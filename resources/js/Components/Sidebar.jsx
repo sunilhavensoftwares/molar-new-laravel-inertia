@@ -93,18 +93,6 @@ export default function Sidebar() {
 
                                 </div>
 
-
-                                <div className="menu-item">
-
-                                    <a className="menu-link " href="users/user-detail">
-                                        <span className="menu-bullet">
-                                            <span className="bullet bullet-dot"></span>
-                                        </span>
-                                        <span className="menu-title">View User</span>
-                                    </a>
-
-                                </div>
-
                             </div>
 
                         </div>

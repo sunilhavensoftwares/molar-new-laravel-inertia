@@ -39,7 +39,7 @@ export default function Index({ auth }) {
             router.get(route(route().current()), {
                 ...appliedFilters,
                 page: 1,
-                perPage: users.per_page,
+                perPage: users.meta.per_page,
                 sort: query?.sort,
                 order: query?.order,
                 name: searchQuery, // assuming backend filters by name
@@ -67,7 +67,7 @@ export default function Index({ auth }) {
 
         router.get(route(route().current()), {
             page: 1,
-            perPage: users.per_page,
+            perPage: users.meta.per_page,
         }, {
             preserveScroll: true,
             preserveState: true,
@@ -83,7 +83,7 @@ export default function Index({ auth }) {
             sort: query?.sort,
             order: query?.order,
             page: 1,
-            perPage: users.per_page,
+            perPage: users.meta.per_page,
         }, {
             preserveScroll: true,
             preserveState: true,
@@ -121,7 +121,7 @@ export default function Index({ auth }) {
                             </div>
                         </div>
                         <div className="d-flex flex-column">
-                            <a href="#" className="text-gray-800 text-hover-primary mb-1">{user.name}</a>
+                            <Link href={`/users/user-detail/${user.id}` } className="text-gray-800 text-hover-primary mb-1">{user.name}</Link>
                             <span>{user.email}</span>
                         </div>
                     </div>
@@ -1068,9 +1068,9 @@ export default function Index({ auth }) {
                                             columns={columns}
                                             data={data}
                                             tableProps={{ className: 'table align-middle table-row-dashed fs-6 gy-5' }}
-                                            currentPage={users.current_page}
-                                            perPage={users.per_page}
-                                            total={users.total}
+                                            currentPage={users.meta.current_page}
+                                            perPage={users.meta.per_page}
+                                            total={users.meta.total}
                                             sortKey={query?.sort}
                                             sortOrder={query?.order}
                                             searchQuery={filters.name}

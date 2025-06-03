@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -30,7 +31,7 @@ class UserController extends Controller
         }
 
         if ($request->filled('role')) {
-           $query->whereHas('roles', function ($q) use ($request) {
+            $query->whereHas('roles', function ($q) use ($request) {
                 $q->where('name', $request->role);
             });
         }
@@ -40,7 +41,7 @@ class UserController extends Controller
         $users = $query->with('roles')->paginate($request->get('perPage', 10))->appends($request->all());
 
         return Inertia::render('Users/Index', [
-            'users' => $users,
+            'users' => UserResource::collection($users),
             'query' => $request->all(),
             'routeUrl' => route('users.index'),
         ]);
@@ -68,7 +69,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::with(['roles:id,name'])->find($id);
+        return Inertia::render('Users/Detail', [
+            'user' => new UserResource($user),
+            'routeUrl' => route('users.index'),
+        ]);
     }
 
     /**
