@@ -1,0 +1,1 @@
+$("#kt_table_users").DataTable();
