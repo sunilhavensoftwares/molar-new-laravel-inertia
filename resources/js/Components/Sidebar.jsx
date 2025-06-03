@@ -114,12 +114,12 @@ export default function Sidebar() {
 
                                 <div className="menu-item">
 
-                                    <a className="menu-link  " href="roles/roles">
+                                    <Link className="menu-link" href="/roles">
                                         <span className="menu-bullet">
                                             <span className="bullet bullet-dot"></span>
                                         </span>
                                         <span className="menu-title">Roles List</span>
-                                    </a>
+                                    </Link>
 
                                 </div>
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontEndController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard',[DashboardController::class, 'index']);
     Route::get('/users',[UserController::class, 'index'])->name('users.index');
     Route::get('/users/user-detail/{id}',[UserController::class, 'show'])->name('users.show');
+    Route::get('/roles',[RoleController::class, 'index'])->name('roles.index');
 });
 
 require __DIR__.'/auth.php';

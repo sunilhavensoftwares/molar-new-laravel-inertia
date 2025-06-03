@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RoleResource;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class RoleController extends Controller
 {
@@ -12,7 +14,14 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        $roles = Role::withCount('users')->get();
+        $roles = RoleResource::collection($roles);
+        return Inertia::render(
+            'Roles/Index',
+            [
+                'roles' => $roles
+            ]
+        );
     }
 
     /**
