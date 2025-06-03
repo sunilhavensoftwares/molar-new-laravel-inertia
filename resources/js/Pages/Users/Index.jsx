@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import FlatpickrInput from '@/Components/FlatpickrInput';
 import CalendarApp from '@/Components/CalendarApp';
 import Select2Input from '@/Components/Select2Input';
@@ -30,9 +30,30 @@ export default function Index({ auth }) {
         });
         setChecked(initChecked);
     }, [users]);
+    const searchTimeout = useRef(null);
+
+    useEffect(() => {
+        if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+        searchTimeout.current = setTimeout(() => {
+            router.get(route(route().current()), {
+                ...appliedFilters,
+                page: 1,
+                perPage: users.per_page,
+                sort: query?.sort,
+                order: query?.order,
+                name: searchQuery, // assuming backend filters by name
+            }, {
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }, 400);
+
+        return () => clearTimeout(searchTimeout.current);
+    }, [searchQuery]);
 
     const handleFilterChange = (key) => (value) => {
-        setFilters(prev => ({
+        setFilters((prev) => ({
             ...prev,
             [key]: value,
         }));
@@ -41,15 +62,32 @@ export default function Index({ auth }) {
     const handleFilterReset = () => {
         setFilters({});
         setAppliedFilters({});
-        // Reset native form fields
         filtersFormRef.current.reset();
-        // Reset Select2 dropdowns manually after form reset
         $(filtersFormRef.current).find('select').val(null).trigger('change');
+
+        router.get(route(route().current()), {
+            page: 1,
+            perPage: users.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
     };
 
     const applyFilters = (e) => {
         e.preventDefault();
-        setAppliedFilters(filters); // Only apply when user clicks Apply
+        setAppliedFilters(filters);
+
+        router.get(route(route().current()), {
+            ...filters,
+            sort: query?.sort,
+            order: query?.order,
+            page: 1,
+            perPage: users.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
     };
 
     const handleToggle = (userId, key) => (e) => {
@@ -298,11 +336,13 @@ export default function Index({ auth }) {
                                                                     data-allow-clear="true" data-kt-user-table-filter="role"
                                                                     data-hide-search="true" name="role" value={filters.role || ''} onChange={(value) => handleFilterChange('role')(value)} >
                                                                     <option></option>
-                                                                    <option defaultValue="administrator">Administrator</option>
-                                                                    <option defaultValue="analyst">Analyst</option>
-                                                                    <option defaultValue="developer">Developer</option>
-                                                                    <option defaultValue="support">Support</option>
-                                                                    <option defaultValue="trial">Trial</option>
+                                                                    <option defaultValue="administrator "> Administrator</option>
+                                                                    <option defaultValue="doctor "> Doctor</option>
+                                                                    <option defaultValue="receptionist "> Receptionist</option>
+                                                                    <option defaultValue="nurse "> Nurse</option>
+                                                                    <option defaultValue="accountant "> Accountant</option>
+                                                                    <option defaultValue="laboratorist "> Laboratorist</option>
+                                                                    <option defaultValue="pharmacist "> Pharmacist</option>
                                                                 </Select2Input>
                                                             </div>
 
@@ -1027,19 +1067,17 @@ export default function Index({ auth }) {
                                         <DataTable
                                             columns={columns}
                                             data={data}
-                                            tableProps={{
-                                                className: 'table align-middle table-row-dashed fs-6 gy-5',
-                                                id: 'kt_table_users',
-                                                'data-kt-table': 'true',
-                                            }}
+                                            tableProps={{ className: 'table align-middle table-row-dashed fs-6 gy-5' }}
                                             currentPage={users.current_page}
                                             perPage={users.per_page}
                                             total={users.total}
                                             sortKey={query?.sort}
                                             sortOrder={query?.order}
+                                            searchQuery={filters.name}
+                                            appliedFilters={appliedFilters}
                                         />
-                                        
-                                        
+
+
 
                                     </div>
 

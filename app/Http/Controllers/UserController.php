@@ -25,6 +25,15 @@ class UserController extends Controller
         if (!in_array($order, ['asc', 'desc'])) {
             $order = 'asc';
         }
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('role')) {
+           $query->whereHas('roles', function ($q) use ($request) {
+                $q->where('name', $request->role);
+            });
+        }
 
         $query->orderBy($sort, $order);
 
@@ -33,6 +42,7 @@ class UserController extends Controller
         return Inertia::render('Users/Index', [
             'users' => $users,
             'query' => $request->all(),
+            'routeUrl' => route('users.index'),
         ]);
     }
 

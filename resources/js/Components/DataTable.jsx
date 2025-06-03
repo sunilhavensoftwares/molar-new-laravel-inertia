@@ -1,7 +1,6 @@
 import React from 'react';
 import { router, usePage } from '@inertiajs/react';
 
-// Pagination component
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const generatePages = () => {
     const pages = [];
@@ -25,54 +24,43 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     <nav aria-label="Pagination">
       <ul className="pagination pagination-sm mb-0">
         <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-          <button
-            className="page-link"
-            onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-          >
-            &laquo;
-          </button>
+          <button className="page-link" onClick={() => onPageChange(currentPage - 1)}><i className='previous'></i></button>
         </li>
-        {pages.map((num, idx) => (
+
+        {pages.map((page, idx) => (
           <li
             key={idx}
-            className={`page-item ${num === currentPage ? 'active' : ''} ${num === '...' ? 'disabled' : ''}`}
+            className={`page-item ${page === currentPage ? 'active' : ''} ${page === '...' ? 'disabled' : ''}`}
           >
-            {num === '...' ? (
+            {page === '...' ? (
               <span className="page-link">…</span>
             ) : (
-              <button className="page-link" onClick={() => onPageChange(num)}>
-                {num}
-              </button>
+              <button className="page-link" onClick={() => onPageChange(page)}>{page}</button>
             )}
           </li>
         ))}
+
         <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-          <button
-            className="page-link"
-            onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
-          >
-            &raquo;
-          </button>
+          <button className="page-link" onClick={() => onPageChange(currentPage + 1)}><i className='next'></i></button>
         </li>
       </ul>
     </nav>
   ) : null;
 };
 
-// Main DataTable component
 const DataTable = ({
-  columns = [],
-  data = [],
+  columns,
+  data,
   tableProps = {},
-  currentPage = 1,
-  perPage = 10,
-  total = 0,
-  sortKey = null,
-  sortOrder = null,
+  currentPage,
+  perPage,
+  total,
+  sortKey,
+  sortOrder,
 }) => {
   const { props } = usePage();
-  const queryParams = props.query ?? {};
-
+  const queryParams = props.query || {};
+  const baseUrl = props.routeUrl || window.location.pathname;
   const totalPages = Math.ceil(total / perPage);
 
   const handleSort = (key) => {
@@ -81,7 +69,7 @@ const DataTable = ({
       order = sortOrder === 'asc' ? 'desc' : 'asc';
     }
 
-    router.get(route().current(), {
+    router.get(baseUrl, {
       ...queryParams,
       page: 1,
       perPage,
@@ -94,7 +82,7 @@ const DataTable = ({
   };
 
   const handlePageChange = (page) => {
-    router.get(route().current(), {
+    router.get(baseUrl, {
       ...queryParams,
       page,
       perPage,
@@ -108,7 +96,7 @@ const DataTable = ({
 
   const handlePageSizeChange = (e) => {
     const newSize = Number(e.target.value);
-    router.get(route().current(), {
+    router.get(baseUrl, {
       ...queryParams,
       page: 1,
       perPage: newSize,
@@ -128,13 +116,13 @@ const DataTable = ({
             {columns.map((col, idx) => (
               <th
                 key={idx}
-                onClick={() => handleSort(col.key)}
-                style={{ cursor: col.sortable !== false ? 'pointer' : 'default' }}
-                {...(col.thProps || {})}
+                onClick={() => col.sortable && handleSort(col.key)}
+                style={{ cursor: col.sortable ? 'pointer' : 'default' }}
+                {...col.thProps}
               >
                 {col.label}
-                {sortKey === col.key && (
-                  sortOrder === 'asc' ? ' ▲' : ' ▼'
+                {col.sortable && sortKey === col.key && (
+                  <span> {sortOrder === 'asc' ? '▲' : '▼'}</span>
                 )}
               </th>
             ))}
@@ -158,14 +146,14 @@ const DataTable = ({
           ) : (
             <tr>
               <td colSpan={columns.length} className="text-center py-3">
-                No records found
+                No records found.
               </td>
             </tr>
           )}
         </tbody>
       </table>
 
-      {/* Footer Controls */}
+      {/* Footer */}
       <div className="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
         <div>
           Show{' '}
