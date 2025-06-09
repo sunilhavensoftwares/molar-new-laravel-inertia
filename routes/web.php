@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/dashboard',[DashboardController::class, 'index']);
+    Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
     Route::get('/users',[UserController::class, 'index'])->name('users.index');
     Route::get('/users/user-detail/{id}',[UserController::class, 'show'])->name('users.show');
     Route::get('/roles',[RoleController::class, 'index'])->name('roles.index');

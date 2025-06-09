@@ -2,7 +2,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 export default function Index({ auth }) {
     const { roles } = usePage().props;
-    console.log(roles);
     
     return (
         <AuthenticatedLayout

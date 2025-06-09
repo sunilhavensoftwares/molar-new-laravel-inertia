@@ -3,15 +3,40 @@ import { useEffect, useState } from 'react';
 // import Dropdown from '@/Components/Dropdown';
 // import NavLink from '@/Components/NavLink';
 // import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import useScript from '@/Hooks/useScript';
 import { Link, router } from '@inertiajs/react';
 import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import Sidebar from '@/Components/Sidebar';
 import { useMetronicInit } from '../Misc/use_metronics_init';
 
-export default function Authenticated({ user, header, children }) {
-    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+export default function Authenticated({ user, header, children, bodyClass = 'app-default' }) {
+    //load scripts
+    useScript('/assets/plugins/custom/fullcalendar/fullcalendar.bundle.js');
+    useScript('/assets/plugins/custom/datatables/datatables.bundle.js');
+    useScript('https://cdn.amcharts.com/lib/5/index.js');
+    useScript('https://cdn.amcharts.com/lib/5/xy.js');
+    useScript('https://cdn.amcharts.com/lib/5/percent.js');
+    useScript('https://cdn.amcharts.com/lib/5/radar.js');
+    useScript('https://cdn.amcharts.com/lib/5/themes/Animated.js');
+    useScript('https://cdn.amcharts.com/lib/5/map.js');
+    useScript('https://cdn.amcharts.com/lib/5/geodata/worldLow.js');
+    useScript('https://cdn.amcharts.com/lib/5/geodata/continentsLow.js');
+    useScript('https://cdn.amcharts.com/lib/5/geodata/usaLow.js');
+    useScript('https://cdn.amcharts.com/lib/5/geodata/worldTimeZonesLow.js');
+    useScript('https://cdn.amcharts.com/lib/5/geodata/worldTimeZoneAreasLow.js');
+
+    useScript('/assets/js/widgets.bundle.js');
+    useScript('/assets/js/custom/widgets.js');
+    useScript('/assets/js/custom/apps/chat/chat.js');
+    useScript('/assets/js/custom/utilities/modals/upgrade-plan.js');
+    useScript('/assets/js/custom/utilities/modals/create-app.js');
+    useScript('/assets/js/custom/utilities/modals/users-search.js');
+
     useMetronicInit();
+     useEffect(() => {
+        document.body.className = bodyClass;
+    }, [bodyClass]);
     useEffect(() => {
         const triggers = document.querySelectorAll('[data-bs-toggle="tooltip"]');
         triggers.forEach(el => new window.bootstrap.Tooltip(el));
