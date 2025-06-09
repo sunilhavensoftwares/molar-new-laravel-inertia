@@ -1,0 +1,1 @@
+import{j as s}from"./app-CsiQgyDm.js";function m({children:e}){return s.jsx("div",{className:"d-flex gap-3",children:s.jsx("div",{className:"w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg",children:e})})}export{m as G};
