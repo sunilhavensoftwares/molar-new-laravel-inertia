@@ -1,9 +1,9 @@
 .guestLayoutBody {
-    background-image: url('/assets/media/auth/bg4.jpg');
+    background-image: url('/public/assets/media/auth/bg4.jpg');
 }
 
 [data-theme="dark"] .guestLayoutBody {
-    background-image: url('/assets/media/auth/bg4.jpg');
+    background-image: url('/public/assets/media/auth/bg4.jpg');
 }
 .guestLayoutBody #app{
     height: 100%;
