@@ -109,7 +109,7 @@ const DataTable = ({
   };
 
   return (
-    <div>
+    <div class="table-responsive">
       <table {...tableProps}>
         <thead>
           <tr>

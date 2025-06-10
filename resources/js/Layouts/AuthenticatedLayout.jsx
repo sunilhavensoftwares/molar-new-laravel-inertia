@@ -34,7 +34,7 @@ export default function Authenticated({ user, header, children, bodyClass = 'app
     useScript('/assets/js/custom/utilities/modals/users-search.js');
 
     useMetronicInit();
-     useEffect(() => {
+    useEffect(() => {
         document.body.className = bodyClass;
     }, [bodyClass]);
     useEffect(() => {
@@ -84,10 +84,14 @@ export default function Authenticated({ user, header, children, bodyClass = 'app
                         <div className="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
 
 
-                            <div id="kt_app_sidebar" className="app-sidebar flex-column no-print" data-kt-drawer="true"
-                                data-kt-drawer-name="app-sidebar" data-kt-drawer-activate="{default: true, lg: false}"
-                                data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'180px'}"
-                                data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle">
+                            <div id="kt_app_sidebar"
+                                className="app-sidebar flex-column no-print"
+                                data-kt-drawer="true"
+                                data-kt-drawer-name="app-sidebar"
+                                data-kt-drawer-activate="{default: true, lg: false}"
+                                data-kt-drawer-width="{default:'180px'}"
+                                data-kt-drawer-direction="start"
+                                data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle">
 
                                 <div className="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
 
