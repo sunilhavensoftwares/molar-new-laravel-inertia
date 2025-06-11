@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'two_step_enabled' =>$this->two_step_enabled,
             'encrypt_detail_enabled' =>$this->encrypt_detail_enabled,
             'active' =>$this->active,
+            'created_at' => $this->created_at_formatted,
 
             // Relationship: roles
             'roles' => RoleResource::collection($this->whenLoaded('roles')),

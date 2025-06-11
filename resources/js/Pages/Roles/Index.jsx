@@ -26,7 +26,7 @@ export default function Index({ auth }) {
                                     <ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 
                                         <li className="breadcrumb-item text-muted">
-                                            <a href="dashboard/index" className="text-muted text-hover-primary">Home</a>
+                                            <Link href="/dashboard" className="text-muted text-hover-primary">Home</Link>
                                         </li>
 
 
@@ -54,8 +54,8 @@ export default function Index({ auth }) {
 
 
 
-                                    <a href="users/add-role" type="button" className="btn btn-primary"><i className="fa-solid fa-plus"></i> Add Role
-                                    </a>
+                                    <Link href="roles/add-role" type="button" className="btn btn-primary"><i className="fa-solid fa-plus"></i> Add Role
+                                    </Link>
 
                                 </div>
 
@@ -91,8 +91,8 @@ export default function Index({ auth }) {
 
 
                                                 <div className="card-footer flex-wrap pt-0">
-                                                    <a href="roles/role-detail" className="btn btn-light my-1 me-2"> <i className="fa-regular text-info fa-eye fs-2x"></i></a>
-                                                    <a href="users/add-role" type="button" className="btn btn-light btn-active-light-primary me-2"><i className="fa-regular  text-warning fa-pen-to-square fs-2x"></i></a>
+                                                    <Link href={`roles/role-detail/${role.id}`} className="btn btn-light my-1 me-2"> <i className="fa-regular text-info fa-eye fs-2x"></i></Link>
+                                                    <Link href={`/roles/edit-role/${role.id}`} type="button" className="btn btn-light btn-active-light-primary me-2"><i className="fa-regular  text-warning fa-pen-to-square fs-2x"></i></Link>
                                                     <button type="button" className="btn btn-light btn-active-light-primary me-2"> <i className="fa-regular text-danger fa-trash-can fs-2x"></i></button>
                                                 </div>
 

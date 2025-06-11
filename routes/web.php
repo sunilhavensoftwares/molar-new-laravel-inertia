@@ -29,16 +29,19 @@ use Inertia\Inertia;
 //         'phpVersion' => PHP_VERSION,
 //     ]);
 // });
- Route::get('/', [AuthenticatedSessionController::class, 'create'])
-                ->name('login');
+Route::get('/', [AuthenticatedSessionController::class, 'create'])
+    ->name('login');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/users',[UserController::class, 'index'])->name('users.index');
-    Route::get('/users/user-detail/{id}',[UserController::class, 'show'])->name('users.show');
-    Route::get('/roles',[RoleController::class, 'index'])->name('roles.index');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/user-detail/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+    Route::get('/roles/role-detail/{id}', [RoleController::class, 'show'])->name('roles.show');
+    Route::get('/roles/edit-role/{role}', [RoleController::class, 'edit'])->name('roles.edit');
+    Route::get('/roles/add-role', [RoleController::class, 'create'])->name('roles.create');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

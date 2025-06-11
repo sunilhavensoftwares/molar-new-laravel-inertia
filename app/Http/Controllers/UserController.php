@@ -13,39 +13,58 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        $query = User::query();
+{
+    $query = User::query()->with('roles');
 
-        $sort = $request->get('sort', 'name');
-        $order = strtolower($request->get('order', 'asc'));
+    $sort = $request->get('sort', 'users.email'); 
+    $order = strtolower($request->get('order', 'asc'));
 
-        $allowedSorts = ['id', 'name', 'email', 'status'];
-        if (!in_array($sort, $allowedSorts)) {
-            $sort = 'name';
-        }
-        if (!in_array($order, ['asc', 'desc'])) {
-            $order = 'asc';
-        }
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
+    $allowedSorts = [
+        'users.email',
+        'roles.name',
+        'users.last_login',
+        'users.two_step_enabled',
+        'users.encrypt_detail_enabled',
+        'users.active',
+    ];
 
-        if ($request->filled('role')) {
-            $query->whereHas('roles', function ($q) use ($request) {
-                $q->where('name', $request->role);
-            });
-        }
-
-        $query->orderBy($sort, $order);
-
-        $users = $query->with('roles')->paginate($request->get('perPage', 10))->appends($request->all());
-
-        return Inertia::render('Users/Index', [
-            'users' => UserResource::collection($users),
-            'query' => $request->all(),
-            'routeUrl' => route('users.index'),
-        ]);
+    if (!in_array($sort, $allowedSorts)) {
+        $sort = 'users.email'; 
     }
+
+    if (!in_array($order, ['asc', 'desc'])) {
+        $order = 'asc';
+    }
+
+    if ($request->filled('name')) {
+        $query->where('users.name', 'like', '%' . $request->name . '%');
+    }
+
+    if ($request->filled('role')) {
+        $query->whereHas('roles', function ($q) use ($request) {
+            $q->where('roles.name', $request->role);
+        });
+    }
+
+    // Handle sorting
+    if ($sort === 'roles.name') {
+        $query->select('users.*')
+              ->leftJoin('role_user', 'users.id', '=', 'role_user.user_id')
+              ->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+              ->groupBy('users.id') // avoid duplicates
+              ->orderByRaw("MIN(roles.name) $order");
+    } else {
+        $query->orderBy($sort, $order);
+    }
+    $users = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn ($value) => $value !== null && $value !== ''));
+    
+    return Inertia::render('Users/Index', [
+        'users' => UserResource::collection($users),
+        'query' => $request->all(),
+        'routeUrl' => route('users.index'),
+    ]);
+}
+
 
 
     /**

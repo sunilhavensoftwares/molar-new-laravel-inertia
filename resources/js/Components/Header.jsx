@@ -804,6 +804,7 @@ export default function Header() {
                                             href={route('logout')}
                                             method="post"
                                             className="menu-link px-5"
+                                            as="a"
                                         >
                                             Log Out
                                         </Link>

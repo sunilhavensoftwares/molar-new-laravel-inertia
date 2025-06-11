@@ -64,8 +64,13 @@ const DataTable = ({
   const totalPages = Math.ceil(total / perPage);
 
   const handleSort = (key) => {
+    const column = columns.find(col => col.key === key);
+    if (!column || !column.sortable) return;
+
     let order = 'asc';
-    if (sortKey === key) {
+
+    // Correct comparison!
+    if (sortKey === column.sort_key) {
       order = sortOrder === 'asc' ? 'desc' : 'asc';
     }
 
@@ -73,13 +78,14 @@ const DataTable = ({
       ...queryParams,
       page: 1,
       perPage,
-      sort: key,
+      sort: column.sort_key, // backend sort key
       order,
     }, {
       preserveScroll: true,
       preserveState: true,
     });
   };
+
 
   const handlePageChange = (page) => {
     router.get(baseUrl, {
@@ -109,7 +115,7 @@ const DataTable = ({
   };
 
   return (
-    <div class="table-responsive">
+    <div className="table-responsive">
       <table {...tableProps}>
         <thead>
           <tr>
@@ -121,7 +127,7 @@ const DataTable = ({
                 {...col.thProps}
               >
                 {col.label}
-                {col.sortable && sortKey === col.key && (
+                {col.sortable && col.sort_key === sortKey && (
                   <span> {sortOrder === 'asc' ? '▲' : '▼'}</span>
                 )}
               </th>
@@ -135,8 +141,8 @@ const DataTable = ({
                 {columns.map((col, colIdx) => (
                   <td key={colIdx} {...(col.tdProps || {})}>
                     {typeof row[col.key] === 'object' &&
-                    row[col.key] !== null &&
-                    'content' in row[col.key]
+                      row[col.key] !== null &&
+                      'content' in row[col.key]
                       ? row[col.key].content
                       : row[col.key]}
                   </td>

@@ -35,6 +35,9 @@ export default function Index({ auth }) {
     useEffect(() => {
         if (searchTimeout.current) clearTimeout(searchTimeout.current);
 
+        // Skip firing on empty input if it's the same as what's already in the query
+        if (searchQuery === '' && !query?.name) return;
+
         searchTimeout.current = setTimeout(() => {
             router.get(route(route().current()), {
                 ...appliedFilters,
@@ -42,7 +45,7 @@ export default function Index({ auth }) {
                 perPage: users.meta.per_page,
                 sort: query?.sort,
                 order: query?.order,
-                name: searchQuery, // assuming backend filters by name
+                name: searchQuery || undefined, // don't include empty string in URL
             }, {
                 preserveScroll: true,
                 preserveState: true,
@@ -51,6 +54,7 @@ export default function Index({ auth }) {
 
         return () => clearTimeout(searchTimeout.current);
     }, [searchQuery]);
+
 
     const handleFilterChange = (key) => (value) => {
         setFilters((prev) => ({
@@ -101,12 +105,12 @@ export default function Index({ auth }) {
         }));
     };
     const columns = [
-        { label: 'User', key: 'user', thProps: { className: 'min-w-125px' } },
-        { label: 'Role', key: 'role', thProps: { className: 'min-w-125px' } },
-        { label: 'Last login', key: 'lastLogin', thProps: { className: 'min-w-125px' } },
-        { label: 'Two-step', key: 'twoStep', thProps: { className: 'min-w-125px' } },
-        { label: 'Encrypt detail', key: 'encryptDetail', thProps: { className: 'min-w-125px' } },
-        { label: 'Status', key: 'status', thProps: { className: 'min-w-125px' } },
+        { label: 'User', key: 'user', thProps: { className: 'min-w-125px' }, 'sort_key': 'users.email', 'sortable': 1 },
+        { label: 'Role', key: 'role', thProps: { className: 'min-w-125px' }, 'sort_key': 'roles.name', 'sortable': 1 },
+        { label: 'Last login', key: 'lastLogin', thProps: { className: 'min-w-125px' }, 'sort_key': 'users.last_login', 'sortable': 1 },
+        { label: 'Two-step', key: 'twoStep', thProps: { className: 'min-w-125px' }, 'sort_key': 'users.two_step_enabled', 'sortable': 1 },
+        { label: 'Encrypt detail', key: 'encryptDetail', thProps: { className: 'min-w-125px' }, 'sort_key': 'users.encrypt_detail_enabled', 'sortable': 1 },
+        { label: 'Status', key: 'status', thProps: { className: 'min-w-125px' }, 'sort_key': 'users.active', 'sortable': 1 },
         { label: 'Actions', key: 'actions', thProps: { className: 'text-end min-w-100px' } },
     ];
     const data = users.data.map((user, index) => (
@@ -121,7 +125,7 @@ export default function Index({ auth }) {
                             </div>
                         </div>
                         <div className="d-flex flex-column">
-                            <Link href={`/users/user-detail/${user.id}` } className="text-gray-800 text-hover-primary mb-1">{user.name}</Link>
+                            <Link href={`/users/user-detail/${user.id}`} className="text-gray-800 text-hover-primary mb-1">{user.name}</Link>
                             <span>{user.email}</span>
                         </div>
                     </div>
