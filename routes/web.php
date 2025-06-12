@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FrontEndController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -29,8 +30,7 @@ use Inertia\Inertia;
 //         'phpVersion' => PHP_VERSION,
 //     ]);
 // });
-Route::get('/', [AuthenticatedSessionController::class, 'create'])
-    ->name('login');
+Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/roles/role-detail/{id}', [RoleController::class, 'show'])->name('roles.show');
     Route::get('/roles/edit-role/{role}', [RoleController::class, 'edit'])->name('roles.edit');
     Route::get('/roles/add-role', [RoleController::class, 'create'])->name('roles.create');
+     Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index');
 });
 
 require __DIR__ . '/auth.php';

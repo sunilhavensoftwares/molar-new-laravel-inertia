@@ -123,18 +123,6 @@ export default function Sidebar() {
 
                                 </div>
 
-
-                                <div className="menu-item">
-
-                                    <a className="menu-link  " href="roles/role-detail">
-                                        <span className="menu-bullet">
-                                            <span className="bullet bullet-dot"></span>
-                                        </span>
-                                        <span className="menu-title">View Roles</span>
-                                    </a>
-
-                                </div>
-
                             </div>
 
                         </div>
@@ -142,9 +130,6 @@ export default function Sidebar() {
                     </div>
 
                 </div>
-
-
-
 
                 <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
 
@@ -162,12 +147,12 @@ export default function Sidebar() {
 
                         <div className="menu-item">
 
-                            <a className="menu-link " href="doctors">
+                            <Link className="menu-link " href="/doctors">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Doctors List</span>
-                            </a>
+                            </Link>
 
                         </div>
 
