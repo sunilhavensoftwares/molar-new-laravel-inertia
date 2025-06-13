@@ -9,11 +9,11 @@ import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import Sidebar from '@/Components/Sidebar';
 import { useMetronicInit } from '../Misc/use_metronics_init';
-
+import './css/AuthenticatedLayout.css';
 export default function Authenticated({ user, header, children, bodyClass = 'app-default' }) {
     //load scripts
     useScript('/assets/plugins/custom/fullcalendar/fullcalendar.bundle.js');
-   
+
 
     useScript('/assets/js/widgets.bundle.js');
     useScript('/assets/js/custom/widgets.js');
@@ -133,9 +133,21 @@ export default function Authenticated({ user, header, children, bodyClass = 'app
                             {children}
 
 
+                            <div id="kt_app_footer" className="app-footer">
+
+                                <div className="app-container container-fluid d-flex flex-column flex-md-row flex-center flex-md-stack py-3">
+
+                                    <div className="text-dark order-2 order-md-1">
+                                        <span className="text-muted fw-semibold me-1">2022&copy;</span>
+                                        <a href="https://keenthemes.com" target="_blank"
+                                            className="text-gray-800 text-hover-primary">Molar Clinic</a>
+                                    </div>
+
+                                </div>
+
+                            </div>
                         </div>
-
-
+                        
                         <Footer />
 
                     </div>

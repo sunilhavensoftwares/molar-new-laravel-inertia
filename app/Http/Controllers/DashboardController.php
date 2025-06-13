@@ -12,7 +12,15 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Dashboard/Index');
+        $currentYear = Date('Y');
+        $years = array_map(function($val){
+            return Date('Y') - $val;
+        },[0,1,2,3,4,5]);
+        return Inertia::render('Dashboard/Index',
+        [
+            'currentDate' => Date('Y-m-d'),
+            'years' => $years,
+        ]);
     }
 
     /**

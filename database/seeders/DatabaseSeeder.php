@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Patient;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,15 +16,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory(1000)->create();
-
-        \App\Models\User::factory()->create([
+        User::factory(1000)->create();
+        User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@test.com',
             'password'=>Hash::make('Admin@123')
         ]);
+
         $this->call(RoleModulePermissionSeeder::class);
         $this->call(RoleUserSeeder::class);
         $this->call(DoctorSeeder::class);
+
+        $this->call(PatientSeeder::class);
+
+        $this->call(PatientDoctorSeeder::class);
     }
 }

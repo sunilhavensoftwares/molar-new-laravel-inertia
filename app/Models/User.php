@@ -52,7 +52,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class);
     }
-
+    public function scopeHasRole($query, $role)
+    {
+        return $query->whereHas('roles', function ($q) use ($role) {
+            $q->where('name', $role);
+        });
+    }
     public function hasRole($role)
     {
         return $this->roles->contains('name', $role);

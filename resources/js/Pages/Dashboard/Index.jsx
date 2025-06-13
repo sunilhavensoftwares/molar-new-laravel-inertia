@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import statisticsStylesArray from '../../Misc/stat_card_style';
 import statisticsStylesArray_2 from '../../Misc/stat_card_style_2';
 import IncomeExpenseCharts from '../../components/IncomeExpenseCharts';
@@ -8,6 +8,7 @@ import FlatpickrInput from '../../components/FlatpickrInput';
 import CalendarApp from '../../Components/CalendarApp';
 import Select2Input from '../../Components/Select2Input';
 export default function Dashboard({ auth }) {
+    const { currentDate, years } = usePage().props;
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -314,7 +315,7 @@ export default function Dashboard({ auth }) {
 
                                                                         <div className="col-md-6">
                                                                             <FlatpickrInput className="form-control form-control-solid text-center"
-                                                                                name="date" value="2025-05-30" />
+                                                                                name="date" value={currentDate} />
 
                                                                         </div>
                                                                     </td>
@@ -449,10 +450,10 @@ export default function Dashboard({ auth }) {
                                                                                 data-allow-clear="true"
                                                                                 data-kt-user-table-filter="role"
                                                                                 data-hide-search="true" >
-                                                                                <option defaultValue="2025">2025</option>
-                                                                                <option defaultValue="2024">2024</option>
-                                                                                <option defaultValue="2023">2023</option>
-                                                                                <option defaultValue="2022">2022</option>
+                                                                                {years && years.map((year) => (
+                                                                                        <option defaultValue={year}  key={year}>{year}</option>
+                                                                                ))}
+
 
                                                                             </Select2Input>
                                                                         </div>

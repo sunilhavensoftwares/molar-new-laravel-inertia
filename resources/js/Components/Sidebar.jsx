@@ -1,9 +1,9 @@
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from "react";
 
 export default function Sidebar() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-
+    const { route } = usePage().props;
     useEffect(() => {
         const sidebarEl = document.getElementById('kt_app_sidebar_menu');
         if (!sidebarEl) return;
@@ -24,6 +24,32 @@ export default function Sidebar() {
             }
         }
     }, [sidebarOpen]);
+    const checkActive = (search) => {
+        let segments = route.url;
+        return search.some(str => segments.includes(str)) ? true : false;
+    }
+    const getMenuClass = (keys, type) => {
+        let className ='';
+        switch (type) {
+            case 'main':
+                className = `menu-item menu-sub-indention menu-accordion ${checkActive(keys) ? 'show' : ''}`;
+                break;
+            case 'sub':
+                className = `menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px ${checkActive(keys) ? 'show' : ''}`;
+                break;
+            case 'item':
+                className = `menu-item menu-accordion ${checkActive(keys) ? 'show' : ''}`;
+                break;
+            case 'link':
+                className = `menu-link ${checkActive(keys) ? 'active' : ''}`;
+                break;
+                
+            default:
+                break;
+        }
+        return className;
+
+    }
     return (
         <>
             <div className="menu menu-column menu-rounded menu-sub-indention px-3" id="#kt_app_sidebar_menu"
@@ -31,7 +57,7 @@ export default function Sidebar() {
 
                 <div className="menu-item">
 
-                    <Link className="menu-link" href="/dashboard">
+                    <Link className={getMenuClass(['dashboard'], 'link')} href="/dashboard">
                         <span className="menu-icon">
 
                             <span className="svg-icon svg-icon-2">
@@ -54,7 +80,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['users','roles'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -66,9 +92,9 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['users','roles'], 'sub')}>
 
-                        <div data-kt-menu-trigger="click" className="menu-item menu-accordion  ">
+                        <div data-kt-menu-trigger="click" className={getMenuClass(['users'], 'item')}>
 
                             <span className="menu-link ">
                                 <span className="menu-bullet">
@@ -79,12 +105,11 @@ export default function Sidebar() {
                             </span>
 
 
-                            <div
-                                className="menu-sub menu-sub-accordion menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                            <div className={getMenuClass(['users'], 'sub')}>
 
                                 <div className="menu-item ">
 
-                                    <Link className="menu-link" href="/users">
+                                    <Link className={getMenuClass(['users'], 'link')} href="/users">
                                         <span className="menu-bullet">
                                             <span className="bullet bullet-dot"></span>
                                         </span>
@@ -98,7 +123,7 @@ export default function Sidebar() {
                         </div>
 
 
-                        <div data-kt-menu-trigger="click" className="menu-item menu-accordion ">
+                        <div data-kt-menu-trigger="click" className={getMenuClass(['roles'], 'item')}>
 
                             <span className="menu-link">
                                 <span className="menu-bullet">
@@ -109,12 +134,11 @@ export default function Sidebar() {
                             </span>
 
 
-                            <div
-                                className="menu-sub menu-sub-accordion menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                            <div className={getMenuClass(['roles'], 'sub')}>
 
                                 <div className="menu-item">
 
-                                    <Link className="menu-link" href="/roles">
+                                    <Link className={getMenuClass(['roles'], 'link')} href="/roles">
                                         <span className="menu-bullet">
                                             <span className="bullet bullet-dot"></span>
                                         </span>
@@ -131,7 +155,7 @@ export default function Sidebar() {
 
                 </div>
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['doctors'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -142,12 +166,12 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['doctors'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <Link className="menu-link " href="/doctors">
+                            <Link className={getMenuClass(['doctors'], 'link')} href="/doctors">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -163,94 +187,94 @@ export default function Sidebar() {
 
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['patients'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
                             <i className="fa-solid fa-hospital-user fs-3"></i>
                         </span>
-                        <span className="menu-title">Patient</span>
+                        <span className="menu-title">Patients</span>
                         <span className="menu-arrow"></span>
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['patients'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link " href="patient">
+                            <Link className={getMenuClass(['patients'], 'link')} href="/patients">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Patient List</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="patient/temporary-patient">
+                            <Link className={getMenuClass(['temporary-patient'], 'link')} href="patient/temporary-patient">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Temporary Patient</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="patient/case_list">
+                            <Link className={getMenuClass(['case-list'], 'link')} href="patient/case-list">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Case Manager</span>
-                            </a>
+                            </Link>
 
 
 
-                            <a className="menu-link " href="patient/case-category">
+                            <Link className={getMenuClass(['case-category'], 'link')} href="patient/case-category">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Case Category</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="patient/tooth">
+                            <Link className={getMenuClass(['tooth'], 'link')} href="patient/tooth">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Tooth</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="patient/case-status">
+                            <Link className={getMenuClass(['case-status'], 'link')} href="patient/case-status">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Case Status</span>
-                            </a>
+                            </Link>
 
 
 
-                            <a className="menu-link " href="patient/case-refer">
+                            <Link className={getMenuClass(['case-refer'], 'link')} href="patient/case-refer">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Case Refer</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="patient/case-material">
+                            <Link className={getMenuClass(['case-material'], 'link')} href="patient/case-material">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Case Material</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="patient/pdocuments">
+                            <Link className={getMenuClass(['pdocuments'], 'link')} href="patient/pdocuments">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Documents</span>
-                            </a>
+                            </Link>
 
 
                         </div>
@@ -262,7 +286,7 @@ export default function Sidebar() {
 
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['schedule'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -274,25 +298,25 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['schedule'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link " href="schedule">
+                            <Link className={getMenuClass(['schedule'], 'link')} href="schedule">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">All Schedules</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="schedule/holidays">
+                            <Link className={getMenuClass(['holidays'], 'link')} href="schedule/holidays">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Holidays</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -303,7 +327,7 @@ export default function Sidebar() {
 
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['appointments'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -314,49 +338,49 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['appointments'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link " href="appointment">
+                            <Link className={getMenuClass(['appointments'], 'link')} href="appointments">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">All</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="appointment/today">
+                            <Link className={getMenuClass(['today'], 'link')} href="appointment/today">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Todays</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="appointment/upcoming">
+                            <Link className={getMenuClass(['upcoming'], 'link')} href="appointment/upcoming">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Upcoming</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="appointment/calendar">
+                            <Link className={getMenuClass(['calendar'], 'link')} href="appointment/calendar">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Calendar</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="appointment/request">
+                            <Link className={getMenuClass(['request'], 'link')} href="appointment/request">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Request</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -366,7 +390,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['appointments'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -377,18 +401,18 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['human-resources'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link /dashboard/ "
-                                href="human-resources/index?tab=nurse">
+                            <Link className={getMenuClass(['human-resources'], 'link')}
+                                href="/human-resources/index?tab=nurse">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">All</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -399,7 +423,7 @@ export default function Sidebar() {
 
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['finance'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -410,49 +434,49 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['finance'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link " href="finance">
+                            <Link className={getMenuClass(['finance'], 'link')} href="finance">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Payments</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="finance/payment-category">
+                            <Link className={getMenuClass(['payment-category'], 'link')} href="finance/payment-category">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Payment Category</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="finance/expense">
+                            <Link className={getMenuClass(['expense'], 'link')} href="finance/expense">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Expense</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="finance/expense-category">
+                            <Link className={getMenuClass(['expense-category'], 'link')} href="finance/expense-category">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Expense Categories</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="finance/diagnostic-type">
+                            <Link className={getMenuClass(['diagnostic-type'], 'link')} href="finance/diagnostic-type">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Diagnostic Type</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -465,19 +489,19 @@ export default function Sidebar() {
 
                 <div className="menu-item">
 
-                    <a className="menu-link " href="prescription/index">
+                    <Link className={getMenuClass(['prescription'], 'link')} href="prescription/index">
                         <span className="menu-icon">
 
                             <i className="fa-solid fa-stethoscope"></i>
 
                         </span>
                         <span className="menu-title">Prescription</span>
-                    </a>
+                    </Link>
 
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['lab'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -488,17 +512,17 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['lab'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link /dashboard/ " href="lab/index?tab=reports">
+                            <Link className={getMenuClass(['lab'], 'link')} href="lab/index?tab=reports">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">All</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -508,7 +532,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['medicine'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -519,25 +543,25 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['medicine'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link " href="medicine/index">
+                            <Link className={getMenuClass(['medicine'], 'sub')} href="medicine/index">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Medicine List</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="medicine/category">
+                            <Link className={getMenuClass(['medicine-category'], 'link')} href="medicine/medicine-category">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Medicine Category</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -547,7 +571,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['pharmacy'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -558,17 +582,17 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['pharmacy'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link /dashboard/ " href="pharmacy/index?tab=dashboard">
+                            <Link className={getMenuClass(['pharmacy'], 'link')} href="pharmacy/index?tab=dashboard">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">All</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -578,7 +602,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['report'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -589,18 +613,17 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['report'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link /dashboard/ "
-                                href="report/index?tab=financial-report">
+                            <Link className={getMenuClass(['report'], 'link')} href="report/index?tab=financial-report">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">All</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -610,7 +633,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['email'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -621,17 +644,17 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['email'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link " href="email/index">
+                            <Link className={getMenuClass(['email'], 'link')} href="email/index">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Email List</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -641,7 +664,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['sms'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -652,41 +675,41 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['report'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link " href="sms/new">
+                            <Link className={getMenuClass(['new-sms'], 'link')} href="sms/new-sms">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Write Message</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="sms/settings">
+                            <Link className={getMenuClass(['sms-settings'], 'link')} href="sms/sms-settings">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">SMS Settings</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="sms/templates">
+                            <Link className={getMenuClass(['sms-templates'], 'link')} href="sms/sms-templates">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">SMS Templates</span>
-                            </a>
+                            </Link>
 
 
-                            <a className="menu-link " href="sms/whatsapp">
+                            <Link className={getMenuClass(['whatsapp'], 'link')} href="sms/whatsapp">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">Whatsapp Reply</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -696,7 +719,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['website'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -707,17 +730,17 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion  menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['website'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link /dashboard/ " href="website/index?tab=slides">
+                            <Link className={getMenuClass(['website'], 'link')} href="website/index?tab=slides">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">All</span>
-                            </a>
+                            </Link>
 
                         </div>
 
@@ -727,7 +750,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className="menu-item menu-sub-indention menu-accordion ">
+                <div data-kt-menu-trigger="click" className={getMenuClass(['settings'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -738,17 +761,17 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className="menu-sub menu-sub-accordion menu-active-bg px-lg-2 py-lg-4 w-lg-225px">
+                    <div className={getMenuClass(['settings'], 'sub')}>
 
 
                         <div className="menu-item">
 
-                            <a className="menu-link " href="settings/index">
+                            <Link className={getMenuClass(['settings'], 'link')} href="settings/index">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
                                 <span className="menu-title">System Settings</span>
-                            </a>
+                            </Link>
 
                         </div>
 

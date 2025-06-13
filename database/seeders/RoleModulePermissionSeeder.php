@@ -16,7 +16,7 @@ class RoleModulePermissionSeeder extends Seeder
     public function run()
     {
         $roles = [
-            'admin', 'doctor', 'nurse', 'receptionist', 'accountant', 'laboratorist', 'pharmacist',
+            'admin', 'doctor', 'nurse', 'receptionist', 'accountant', 'laboratorist', 'pharmacist','patient',
         ];
 
         $modules = [

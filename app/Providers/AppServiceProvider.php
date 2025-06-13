@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        //shared url info for sidebar menu
+         Inertia::share([
+        'route' => function () {
+            return [
+                'url'=>request()->segments()
+            ];
+        },
+    ]);
     }
 }

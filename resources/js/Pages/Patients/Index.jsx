@@ -5,10 +5,9 @@ import CalendarApp from '@/Components/CalendarApp';
 import Select2Input from '@/Components/Select2Input';
 import DataTable from '@/Components/DataTable';
 import { useEffect, useRef, useState } from 'react';
-import toastr from '@/Misc/toastr';
 
 export default function Index({ auth }) {
-    const { doctors, query, routeUrl } = usePage().props;
+    const { patients, query, routeUrl } = usePage().props;
     const filtersFormRef = useRef(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState({});
@@ -16,18 +15,18 @@ export default function Index({ auth }) {
     const [processing, setProcessing] = useState({});
     // Initialize all your checkbox states here
     const [checked, setChecked] = useState({});
-    // Initialize checked state when doctors load/change
+    // Initialize checked state when patients load/change
     useEffect(() => {
-        if (!doctors) return;
+        if (!patients) return;
 
         const initChecked = {};
-        doctors.data.forEach(doctor => {
-            initChecked[doctor.id] = {
-                is_visible: !!doctor.is_visible
+        patients.data.forEach(patient => {
+            initChecked[patient.id] = {
+                is_visible: !!patient.is_visible
             };
         });
         setChecked(initChecked);
-    }, [doctors]);
+    }, [patients]);
     const searchTimeout = useRef(null);
 
     useEffect(() => {
@@ -40,7 +39,7 @@ export default function Index({ auth }) {
             router.get(route(route().current()), {
                 ...appliedFilters,
                 page: 1,
-                perPage: doctors.meta.per_page,
+                perPage: patients.meta.per_page,
                 sort: query?.sort,
                 order: query?.order,
                 name: searchQuery || undefined, // don't include empty string in URL
@@ -70,7 +69,7 @@ export default function Index({ auth }) {
 
         router.get(route(route().current()), {
             page: 1,
-            perPage: doctors.meta.per_page,
+            perPage: patients.meta.per_page,
         }, {
             preserveScroll: true,
             preserveState: true,
@@ -86,25 +85,25 @@ export default function Index({ auth }) {
             sort: query?.sort,
             order: query?.order,
             page: 1,
-            perPage: doctors.meta.per_page,
+            perPage: patients.meta.per_page,
         }, {
             preserveScroll: true,
             preserveState: true,
         });
     };
 
-    const handleToggle = (doctorId, key) => async (e) => {
+    const handleToggle = (patientId, key) => async (e) => {
         const value = e.target.checked;
-        setProcessing((prev) => ({ ...prev, [doctorId]: true }));
+        setProcessing((prev) => ({ ...prev, [patientId]: true }));
         setChecked(prev => ({
             ...prev,
-            [doctorId]: {
-                ...prev[doctorId],
+            [patientId]: {
+                ...prev[patientId],
                 [key]: value,
             },
         }));
         try {
-            const response = await axios.post(`/doctors/${doctorId}/visibility`, {
+            const response = await axios.post(`/patients/${patientId}/visibility`, {
                 [key]: value,
             });
             response.data.success && toastr.success(response.data.message);
@@ -112,69 +111,57 @@ export default function Index({ auth }) {
         } catch (error) {
             toastr.error('Error updating visibility:', error);
         } finally {
-            setProcessing((prev) => ({ ...prev, [doctorId]: false }));
+            setProcessing((prev) => ({ ...prev, [patientId]: false }));
         }
     };
     const columns = [
-        { label: 'ID', key: 'id', thProps: { className: 'min-w-125px' }, 'sort_key': 'doctors.id', 'sortable': 1 },
-        { label: 'Doctor', key: 'doctor', thProps: { className: 'min-w-125px' }, 'sort_key': 'doctors.name', 'sortable': 1 },
-        { label: 'Phone', key: 'phone', thProps: { className: 'min-w-125px' }, 'sort_key': 'doctors.phone', 'sortable': 1 },
-        { label: 'Profile', key: 'profile', thProps: { className: 'min-w-125px' }, 'sort_key': 'doctors.profile', 'sortable': 1 },
-        { label: 'Visibility', key: 'visibility', thProps: { className: 'min-w-125px' }, 'sort_key': 'doctors.is_visible', 'sortable': 1 },
-        { label: 'Patient Treated', key: 'patient_treated', thProps: { className: 'min-w-125px' } },
-        { label: 'Appointments', key: 'appointments', thProps: { className: 'min-w-125px' } },
+        { label: 'ID', key: 'id', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.id', 'sortable': 1 },
+        { label: 'Patient', key: 'patient', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.email', 'sortable': 1 },
+        { label: 'Phone', key: 'phone', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.phone', 'sortable': 1 },
+        { label: 'National Id', key: 'nId', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.nID', 'sortable': 1 },
+        { label: 'Due Balance', key: 'due_balance', thProps: { className: 'min-w-125px' } },
+        { label: 'Visibility', key: 'visibility', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.encrypt_detail_enabled', 'sortable': 1 },
+        { label: 'Whatsapp', key: 'whatsapp', thProps: { className: 'min-w-125px' } },
         { label: 'Actions', key: 'actions', thProps: { className: 'text-end min-w-100px' } },
     ];
-    const data = doctors.data.map((doctor, index) => (
+    const data = patients.data.map((patient, index) => (
         {
-            id: doctor.id,
-            doctor: {
-                sortValue: doctor.name.toLowerCase(),
+            id: patient.id || '',
+            patient: {
+                sortValue: patient.name.toLowerCase(),
                 content: (
                     <div className="d-flex align-items-center">
                         <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                             <div className="symbol-label">
-                                <img src={doctor.image_url || 'assets/media/avatars/blank.png'} alt={doctor.name} className="w-100" />
+                                <img src={patient.img_url || 'assets/media/avatars/blank.png'} alt={patient.name} className="w-100" />
                             </div>
                         </div>
                         <div className="d-flex flex-column">
-                            <Link href={`/doctors/doctor-detail/${doctor.id}`} className="text-gray-800 text-hover-primary mb-1">{doctor.name}</Link>
-                            <span>{doctor.email}</span>
+                            <Link href={`/patients/user-detail/${patient.id}`} className="text-gray-800 text-hover-primary mb-1">{patient.name}</Link>
+                            <span>{patient.email}</span>
                         </div>
                     </div>
                 )
             },
-            phone: doctor.phone || '',
-            profile: doctor.profile && <div className="badge badge-light fw-bold">{doctor.profile}</div>,
+            phone: patient.phone || '',
+            nId: <div className="badge badge-light fw-bold">{patient.nID}</div>,
+            due_balance: 'SAR 0',
             visibility: (
                 <div className="form-check form-switch form-check-custom form-check-success form-check-solid">
                     <input
-                        disabled={!!processing[doctor.id]}
+                        disabled={!!processing[patient.id]}
                         type="checkbox"
                         className="form-check-input"
-                        name={`visible_doctor_${doctor.id}`}
-                        checked={!!checked[doctor.id]?.is_visible}
-                        onChange={handleToggle(doctor.id, 'is_visible')}
+                        name={`visible_patient_${patient.id}`}
+                        checked={!!checked[patient.id]?.is_visible}
+                        onChange={handleToggle(patient.id, 'is_visible')}
                     />
                 </div>
             ),
-            patient_treated: <div className="badge badge-light fw-bold">12345</div>,
-            appointments: <a href="doctors/doctor-detail.php" className="btn btn-info">View</a>,
-            status: (
-                <div className="form-check form-switch form-check-custom form-check-success form-check-solid">
-                    <input
-                        type="checkbox"
-                        className="form-check-input"
-                        name={`checkedStatus_${doctor.id}`}
-                        checked={!!checked[doctor.id]?.status}
-                        onChange={handleToggle(doctor.id, 'status')}
-                    />
-                </div>
-            ),
-
+            whatsapp: <button className="btn btn-sm btn-light-primary fw-bold">Send</button>,
             actions: (
                 <div className="text-end">
-                    <a className="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                    <Link className="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         Actions
                         <span className="svg-icon svg-icon-5 m-0">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -183,27 +170,23 @@ export default function Index({ auth }) {
                                     fill="currentColor" />
                             </svg>
                         </span>
-                    </a>
+                    </Link>
                     <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
                         data-kt-menu="true">
                         <div className="menu-item px-3">
-                            <a href="doctors/doctor-detail.php" className="menu-link px-3">Details</a>
+                            <Link href={`patient/detail/${patient.id}`} className="menu-link px-3">Detail</Link>
                         </div>
-
 
                         <div className="menu-item px-3">
-                            <a href="#" className="menu-link px-3" data-bs-target="#kt_modal_add_user"
-                                data-bs-toggle="modal">Edit</a>
+                            <Link href="#" className="menu-link px-3"
+                                data-kt-patients-table-filter="delete_row">Edit</Link>
                         </div>
-
-                        <div className="menu-item ">
-                            <a href="#" className="menu-link px-3" data-bs-target="#kt_modal_add_case_edit_permission"
-                                data-bs-toggle="modal">Case Edit Access</a>
-                        </div>
-
-
                         <div className="menu-item px-3">
-                            <a href="#" className="menu-link px-3">Delete</a>
+                            <Link href="#" className="menu-link px-3"
+                                data-kt-patients-table-filter="delete_row">Delete</Link>
+                        </div>
+                        <div className="menu-item px-3">
+                            <Link href="#" className="menu-link px-3">Payment</Link>
                         </div>
                     </div>
                 </div>
@@ -213,21 +196,21 @@ export default function Index({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">doctors</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">patients</h2>}
         >
-            <Head title="doctors" />
+            <Head title="patients" />
             <>
-                <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
-                    <style>{`
-                                    .image-input-placeholder {
-                                        backgroundImage: "url('assets/media/svg/files/blank-image.svg')";
-                                    }
+                <style> {`
+                    .image-input-placeholder {
+                        backgroundImage: "url('assets/media/svg/files/blank-image.svg')";
+                    }
 
-                                    [data-theme="dark"] .image-input-placeholder {
-                                        backgroundImage: "url('assets/media/svg/files/blank-image-dark.svg')";
-                                    }
-                                    `}
-                    </style>
+                    [data-theme="dark"] .image-input-placeholder {
+                        backgroundImage: "url('assets/media/svg/files/blank-image-dark.svg')";
+                    }
+                `}</style>
+                <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
+
                     <div className="d-flex flex-column flex-column-fluid">
 
                         <div id="kt_app_toolbar" className="app-toolbar py-3 py-lg-6">
@@ -237,13 +220,13 @@ export default function Index({ auth }) {
                                 <div className="page-title d-flex flex-column justify-content-center flex-wrap me-3">
 
                                     <h1 className="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
-                                        Doctor List</h1>
+                                        Patient List</h1>
 
 
                                     <ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 
                                         <li className="breadcrumb-item text-muted">
-                                            <a href="dashboard/index.php" className="text-muted text-hover-primary">Home</a>
+                                            <Link href="dashboard" className="text-muted text-hover-primary">Home</Link>
                                         </li>
 
 
@@ -252,7 +235,7 @@ export default function Index({ auth }) {
                                         </li>
 
 
-                                        <li className="breadcrumb-item text-muted">Doctors</li>
+                                        <li className="breadcrumb-item text-muted">Patient</li>
 
                                     </ul>
 
@@ -264,7 +247,7 @@ export default function Index({ auth }) {
 
 
                                     <button type="button" className="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#kt_modal_add_doctor">
+                                        data-bs-target="#kt_modal_add_patient">
 
                                         <span className="svg-icon svg-icon-2">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -274,9 +257,22 @@ export default function Index({ auth }) {
                                                 <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
                                             </svg>
                                         </span>
-                                        Add Doctor
+                                        Add
                                     </button>
 
+                                    <button type="button" className="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#kt_modal_add_temporary_patient">
+
+                                        <span className="svg-icon svg-icon-2">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1"
+                                                    transform="rotate(-90 11.364 20.364)" fill="currentColor" />
+                                                <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="currentColor" />
+                                            </svg>
+                                        </span>
+                                        Add Temporary
+                                    </button>
                                 </div>
 
                             </div>
@@ -309,7 +305,7 @@ export default function Index({ auth }) {
 
                                                 <input type="text" data-kt-user-table-filter="search"
                                                     className="form-control form-control-solid w-250px ps-14"
-                                                    placeholder="Search Doctor" onChange={(e) => setSearchQuery(e.target.value)} />
+                                                    placeholder="Search Patient" />
                                             </div>
 
                                         </div>
@@ -317,9 +313,11 @@ export default function Index({ auth }) {
 
                                         <div className="card-toolbar">
 
-                                            <div className="w-150px me-3">
-                                                <button type="button" className="btn btn-light-primary me-3 w-150px"
-                                                    data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                            <div className="d-flex justify-content-end" data-kt-user-table-toolbar="base">
+
+
+                                                <button type="button" className="btn btn-light-primary me-3" data-kt-menu-trigger="click"
+                                                    data-kt-menu-placement="bottom-end">
 
                                                     <span className="svg-icon svg-icon-2">
                                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -331,10 +329,11 @@ export default function Index({ auth }) {
                                                     </span>
                                                     Filter</button>
 
-                                                <div className="menu menu-sub menu-sub-dropdown w-300px w-md-325px" data-kt-menu="true">
+                                                <div className="menu menu-sub menu-sub-dropdown w-250px w-sm-200px w-md-325px"
+                                                    data-kt-menu="true">
 
                                                     <div className="px-7 py-5">
-                                                        <div className="fs-5 text-dark fw-bold">Select Filter</div>
+                                                        <div className="fs-5 text-dark fw-bold">Patient Options</div>
                                                     </div>
 
 
@@ -344,16 +343,17 @@ export default function Index({ auth }) {
                                                     <div className="px-7 py-5" data-kt-user-table-filter="form">
                                                         <form onSubmit={applyFilters} ref={filtersFormRef} >
                                                             <div className="mb-10">
-                                                                <label className="form-label fs-6 fw-semibold">Date From:</label>
-                                                                <FlatpickrInput className="form-control form-control-solid text-center"
-                                                                    name="date_from" value={filters.date_from || ''} onChange={(value) => handleFilterChange('date_from')(value)} />
-                                                            </div>
-
-
-                                                            <div className="mb-10">
-                                                                <label className="form-label fs-6 fw-semibold">Date To:</label>
-                                                                <FlatpickrInput className="form-control form-control-solid text-center"
-                                                                    name="date_to" value={filters.date_to || ''} onChange={(value) => handleFilterChange('date_to')(value)} />
+                                                                <label className="form-label fs-6 fw-semibold">Select:</label>
+                                                                <Select2Input className="form-select form-select-solid fw-bold"
+                                                                    data-kt-select2="true" data-placeholder="Select option"
+                                                                    data-allow-clear="true" data-kt-user-table-filter="patient"
+                                                                    data-hide-search="true" name="patientFilter" value={filters.patientFilter || ''} onChange={(value) => handleFilterChange('patientFilter')(value)} >
+                                                                    <option></option>
+                                                                    <option value="id">Patient Id</option>
+                                                                    <option value="name">Name</option>
+                                                                    <option value="phone">Phone</option>
+                                                                    <option value="nID">National Id</option>
+                                                                </Select2Input>
                                                             </div>
 
 
@@ -367,19 +367,15 @@ export default function Index({ auth }) {
                                                                     data-kt-user-table-filter="filter">Apply</button>
                                                             </div>
                                                         </form>
-
                                                     </div>
 
                                                 </div>
 
-                                            </div>
 
-
-                                            <div className="d-flex justify-content-end" data-kt-user-table-toolbar="base">
 
 
                                                 <button type="button" className="btn btn-light-primary me-3" data-bs-toggle="modal"
-                                                    data-bs-target="#kt_modal_export_doctors">
+                                                    data-bs-target="#kt_modal_export_patients">
 
                                                     <span className="svg-icon svg-icon-2">
                                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -410,15 +406,15 @@ export default function Index({ auth }) {
                                             </div>
 
 
-                                            <div className="modal fade" id="kt_modal_export_doctors" tabIndex="-1" aria-hidden="true">
+                                            <div className="modal fade" id="kt_modal_export_patients" tabIndex="-1" aria-hidden="true">
 
-                                                <div className="modal-dialog modal-dialog-centered mw-650px">
+                                                <div className="modal-dialog modal-dialog-centered mw-500px">
 
                                                     <div className="modal-content">
 
                                                         <div className="modal-header">
 
-                                                            <h2 className="fw-bold">Export Doctors</h2>
+                                                            <h2 className="fw-bold">Export</h2>
 
 
                                                             <div className="btn btn-icon btn-sm btn-active-icon-primary"
@@ -440,9 +436,9 @@ export default function Index({ auth }) {
                                                         </div>
 
 
-                                                        <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
+                                                        <div className="modal-body scroll-y">
 
-                                                            <form id="kt_modal_export_doctors_form" className="form" action="#">
+                                                            <form id="kt_modal_export_patients_form" className="form" action="#">
 
 
                                                                 <div className="fv-row mb-10">
@@ -468,7 +464,7 @@ export default function Index({ auth }) {
                                                                     <button type="reset" className="btn btn-light me-3"
                                                                         data-bs-dismiss="modal">Discard</button>
                                                                     <button type="submit" className="btn btn-primary"
-                                                                        data-kt-doctors-modal-action="submit">
+                                                                        data-kt-patients-modal-action="submit">
                                                                         <span className="indicator-label">Submit</span>
                                                                         <span className="indicator-progress">Please wait...
                                                                             <span
@@ -487,7 +483,8 @@ export default function Index({ auth }) {
                                             </div>
 
 
-                                            <div className="modal fade" id="kt_modal_add_doctor" tabIndex="-1" aria-hidden="true">
+
+                                            <div className="modal fade" id="kt_modal_add_patient" tabIndex="-1" aria-hidden="true">
 
                                                 <div className="modal-dialog modal-dialog-centered mw-650px">
 
@@ -495,7 +492,7 @@ export default function Index({ auth }) {
 
                                                         <div className="modal-header" id="kt_modal_add_user_header">
 
-                                                            <h2 className="fw-bold">Add Doctor</h2>
+                                                            <h2 className="fw-bold">Add Patient</h2>
 
 
                                                             <div className="btn btn-icon btn-sm btn-active-icon-primary"
@@ -517,9 +514,9 @@ export default function Index({ auth }) {
                                                         </div>
 
 
-                                                        <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
+                                                        <div className="modal-body scroll-y mx-5 my-7">
 
-                                                            <form id="kt_modal_add_doctor_form" className="form">
+                                                            <form id="kt_modal_add_patient_form" className="form" >
 
                                                                 <div className="d-flex flex-column scroll-y me-n7 pe-7"
                                                                     id="kt_modal_add_user_scroll" data-kt-scroll="true"
@@ -534,11 +531,11 @@ export default function Index({ auth }) {
 
                                                                         <label className="d-block fw-semibold fs-6 mb-5">Avatar</label>
 
-
                                                                         <div className="image-input image-input-outline image-input-placeholder"
                                                                             data-kt-image-input="true">
 
-                                                                            <div className="image-input-wrapper w-125px h-125px" style={{ backgroundImage: `url('assets/media/avatars/300-6.jpg')` }} >
+                                                                            <div className="image-input-wrapper w-125px h-125px"
+                                                                                style={{ backgroundImage: `url('assets/media/avatars/300-6.jpg')` }}>
                                                                             </div>
 
 
@@ -585,7 +582,7 @@ export default function Index({ auth }) {
                                                                             Name</label>
 
 
-                                                                        <input type="text" name="doctor_name"
+                                                                        <input type="text" name="patient_name"
                                                                             className="form-control form-control-solid mb-3 mb-lg-0"
                                                                             placeholder="Full name" />
 
@@ -594,63 +591,97 @@ export default function Index({ auth }) {
 
                                                                     <div className="fv-row mb-7">
 
-                                                                        <label className="required fw-semibold fs-6 mb-2">Email</label>
+                                                                        <label className="required fw-semibold fs-6 mb-2">
+                                                                            Phone</label>
 
 
-                                                                        <input type="email" name="doctor_email"
+                                                                        <input type="text" name="patient_phone"
                                                                             className="form-control form-control-solid mb-3 mb-lg-0"
-                                                                            placeholder="example@domain.com" />
+                                                                            placeholder="Full name" />
 
                                                                     </div>
 
 
                                                                     <div className="fv-row mb-7">
 
-                                                                        <label className="required fw-semibold fs-6 mb-2">Phone</label>
+                                                                        <label className="required fw-semibold fs-6 mb-2">National
+                                                                            ID</label>
 
 
-                                                                        <input type="text" name="doctor_phone"
-                                                                            className="form-control form-control-solid mb-3 mb-lg-0" />
-
-                                                                    </div>
-
-
-                                                                    <div className="fv-row mb-7">
-
-                                                                        <label
-                                                                            className="required fw-semibold fs-6 mb-2">Address</label>
-
-
-                                                                        <input type="text" name="doctor_address"
-                                                                            className="form-control form-control-solid mb-3 mb-lg-0" />
-
-                                                                    </div>
-
-
-
-                                                                    <div className="fv-row mb-7">
-
-                                                                        <label
-                                                                            className="required fw-semibold fs-6 mb-2">Password</label>
-
-
-                                                                        <input type="Password" name="doctor_password"
-                                                                            className="form-control form-control-solid mb-3 mb-lg-0" />
+                                                                        <input type="text" name="patient_national"
+                                                                            className="form-control form-control-solid mb-3 mb-lg-0"
+                                                                            placeholder="Full name" />
 
                                                                     </div>
 
 
                                                                     <div className="fv-row mb-7">
 
-                                                                        <label
-                                                                            className="required fw-semibold fs-6 mb-2">Profile</label>
+                                                                        <label className="required fw-semibold fs-6 mb-2">Birth Date</label>
 
 
-                                                                        <input type="text" name="doctor_profile"
-                                                                            className="form-control form-control-solid mb-3 mb-lg-0" />
+                                                                        <input className="form-control form-control-solid  pe-5 flatpicker"
+                                                                            placeholder="Select date" name="patient_dob" type="text"
+                                                                            readOnly="readonly" />
 
                                                                     </div>
 
+
+                                                                    <div className="fv-row mb-7">
+
+                                                                        <label className="required fw-semibold fs-6 mb-2">Gender</label>
+
+
+                                                                        <select className="form-select form-select-solid"
+                                                                            aria-label="Select example">
+                                                                            <option>Select Gender`</option>
+                                                                            <option value="1">Male</option>
+                                                                            <option value="2">Female</option>
+                                                                            <option value="3">Other</option>
+                                                                        </select>
+
+                                                                    </div>
+
+
+
+                                                                    <div className="fv-row mb-7">
+
+                                                                        <label className="required fw-semibold fs-6 mb-2">patient</label>
+
+
+                                                                        <select className="form-select form-select-solid"
+                                                                            aria-label="Select example">
+                                                                            <option>Select patient</option>
+                                                                            <option value="1">Faisal</option>
+                                                                            <option value="2">Ahmad</option>
+                                                                            <option value="3">Saud</option>
+                                                                        </select>
+
+                                                                    </div>
+
+
+                                                                    <div className="fv-row mb-7">
+
+                                                                        <label className="required fw-semibold fs-6 mb-2">Address</label>
+
+
+                                                                        <textarea name="patient_address"
+                                                                            className="form-control form-control-solid" cols="30"
+                                                                            rows="5"></textarea>
+
+                                                                    </div>
+
+
+
+                                                                    <div className="fv-row mb-7">
+                                                                        <div className="form-check form-check-custom form-check-success ">
+                                                                            <input className="form-check-input" name="send_message"
+                                                                                type="checkbox" value="" defaultChecked />
+                                                                            <label className="form-check-label" >
+                                                                                Send Message
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
 
                                                                 </div>
 
@@ -659,7 +690,100 @@ export default function Index({ auth }) {
                                                                     <button type="reset" className="btn btn-light me-3"
                                                                         data-bs-dismiss="modal">Discard</button>
                                                                     <button type="submit" className="btn btn-primary"
-                                                                        data-kt-doctors-modal-action="submit">
+                                                                        data-kt-patients-modal-action="submit">
+                                                                        <span className="indicator-label">Submit</span>
+                                                                    </button>
+                                                                </div>
+
+                                                            </form>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+
+                                            <div className="modal fade" id="kt_modal_add_temporary_patient" tabIndex="-1"
+                                                aria-hidden="true">
+
+                                                <div className="modal-dialog modal-dialog-centered mw-650px">
+
+                                                    <div className="modal-content">
+
+                                                        <div className="modal-header" id="kt_modal_add_user_header">
+
+                                                            <h2 className="fw-bold">Add Temporary</h2>
+
+
+                                                            <div className="btn btn-icon btn-sm btn-active-icon-primary"
+                                                                data-bs-dismiss="modal">
+
+                                                                <span className="svg-icon svg-icon-1">
+                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                                        xmlns="http://www.w3.org/2000/svg">
+                                                                        <rect opacity="0.5" x="6" y="17.3137" width="16" height="2"
+                                                                            rx="1" transform="rotate(-45 6 17.3137)"
+                                                                            fill="currentColor" />
+                                                                        <rect x="7.41422" y="6" width="16" height="2" rx="1"
+                                                                            transform="rotate(45 7.41422 6)" fill="currentColor" />
+                                                                    </svg>
+                                                                </span>
+
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        <div className="modal-body scroll-y">
+
+                                                            <form id="kt_modal_edit_user_form" className="form" >
+
+                                                                <div className="d-flex flex-column scroll-y me-n7 pe-7"
+                                                                    id="kt_modal_add_user_scroll" data-kt-scroll="true"
+                                                                    data-kt-scroll-activate="{default: false, lg: true}"
+                                                                    data-kt-scroll-max-height="auto"
+                                                                    data-kt-scroll-dependencies="#kt_modal_add_user_header"
+                                                                    data-kt-scroll-wrappers="#kt_modal_add_user_scroll"
+                                                                    data-kt-scroll-offset="300px">
+
+
+                                                                    <div className="fv-row mb-7">
+
+                                                                        <label className="required fw-semibold fs-6 mb-2">Full
+                                                                            Name</label>
+
+
+                                                                        <input type="text" name="temporary_patient_name"
+                                                                            className="form-control form-control-solid mb-3 mb-lg-0"
+                                                                            placeholder="Full name" />
+
+                                                                    </div>
+
+
+                                                                    <div className="fv-row mb-7">
+
+                                                                        <label className="required fw-semibold fs-6 mb-2">
+                                                                            Phone</label>
+
+
+                                                                        <input type="text" name="temporary_patient_name"
+                                                                            className="form-control form-control-solid mb-3 mb-lg-0"
+                                                                            placeholder="Phone" />
+
+                                                                    </div>
+
+                                                                </div>
+
+
+                                                                <div className="text-center pt-15">
+                                                                    <button type="reset" className="btn btn-light me-3"
+                                                                        data-bs-dismiss="modal">Discard</button>
+                                                                    <button type="submit" className="btn btn-primary"
+                                                                        data-kt-patients-modal-action="submit">
                                                                         <span className="indicator-label">Submit</span>
                                                                     </button>
                                                                 </div>
@@ -685,240 +809,15 @@ export default function Index({ auth }) {
                                             columns={columns}
                                             data={data}
                                             tableProps={{ className: 'table align-middle table-row-dashed fs-6 gy-5' }}
-                                            currentPage={doctors.meta.current_page}
-                                            perPage={doctors.meta.per_page}
-                                            total={doctors.meta.total}
+                                            currentPage={patients.meta.current_page}
+                                            perPage={patients.meta.per_page}
+                                            total={patients.meta.total}
                                             sortKey={query?.sort}
                                             sortOrder={query?.order}
                                             searchQuery={filters.name}
-                                            appliedFilters={appliedFilters}
-                                        />
-
+                                            appliedFilters={appliedFilters} />
 
                                     </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div className="modal fade" id="kt_modal_add_user" tabIndex="-1" aria-hidden="true">
-
-                        <div className="modal-dialog modal-dialog-centered mw-650px">
-
-                            <div className="modal-content">
-
-                                <div className="modal-header" id="kt_modal_add_user_header">
-
-                                    <h2 className="fw-bold">Edit Doctor</h2>
-
-
-                                    <div className="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
-
-                                        <span className="svg-icon svg-icon-1">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
-                                                    transform="rotate(-45 6 17.3137)" fill="currentColor" />
-                                                <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)"
-                                                    fill="currentColor" />
-                                            </svg>
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-
-                                <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-
-                                    <form id="kt_modal_add_user_form" className="form" action="#">
-
-                                        <div className="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll"
-                                            data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}"
-                                            data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header"
-                                            data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
-
-
-                                            <div className="fv-row mb-7">
-
-                                                <label className="d-block fw-semibold fs-6 mb-5">Avatar</label>
-
-
-                                                <div className="image-input image-input-outline image-input-placeholder"
-                                                    data-kt-image-input="true">
-
-                                                    <div className="image-input-wrapper w-125px h-125px"
-                                                        style={{ backgroundImage: `url('assets/media/avatars/300-6.jpg')` }} >
-                                                    </div>
-
-
-                                                    <label
-                                                        className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                                        data-kt-image-input-action="change" data-bs-toggle="tooltip"
-                                                        title="Change avatar">
-                                                        <i className="bi bi-pencil-fill fs-7"></i>
-
-                                                        <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
-                                                        <input type="hidden" name="avatar_remove" />
-
-                                                    </label>
-
-
-                                                    <span
-                                                        className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                                        data-kt-image-input-action="cancel" data-bs-toggle="tooltip"
-                                                        title="Cancel avatar">
-                                                        <i className="bi bi-x fs-2"></i>
-                                                    </span>
-
-
-                                                    <span
-                                                        className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                                                        data-kt-image-input-action="remove" data-bs-toggle="tooltip"
-                                                        title="Remove avatar">
-                                                        <i className="bi bi-x fs-2"></i>
-                                                    </span>
-
-                                                </div>
-
-
-                                                <div className="form-text">Allowed file types: png, jpg, jpeg.
-                                                </div>
-
-                                            </div>
-
-
-                                            <div className="fv-row mb-7">
-
-                                                <label className="required fw-semibold fs-6 mb-2">Full
-                                                    Name</label>
-
-
-                                                <input type="text" name="doctor_name"
-                                                    className="form-control form-control-solid mb-3 mb-lg-0" placeholder="Full name" />
-
-                                            </div>
-
-
-                                            <div className="fv-row mb-7">
-
-                                                <label className="required fw-semibold fs-6 mb-2">Email</label>
-
-
-                                                <input type="email" name="doctor_email"
-                                                    className="form-control form-control-solid mb-3 mb-lg-0"
-                                                    placeholder="example@domain.com" />
-
-                                            </div>
-
-
-                                            <div className="fv-row mb-7">
-
-                                                <label className="required fw-semibold fs-6 mb-2">Phone</label>
-
-
-                                                <input type="text" name="doctor_phone"
-                                                    className="form-control form-control-solid mb-3 mb-lg-0" />
-
-                                            </div>
-
-
-
-                                            <div className="fv-row mb-7">
-
-                                                <label className="required fw-semibold fs-6 mb-2">Password</label>
-
-
-                                                <input type="Password" name="doctor_password"
-                                                    className="form-control form-control-solid mb-3 mb-lg-0" />
-
-                                            </div>
-
-
-                                            <div className="fv-row mb-7">
-
-                                                <label className="required fw-semibold fs-6 mb-2">Profile</label>
-
-
-                                                <input type="text" name="doctor_profile"
-                                                    className="form-control form-control-solid mb-3 mb-lg-0" />
-
-                                            </div>
-
-
-                                        </div>
-
-
-                                        <div className="text-center pt-15">
-                                            <button type="reset" className="btn btn-light me-3" data-bs-dismiss="modal">Discard</button>
-                                            <button type="submit" className="btn btn-primary" data-kt-doctors-modal-action="submit">
-                                                <span className="indicator-label">Submit</span>
-                                            </button>
-                                        </div>
-
-                                    </form>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                    <div className="modal fade" id="kt_modal_add_case_edit_permission" aria-hidden="true">
-
-                        <div className="modal-dialog modal-dialog-centered mw-650px">
-
-                            <div className="modal-content">
-
-                                <div className="modal-header">
-
-                                    <h2 className="fw-bold">Case Edit Permission (Doctor:Emma Smith)</h2>
-
-
-                                    <div className="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
-                                        <i className="fa fa-close fs-2x"></i>
-                                    </div>
-
-                                </div>
-
-
-                                <div className="modal-body scroll-y">
-
-                                    <form id="kt_modal_add_case_edit_permission_form" className="form" >
-
-                                        <div className="d-flex flex-column scroll-y me-n7 pe-7">
-
-
-                                            <div className="fv-row mb-7">
-                                                <div className="row g-3">
-                                                    <div className="col-md-6">
-                                                        <label className="required fw-semibold fs-6 mb-2">Start Time</label>
-                                                        <input className="form-control form-control-solid" id="start_time"
-                                                            name="start_time" />
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                        <label className="required fw-semibold fs-6 mb-2">End Time</label>
-                                                        <input className="form-control form-control-solid" id="end_time"
-                                                            name="end_time" />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="text-end">
-                                                <button type="submit" className="btn btn-primary">
-                                                    <span className="indicator-label">Submit</span>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                    </form>
 
                                 </div>
 
@@ -930,6 +829,6 @@ export default function Index({ auth }) {
 
                 </div>
             </>
-        </AuthenticatedLayout >
+        </AuthenticatedLayout>
     );
 }

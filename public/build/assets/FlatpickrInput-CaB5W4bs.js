@@ -1,0 +1,1 @@
+import{r as s,j as p}from"./app-CsDpOyQ9.js";const i=({value:t,onChange:e,options:n={},name:u,className:a})=>{const r=s.useRef();return s.useEffect(()=>{const f=window.flatpickr(r.current,{...n,defaultDate:t,onChange:([o])=>{e&&e(o)}});return()=>{f.destroy()}},[]),p.jsx("input",{type:"text",name:u,defaultValue:t,ref:r,className:a})};export{i as F};

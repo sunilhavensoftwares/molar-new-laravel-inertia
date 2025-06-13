@@ -6,6 +6,6 @@
     background-image: url('/public/assets/media/auth/bg4.jpg');
 }
 .guestLayoutBody #app{
-    height: 100%;
+    height: 100vh;
     display: flex;
 }

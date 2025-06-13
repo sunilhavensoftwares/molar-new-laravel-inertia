@@ -29,9 +29,10 @@ class UserFactory extends Factory
             return $val[0];
         });
         $name_chr = strtoupper(implode('',$name_chr));
+        $role = $this->faker->randomElement(['nurse', 'patient', 'receptionist', 'doctor']);
         return [
             'name' => $name,
-            'email' => fake()->unique()->safeEmail(),
+            'email' =>  strtolower($role . '_' . uniqid() . '@' . $role . '.com'),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
