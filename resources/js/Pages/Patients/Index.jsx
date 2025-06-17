@@ -5,6 +5,7 @@ import CalendarApp from '@/Components/CalendarApp';
 import Select2Input from '@/Components/Select2Input';
 import DataTable from '@/Components/DataTable';
 import { useEffect, useRef, useState } from 'react';
+import TextInput from '@/Components/TextInput';
 
 export default function Index({ auth }) {
     const { patients, query, routeUrl } = usePage().props;
@@ -53,12 +54,11 @@ export default function Index({ auth }) {
     }, [searchQuery]);
 
 
-    const handleFilterChange = (key) => (value) => {
+    const handleFilterChange = (key)=> (value) => {
         setFilters((prev) => ({
             ...prev,
             [key]: value,
         }));
-
     };
 
     const handleFilterReset = () => {
@@ -66,6 +66,7 @@ export default function Index({ auth }) {
         setAppliedFilters({});
         filtersFormRef.current.reset();
         $(filtersFormRef.current).find('input').val(null).trigger('change');
+        $(filtersFormRef.current).find('select').val(null).trigger('change');
 
         router.get(route(route().current()), {
             page: 1,
@@ -118,9 +119,9 @@ export default function Index({ auth }) {
         { label: 'ID', key: 'id', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.id', 'sortable': 1 },
         { label: 'Patient', key: 'patient', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.email', 'sortable': 1 },
         { label: 'Phone', key: 'phone', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.phone', 'sortable': 1 },
-        { label: 'National Id', key: 'nId', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.nID', 'sortable': 1 },
+        { label: 'National Id', key: 'nID', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.nID', 'sortable': 1 },
         { label: 'Due Balance', key: 'due_balance', thProps: { className: 'min-w-125px' } },
-        { label: 'Visibility', key: 'visibility', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.encrypt_detail_enabled', 'sortable': 1 },
+        { label: 'Visibility', key: 'visibility', thProps: { className: 'min-w-125px' }, 'sort_key': 'patients.is_visible', 'sortable': 1 },
         { label: 'Whatsapp', key: 'whatsapp', thProps: { className: 'min-w-125px' } },
         { label: 'Actions', key: 'actions', thProps: { className: 'text-end min-w-100px' } },
     ];
@@ -137,14 +138,14 @@ export default function Index({ auth }) {
                             </div>
                         </div>
                         <div className="d-flex flex-column">
-                            <Link href={`/patients/user-detail/${patient.id}`} className="text-gray-800 text-hover-primary mb-1">{patient.name}</Link>
+                            <Link href={`/patients/patient-detail/${patient.id}`} className="text-gray-800 text-hover-primary mb-1">{patient.name}</Link>
                             <span>{patient.email}</span>
                         </div>
                     </div>
                 )
             },
             phone: patient.phone || '',
-            nId: <div className="badge badge-light fw-bold">{patient.nID}</div>,
+            nID: <div className="badge badge-light fw-bold">{patient.nID}</div>,
             due_balance: 'SAR 0',
             visibility: (
                 <div className="form-check form-switch form-check-custom form-check-success form-check-solid">
@@ -305,7 +306,7 @@ export default function Index({ auth }) {
 
                                                 <input type="text" data-kt-user-table-filter="search"
                                                     className="form-control form-control-solid w-250px ps-14"
-                                                    placeholder="Search Patient" />
+                                                    placeholder="Search Patient" onChange={(e) => setSearchQuery(e.target.value)} />
                                             </div>
 
                                         </div>
@@ -347,13 +348,26 @@ export default function Index({ auth }) {
                                                                 <Select2Input className="form-select form-select-solid fw-bold"
                                                                     data-kt-select2="true" data-placeholder="Select option"
                                                                     data-allow-clear="true" data-kt-user-table-filter="patient"
-                                                                    data-hide-search="true" name="patientFilter" value={filters.patientFilter || ''} onChange={(value) => handleFilterChange('patientFilter')(value)} >
+                                                                    data-hide-search="true" name="patientFilterKey" value={filters.patientFilterKey || ''} onChange={(value) => handleFilterChange('patientFilterKey')(value)} >
                                                                     <option></option>
                                                                     <option value="id">Patient Id</option>
                                                                     <option value="name">Name</option>
                                                                     <option value="phone">Phone</option>
                                                                     <option value="nID">National Id</option>
                                                                 </Select2Input>
+                                                            </div>
+
+                                                            <div className="mb-10">
+                                                                <label className="form-label fs-6 fw-semibold">Enter Value:</label>
+                                                                <input
+                                                                    id="patientFilterValue"
+                                                                    type="text"
+                                                                    name="patientFilterValue"
+                                                                    value={filters.patientFilterValue || ''}
+                                                                    className="form-control bg-transparent"
+                                                                    placeholder="Enter a keyword"
+                                                                    onChange={(e) => handleFilterChange('patientFilterValue')(e.target.value)}
+                                                                />
                                                             </div>
 
 

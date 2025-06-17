@@ -29,8 +29,9 @@ const Select2Input = ({ children, value, onChange, name, className = "", ...rest
       }
 
       // ✅ Handle change
-      $select.on("change", (e) => {
-        if (onChange) onChange(e.target.value);
+      $select.on("change", function (e) {
+        const selectedData = $select.select2('data'); // returns array of {id, text, ...}
+        if (onChange) onChange(selectedData); // Send the full data to the parent
       });
     };
 
@@ -50,6 +51,7 @@ const Select2Input = ({ children, value, onChange, name, className = "", ...rest
       ref={selectRef}
       name={name}
       className={className}
+      multiple
       {...rest}
     >
       {children}

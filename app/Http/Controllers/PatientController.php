@@ -37,10 +37,10 @@ class PatientController extends Controller
         if ($request->filled('name')) {
             $query->where('patients.name', 'like', '%' . $request->name . '%');
         }
-        if ($request->has('date_from') && $request->has('date_to')) {
-            $date_from = \Carbon\Carbon::parse($request->date_from)->toDateTimeString();
-            $date_to = \Carbon\Carbon::parse($request->date_to)->toDateTimeString();
-            $query->whereBetween('created_at', [$date_from, $date_to]);
+        if ($request->has('patientFilterValue') && $request->has('patientFilterKey')) {
+            $patientFilterKey = $request->patientFilterKey;
+            $patientFilterValue = $request->patientFilterValue;
+            $query->where($patientFilterKey, 'like', $patientFilterValue. '%');
         }
         $query->orderBy($sort, $order);
         $patients = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
@@ -77,7 +77,9 @@ class PatientController extends Controller
      */
     public function show(Patient $patient)
     {
-        //
+        return Inertia::render('Patients/Detail',[
+            'patient'=>$patient
+        ]);
     }
 
     /**
@@ -102,5 +104,41 @@ class PatientController extends Controller
     public function destroy(Patient $patient)
     {
         //
+    }
+    public function documents(Patient $patient)
+    {
+        return Inertia::render('Patients/Documents',[
+            'patient'=>$patient
+        ]);
+    }
+    public function case_history(Patient $patient)
+    {
+        return Inertia::render('Patients/CaseHistory',[
+            'patient'=>$patient
+        ]);
+    }
+    public function prescription(Patient $patient)
+    {
+        return Inertia::render('Patients/Prescription',[
+            'patient'=>$patient
+        ]);
+    }
+    public function timeline(Patient $patient)
+    {
+        return Inertia::render('Patients/TimeLine',[
+            'patient'=>$patient
+        ]);
+    }
+    public function lab(Patient $patient)
+    {
+        return Inertia::render('Patients/Lab',[
+            'patient'=>$patient
+        ]);
+    }
+     public function payment_history(Patient $patient)
+    {
+        return Inertia::render('Patients/PaymentHistory',[
+            'patient'=>$patient
+        ]);
     }
 }

@@ -42,7 +42,12 @@ Route::middleware('auth')->group(function () {
     //Patients modules
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
     Route::get('/patients/patient-detail/{patient}', [PatientController::class, 'show'])->name('patients.show');
-
+    Route::get('/patients/patient-detail/{patient}/documents', [PatientController::class, 'documents'])->name('patients.documents');
+    Route::get('/patients/patient-detail/{patient}/case-history', [PatientController::class, 'case_history'])->name('patients.case_history');
+    Route::get('/patients/patient-detail/{patient}/prescription', [PatientController::class, 'prescription'])->name('patients.prescription');
+    Route::get('/patients/patient-detail/{patient}/timeline', [PatientController::class, 'timeline'])->name('patients.timeline');
+    Route::get('/patients/patient-detail/{patient}/lab', [PatientController::class, 'lab'])->name('patients.lab');
+    Route::get('/patients/patient-detail/{patient}/payment-history', [PatientController::class, 'payment_history'])->name('patients.payment_history');
 });
 
 require __DIR__ . '/auth.php';

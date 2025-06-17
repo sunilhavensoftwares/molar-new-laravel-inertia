@@ -21,7 +21,6 @@ export default function Authenticated({ user, header, children, bodyClass = 'app
     useScript('/assets/js/custom/utilities/modals/upgrade-plan.js');
     useScript('/assets/js/custom/utilities/modals/create-app.js');
     useScript('/assets/js/custom/utilities/modals/users-search.js');
-
     useMetronicInit();
     useEffect(() => {
         document.body.className = bodyClass;
