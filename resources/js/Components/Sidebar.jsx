@@ -28,6 +28,13 @@ export default function Sidebar() {
         let segments = route.url;
         return search.some(str => segments.includes(str)) ? true : false;
     }
+     const exactMatchUrl = (link) => {
+        const { url } = usePage();
+        const currentPath = url.split('?')[0];
+        //console.log(currentPath ,link);
+        
+        return currentPath === link;
+    }
     const getMenuClass = (keys, type) => {
         let className ='';
         switch (type) {
@@ -41,7 +48,7 @@ export default function Sidebar() {
                 className = `menu-item menu-accordion ${checkActive(keys) ? 'show' : ''}`;
                 break;
             case 'link':
-                className = `menu-link ${checkActive(keys) ? 'active' : ''}`;
+                className = `menu-link ${exactMatchUrl(keys) ? 'active' : ''}`;
                 break;
                 
             default:
@@ -57,7 +64,7 @@ export default function Sidebar() {
 
                 <div className="menu-item">
 
-                    <Link className={getMenuClass(['dashboard'], 'link')} href="/dashboard">
+                    <Link className={getMenuClass('/dashboard', 'link')} href="/dashboard">
                         <span className="menu-icon">
 
                             <span className="svg-icon svg-icon-2">
@@ -109,7 +116,7 @@ export default function Sidebar() {
 
                                 <div className="menu-item ">
 
-                                    <Link className={getMenuClass(['users'], 'link')} href="/users">
+                                    <Link className={getMenuClass('/users', 'link')} href="/users">
                                         <span className="menu-bullet">
                                             <span className="bullet bullet-dot"></span>
                                         </span>
@@ -138,7 +145,7 @@ export default function Sidebar() {
 
                                 <div className="menu-item">
 
-                                    <Link className={getMenuClass(['roles'], 'link')} href="/roles">
+                                    <Link className={getMenuClass('/roles', 'link')} href="/roles">
                                         <span className="menu-bullet">
                                             <span className="bullet bullet-dot"></span>
                                         </span>
@@ -171,7 +178,7 @@ export default function Sidebar() {
 
                         <div className="menu-item">
 
-                            <Link className={getMenuClass(['doctors'], 'link')} href="/doctors">
+                            <Link className={getMenuClass('/doctors', 'link')} href="/doctors">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -203,7 +210,7 @@ export default function Sidebar() {
 
                         <div className="menu-item">
 
-                            <Link className={getMenuClass(['patients'], 'link')} href="/patients">
+                            <Link className={getMenuClass('/patients', 'link')} href="/patients">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -211,7 +218,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['temporary-patient'], 'link')} href="patient/temporary-patient">
+                            <Link className={getMenuClass('/patients/temporary-patients', 'link')} href="/patients/temporary-patients">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -219,7 +226,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['case-list'], 'link')} href="patient/case-list">
+                            <Link className={getMenuClass('/patients/case-list', 'link')} href="/patients/case-list">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -228,7 +235,7 @@ export default function Sidebar() {
 
 
 
-                            <Link className={getMenuClass(['case-category'], 'link')} href="patient/case-category">
+                            <Link className={getMenuClass('/patients/case-category', 'link')} href="/patients/case-category">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -236,7 +243,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['tooth'], 'link')} href="patient/tooth">
+                            <Link className={getMenuClass('/patients/tooth', 'link')} href="/patients/tooth">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -244,7 +251,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['case-status'], 'link')} href="patient/case-status">
+                            <Link className={getMenuClass('/patients/case-status', 'link')} href="/patients/case-status">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -253,7 +260,7 @@ export default function Sidebar() {
 
 
 
-                            <Link className={getMenuClass(['case-refer'], 'link')} href="patient/case-refer">
+                            <Link className={getMenuClass('/patients/case-refer', 'link')} href="/patients/case-refer">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -261,7 +268,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['case-material'], 'link')} href="patient/case-material">
+                            <Link className={getMenuClass('/patients/case-material', 'link')} href="/patients/case-material">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -269,7 +276,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['pdocuments'], 'link')} href="patient/pdocuments">
+                            <Link className={getMenuClass('/patients/pdocuments', 'link')} href="/patients/pdocuments">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -303,7 +310,7 @@ export default function Sidebar() {
 
                         <div className="menu-item">
 
-                            <Link className={getMenuClass(['schedule'], 'link')} href="schedule">
+                            <Link className={getMenuClass('/schedule', 'link')} href="schedule">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -311,7 +318,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['holidays'], 'link')} href="schedule/holidays">
+                            <Link className={getMenuClass('schedule/holidays', 'link')} href="schedule/holidays">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -343,7 +350,7 @@ export default function Sidebar() {
 
                         <div className="menu-item">
 
-                            <Link className={getMenuClass(['appointments'], 'link')} href="appointments">
+                            <Link className={getMenuClass('/appointments', 'link')} href="/appointments">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -351,7 +358,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['today'], 'link')} href="appointment/today">
+                            <Link className={getMenuClass('/appointments/today', 'link')} href="/appointments/today">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -359,7 +366,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['upcoming'], 'link')} href="appointment/upcoming">
+                            <Link className={getMenuClass('/appointments/upcoming', 'link')} href="/appointments/upcoming">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -367,7 +374,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['calendar'], 'link')} href="appointment/calendar">
+                            <Link className={getMenuClass('/appointments/calendar', 'link')} href="/appointments/calendar">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -375,7 +382,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['request'], 'link')} href="appointment/request">
+                            <Link className={getMenuClass('/appointments/request', 'link')} href="/appointments/request">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -390,7 +397,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className={getMenuClass(['appointments'], 'main')}>
+                <div data-kt-menu-trigger="click" className={getMenuClass(['human-resources'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -406,7 +413,7 @@ export default function Sidebar() {
 
                         <div className="menu-item">
 
-                            <Link className={getMenuClass(['human-resources'], 'link')}
+                            <Link className={getMenuClass('/human-resources/index', 'link')}
                                 href="/human-resources/index?tab=nurse">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
@@ -439,7 +446,7 @@ export default function Sidebar() {
 
                         <div className="menu-item">
 
-                            <Link className={getMenuClass(['finance'], 'link')} href="finance">
+                            <Link className={getMenuClass(['/finance'], 'link')} href="/finance">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -447,7 +454,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['payment-category'], 'link')} href="finance/payment-category">
+                            <Link className={getMenuClass('/finance/payment-category', 'link')} href="/finance/payment-category">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -455,7 +462,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['expense'], 'link')} href="finance/expense">
+                            <Link className={getMenuClass('/finance/expense', 'link')} href="/finance/expense">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -463,7 +470,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['expense-category'], 'link')} href="finance/expense-category">
+                            <Link className={getMenuClass('/finance/expense-category', 'link')} href="/finance/expense-category">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>
@@ -471,7 +478,7 @@ export default function Sidebar() {
                             </Link>
 
 
-                            <Link className={getMenuClass(['diagnostic-type'], 'link')} href="finance/diagnostic-type">
+                            <Link className={getMenuClass('/finance/diagnostic-type', 'link')} href="/finance/diagnostic-type">
                                 <span className="menu-bullet">
                                     <span className="bullet bullet-dot"></span>
                                 </span>

@@ -48,6 +48,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/patients/patient-detail/{patient}/timeline', [PatientController::class, 'timeline'])->name('patients.timeline');
     Route::get('/patients/patient-detail/{patient}/lab', [PatientController::class, 'lab'])->name('patients.lab');
     Route::get('/patients/patient-detail/{patient}/payment-history', [PatientController::class, 'payment_history'])->name('patients.payment_history');
+    Route::get('/patients/temporary-patients', [PatientController::class, 'temporary_patients'])->name('patients.temporary_patients');
+    Route::get('/patients/case-list', [PatientController::class, 'case_list'])->name('patients.case_list');
+    Route::get('/patients/case-category', [PatientController::class, 'case_category'])->name('patients.case_category');
+    Route::get('/patients/tooth', [PatientController::class, 'tooth'])->name('patients.tooth');
+    Route::get('/patients/case-status', [PatientController::class, 'case_status'])->name('patients.case_status');
+    Route::get('/patients/case-refer', [PatientController::class, 'case_refer'])->name('patients.case_refer');
+    Route::get('/patients/case-material', [PatientController::class, 'case_material'])->name('patients.case_material');
+    Route::get('/patients/pdocuments', [PatientController::class, 'pdocuments'])->name('patients.pdocuments');
+    
 });
 
 require __DIR__ . '/auth.php';

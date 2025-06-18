@@ -1,7 +1,7 @@
 // components/FlatpickrInput.jsx
 import { useEffect, useRef } from "react";
 
-const FlatpickrInput = ({ value, onChange, options = {}, name, className }) => {
+const FlatpickrInput = ({ value, onChange, options = {}, name, className, placeholder }) => {
   const inputRef = useRef();
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const FlatpickrInput = ({ value, onChange, options = {}, name, className }) => {
     };
   }, []);
 
-  return <input type="text" name={name} defaultValue={value} ref={inputRef} className={className} />;
+  return <input type="text" name={name} defaultValue={value} ref={inputRef} className={className} placeholder={placeholder} />;
 };
 
 export default FlatpickrInput;

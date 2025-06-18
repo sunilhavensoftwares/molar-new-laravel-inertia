@@ -253,4 +253,44 @@ class PatientController extends Controller
             'options' => $options
         ]);
     }
+    public function temporary_patients(){
+        return Inertia::render('Patients/TemporaryPatients', [
+            
+        ]);
+    }
+    public function case_list(){
+        return Inertia::render('Patients/CaseList', [
+            
+        ]);
+    }
+    public function case_category(){
+        return Inertia::render('Patients/CaseCategory', [
+            
+        ]);
+    }
+    public function tooth(){
+        return Inertia::render('Patients/Tooth', [
+            
+        ]);
+    }
+    public function case_status(){
+        return Inertia::render('Patients/CaseStatus', [
+            
+        ]);
+    }
+    public function case_refer(){
+        return Inertia::render('Patients/CaseRefer', [
+            
+        ]);
+    }
+    public function case_material(){
+        return Inertia::render('Patients/CaseMaterial', [
+            
+        ]);
+    }
+    public function pdocuments(){
+        return Inertia::render('Patients/Pdocuments', [
+            
+        ]);
+    }
 }
