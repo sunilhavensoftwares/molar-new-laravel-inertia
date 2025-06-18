@@ -2,6 +2,7 @@ import Select2Input from '@/Components/Select2Input';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
+import FlatpickrInput from '@/Components/FlatpickrInput';
 export default function Detail({ auth }) {
     const { patient } = usePage().props;
     return (
@@ -670,7 +671,7 @@ export default function Detail({ auth }) {
                                                             data-bs-target="#kt_modal_add_patient">Add</span>
 
                                                         <Select2Input className="form-select form-select-solid" data-control="select2"
-                                                            aria-label="Select example" data-dropdown-parent="#modal_add_appointment" >
+                                                            aria-label="Select example" data-dropdown-parent="#modal_add_appointment" data-placeholder="select a patient" >
                                                             <option value="">Select Patient</option>
                                                             <option value="1">John</option>
                                                             <option value="2">Afsal</option>
@@ -687,7 +688,7 @@ export default function Detail({ auth }) {
 
 
                                                         <Select2Input className="form-select form-select-solid" data-control="select2"
-                                                            aria-label="Select example" data-dropdown-parent="#modal_add_appointment">
+                                                            aria-label="Select example" data-dropdown-parent="#modal_add_appointment" data-placeholder="select a doctor">
                                                             <option value="">Select Doctor</option>
                                                             <option value="1">Faisal</option>
                                                             <option value="2">Ahmad</option>
@@ -707,7 +708,7 @@ export default function Detail({ auth }) {
                                                         <label className="required fw-semibold fs-6 mb-2">Date</label>
 
 
-                                                        <input type="text" className="form-control form-control-solid kt_datepicker_1"
+                                                        <FlatpickrInput type="text" className="form-control form-control-solid kt_datepicker_1"
                                                             name="date" />
 
                                                     </div>
@@ -717,7 +718,7 @@ export default function Detail({ auth }) {
 
 
                                                         <Select2Input className="form-select form-select-solid" data-control="select2"
-                                                            aria-label="Select example" data-dropdown-parent="#modal_add_appointment">
+                                                            aria-label="Select example" data-dropdown-parent="#modal_add_appointment" data-placeholder="select a slot">
                                                             <option value="">Select Slot</option>
                                                             <option value="03:30 PM To 04:15 PM">03:30 PM To 04:15 PM</option>
                                                             <option value="04:15 PM To 05:00 PM">04:15 PM To 05:00 PM</option>
@@ -740,12 +741,12 @@ export default function Detail({ auth }) {
 
 
                                                         <Select2Input className="form-select form-select-solid" data-control="select2"
-                                                            aria-label="Select example" data-dropdown-parent="#modal_add_appointment">
-                                                            <option value="">Select Status</option>
-                                                            <option value="">Pending</option>
-                                                            <option value="">Confirmed</option>
-                                                            <option value="">Treated</option>
-                                                            <option value="">Cancelled</option>
+                                                            aria-label="Select example" data-dropdown-parent="#modal_add_appointment" data-placeholder="Select status">
+                                                            <option></option>
+                                                            <option value="1">Pending</option>
+                                                            <option value="2">Confirmed</option>
+                                                            <option value="3">Treated</option>
+                                                            <option value="4">Cancelled</option>
                                                         </Select2Input>
 
                                                     </div>

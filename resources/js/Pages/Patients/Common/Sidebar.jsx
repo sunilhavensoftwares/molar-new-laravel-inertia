@@ -1,7 +1,11 @@
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 
 export default function Sidebar({ patient = '' }) {
-
+    const { url } = usePage();
+    const currentPath = url.split('?')[0];
+    const getClasses = (link) => {
+        return currentPath === link ? "nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 active" : "nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0";
+    }
     return (
         <div className="d-lg-flex flex-column flex-lg-row-auto w-lg-275px" data-kt-drawer="true"
             data-kt-drawer-name="start-sidebar" data-kt-drawer-activate="{default: true, lg: false}"
@@ -79,7 +83,7 @@ export default function Sidebar({ patient = '' }) {
                         <ul className="nav nav-pills nav-pills-custom flex-column border-transparent fs-5 fw-bold">
 
                             <li className="nav-item mt-5">
-                                <Link className="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 active"
+                                <Link className={getClasses(`/patients/patient-detail/${patient.id}`)}
                                     href={`/patients/patient-detail/${patient.id}`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -103,7 +107,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 "
+                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/documents`)}
                                     href={`/patients/patient-detail/${patient.id}/documents`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -125,7 +129,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 "
+                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/case-history`)}
                                     href={`/patients/patient-detail/${patient.id}/case-history`}>
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -150,7 +154,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 "
+                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/prescription`)}
                                     href={`/patients/patient-detail/${patient.id}/prescription`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -174,7 +178,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 "
+                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/timeline`)}
                                     href={`/patients/patient-detail/${patient.id}/timeline`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -198,7 +202,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 "
+                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/lab`)}
                                     href={`/patients/patient-detail/${patient.id}/lab`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -222,7 +226,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 "
+                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/payment-history`)}
                                     href={`/patients/patient-detail/${patient.id}/payment-history`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">

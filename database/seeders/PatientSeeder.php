@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Support\Arr;
 
 class PatientSeeder extends Seeder
 {
@@ -20,17 +21,21 @@ class PatientSeeder extends Seeder
         $statusArr = ['soft_deleted', 'active', 'deleted'];
         $patientIds = User::query()->hasRole('patient')->pluck('id')->toArray();
         $patientEmail = User::query()->hasRole('patient')->pluck('email')->toArray();
-
+        
         // Example: Create 50 records
         for ($i = 0; $i < 50; $i++) {
             $gender = $faker->randomElement(['male', 'female']);
             $birthdate = $faker->dateTimeBetween('-80 years', '-18 years');
             $age = now()->diffInYears($birthdate);
-
+            $name = $faker->name($gender);
+            $name_chr = Arr::map(explode(' ',$name),function($val){
+                return $val[0];
+            });
+            $name_chr = strtoupper(implode('',$name_chr));
             Patient::create([
                 'nID' => rand(1000000000, 9999999999), // use integers here, not strings
-                'img_url' => $faker->imageUrl(200, 200, 'people', true),
-                'name' => $faker->name($gender),
+                'img_url' => 'https://placehold.co/100x100?text='.$name_chr,
+                'name' => $name,
                 'email' => $faker->randomElement($patientEmail),
                 'address' => $faker->address,
                 'phone' => $faker->phoneNumber,

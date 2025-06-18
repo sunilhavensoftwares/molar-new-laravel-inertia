@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
          Inertia::share([
         'route' => function () {
             return [
-                'url'=>request()->segments()
+                'url'=>request()->segments(),
             ];
         },
     ]);

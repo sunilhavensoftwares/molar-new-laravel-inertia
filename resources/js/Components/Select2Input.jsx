@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const Select2Input = ({ children, value, onChange, name, className = "", ...rest }) => {
+const Select2Input = ({ children, value, onChange, name, className = "", multiple="", ...rest }) => {
   const selectRef = useRef();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const Select2Input = ({ children, value, onChange, name, className = "", ...rest
 
       // ✅ Initialize Select2
       $select.select2();
-
+      
       // ✅ Set initial value
       if (value !== undefined) {
         $select.val(value).trigger("change");
@@ -51,7 +51,7 @@ const Select2Input = ({ children, value, onChange, name, className = "", ...rest
       ref={selectRef}
       name={name}
       className={className}
-      multiple
+      multiple={multiple??''}
       {...rest}
     >
       {children}

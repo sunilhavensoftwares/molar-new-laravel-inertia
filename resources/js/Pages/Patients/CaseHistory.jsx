@@ -1,6 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
+import FlatpickrInput from '@/Components/FlatpickrInput';
+import Select2Input from '@/Components/Select2Input';
 export default function CaseHistory({ auth }) {
     const { patient } = usePage().props;
     return (
@@ -294,14 +296,14 @@ export default function CaseHistory({ auth }) {
 
                                                         <label className="required fw-semibold fs-6 mb-2">Select Date</label>
 
-                                                        <input className="form-control form-control-solid" name="date" placeholder="Pick a date"
+                                                        <FlatpickrInput className="form-control form-control-solid" name="date" placeholder="Pick a date"
                                                             id="kt_datepicker_1" />
                                                     </div>
                                                     <div className="col-md-6">
                                                         <label className="required fw-semibold fs-6 mb-2">Select Patient </label>
 
 
-                                                        <select name="format" data-control="select2" data-placeholder="Select Patient"
+                                                        <Select2Input name="format" data-control="select2" data-placeholder="Select Patient"
                                                             className="form-select form-select-solid fw-bold"
                                                             data-dropdown-parent="#kt_modal_add_case">
                                                             <option></option>
@@ -309,7 +311,7 @@ export default function CaseHistory({ auth }) {
                                                             <option value="zubair">Zubair</option>
                                                             <option value="jass">Jass</option>
                                                             <option value="kaif">Kaif</option>
-                                                        </select>
+                                                        </Select2Input>
 
                                                     </div>
                                                 </div>
@@ -322,27 +324,27 @@ export default function CaseHistory({ auth }) {
 
                                                         <label className="required fw-semibold fs-6 mb-2">Category</label>
 
-                                                        <select name="format" data-control="select2" data-placeholder="Select Category"
+                                                        <Select2Input name="format" data-control="select2" data-placeholder="Select Category"
                                                             className="form-select form-select-solid fw-bold"
                                                             data-dropdown-parent="#kt_modal_add_case">
                                                             <option></option>
                                                             <option value="implant">Implant</option>
                                                             <option value="rct">RCT</option>
                                                             <option value="extraction">Extraction</option>
-                                                        </select>
+                                                        </Select2Input>
                                                     </div>
                                                     <div className="col-md-6">
                                                         <label className="required fw-semibold fs-6 mb-2">Status</label>
 
 
-                                                        <select name="format" data-control="select2" data-placeholder="Select Status"
+                                                        <Select2Input name="format" data-control="select2" data-placeholder="Select Status"
                                                             className="form-select form-select-solid fw-bold"
                                                             data-dropdown-parent="#kt_modal_add_case">
                                                             <option></option>
                                                             <option value="faisal">In progress</option>
                                                             <option value="saud">Completed</option>
                                                             <option value="ibh">Pending</option>
-                                                        </select>
+                                                        </Select2Input>
 
                                                     </div>
                                                 </div>
@@ -356,13 +358,13 @@ export default function CaseHistory({ auth }) {
                                                 <label className="required fw-semibold fs-6 mb-2">Select Tooth</label>
 
 
-                                                <select name="format" data-control="select2" data-placeholder="Select tooth"
+                                                <Select2Input name="format" data-control="select2" data-placeholder="Select tooth"
                                                     className="form-select form-select-solid fw-bold" data-dropdown-parent="#kt_modal_add_case">
                                                     <option></option>
                                                     <option value="31">#31</option>
                                                     <option value="21">#21</option>
                                                     <option value="11">#11</option>
-                                                </select>
+                                                </Select2Input>
 
                                             </div>
 

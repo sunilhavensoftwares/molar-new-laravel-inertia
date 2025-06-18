@@ -1,29 +1,31 @@
-// resources/js/Hooks/useScript.js
 import { useEffect } from 'react';
 
-export default function useScript(src, options = {}) {
-    useEffect(() => {
-        // Prevent duplicates
-        if (document.querySelector(`script[src="${src}"]`)) return;
+export default function useScript(src, { onload } = {}) {
+  useEffect(() => {
+    if (document.querySelector(`script[src="${src}"]`)) {
+      // Already loaded
+      if (onload) onload();
+      return;
+    }
 
-        const script = document.createElement('script');
-        script.src = src;
-        script.async = options.async ?? true;
-        script.defer = options.defer ?? false;
-        script.onload = () => {
-            if (src.includes('jquery') || src.includes('plugins.bundle')) {
-                // Expose jQuery globally
-                window.$ = window.jQuery = window.jQuery || window.$;
-            }
-            options.onload && options.onload();
-        };
-        document.body.appendChild(script);
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
 
-        return () => {
-            // Optional: remove script on cleanup
-            if (options.removeOnUnmount) {
-                document.body.removeChild(script);
-            }
-        };
-    }, [src]);
+    script.onload = () => {
+      //console.log(`✅ Script loaded: ${src}`);
+      if (onload) onload();
+    };
+
+    script.onerror = () => {
+      //console.error(`❌ Failed to load script: ${src}`);
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      // Optional: clean up
+      script.remove();
+    };
+  }, [src]);
 }
