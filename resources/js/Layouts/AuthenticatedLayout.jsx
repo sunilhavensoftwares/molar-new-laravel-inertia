@@ -12,9 +12,6 @@ import { useMetronicInit } from '../Misc/use_metronics_init';
 import './css/AuthenticatedLayout.css';
 export default function Authenticated({ user, header, children, bodyClass = 'app-default' }) {
     //load scripts
-    useScript('/assets/plugins/custom/fullcalendar/fullcalendar.bundle.js');
-
-
     useScript('/assets/js/widgets.bundle.js');
     useScript('/assets/js/custom/widgets.js');
     useScript('/assets/js/custom/apps/chat/chat.js');

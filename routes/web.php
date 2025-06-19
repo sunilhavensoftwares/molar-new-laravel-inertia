@@ -6,6 +6,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -56,7 +57,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/patients/case-refer', [PatientController::class, 'case_refer'])->name('patients.case_refer');
     Route::get('/patients/case-material', [PatientController::class, 'case_material'])->name('patients.case_material');
     Route::get('/patients/pdocuments', [PatientController::class, 'pdocuments'])->name('patients.pdocuments');
-    
+    //schedules
+    Route::get('/schedules/holidays',[ScheduleController::class,'holidays'])->name('schedules.holidays');
+    Route::resource('/schedules',ScheduleController::class)->except(['holidays']);
+   
 });
 
 require __DIR__ . '/auth.php';

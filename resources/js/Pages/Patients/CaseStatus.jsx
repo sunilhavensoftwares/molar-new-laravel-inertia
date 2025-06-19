@@ -1,5 +1,6 @@
 import { Head, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import Select2Input from "@/Components/Select2Input";
 export default function CaseStatus({ auth }) {
     const { patient } = usePage().props;
     return (
@@ -175,7 +176,7 @@ export default function CaseStatus({ auth }) {
                                                                         Export Format:</label>
                                                                     {/* end::Label */}
                                                                     {/* begin::Input */}
-                                                                    <select name="format" data-control="select2"
+                                                                    <Select2Input name="format" data-control="select2"
                                                                         data-placeholder="Select a format" data-hide-search="true"
                                                                         className="form-select form-select-solid fw-bold">
                                                                         <option></option>
@@ -183,7 +184,7 @@ export default function CaseStatus({ auth }) {
                                                                         <option defaultValue="pdf">PDF</option>
                                                                         <option defaultValue="cvs">CVS</option>
                                                                         <option defaultValue="zip">ZIP</option>
-                                                                    </select>
+                                                                    </Select2Input>
                                                                     {/* end::Input */}
                                                                 </div>
                                                                 {/* end::Input group */}
@@ -257,16 +258,17 @@ export default function CaseStatus({ auth }) {
                                                                         </label>
                                                                         {/* end::Label */}
                                                                         {/* begin::Input */}
-                                                                        <select className="form-select form-select-sm form-select-solid"
+                                                                        <Select2Input className="form-select form-select-sm form-select-solid"
                                                                             data-control="select2" name="color_name"
                                                                             data-placeholder="Options" data-hide-search="true">
+                                                                            <option></option>
                                                                             <option defaultValue="1">Default</option>
                                                                             <option defaultValue="2" className="text-primary">Primary</option>
                                                                             <option defaultValue="3">Success</option>
                                                                             <option defaultValue="4">Info</option>
                                                                             <option defaultValue="5">Warning</option>
                                                                             <option defaultValue="6">Danger</option>
-                                                                        </select>
+                                                                        </Select2Input>
                                                                         {/* end::Input */}
                                                                     </div>
                                                                     {/* end::Input group */}
