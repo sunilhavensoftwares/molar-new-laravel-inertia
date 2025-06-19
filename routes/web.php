@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
@@ -60,7 +61,18 @@ Route::middleware('auth')->group(function () {
     //schedules
     Route::get('/schedules/holidays',[ScheduleController::class,'holidays'])->name('schedules.holidays');
     Route::resource('/schedules',ScheduleController::class)->except(['holidays']);
-   
+    //appointments
+    Route::prefix('/appointments')->name('appointments.')->group(function () {
+
+        Route::get('today', [AppointmentController::class, 'today'])->name('today');
+        Route::get('upcoming', [AppointmentController::class, 'upcoming'])->name('upcoming');
+        Route::get('calendar', [AppointmentController::class, 'calendar'])->name('calendar');
+        Route::get('request', [AppointmentController::class, 'request'])->name('request');
+
+        Route::resource('/', AppointmentController::class)->except([
+            'today', 'upcoming', 'calendar', 'request'
+        ]);
+    });
 });
 
 require __DIR__ . '/auth.php';
