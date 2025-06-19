@@ -1,1 +1,0 @@
-import{r as s,j as c}from"./app-wkG_rE4h.js";const x=({value:t,onChange:e,options:n={},name:u,className:a,placeholder:f})=>{const r=s.useRef();return s.useEffect(()=>{const o=window.flatpickr(r.current,{...n,defaultDate:t,onChange:([p])=>{e&&e(p)}});return()=>{o.destroy()}},[]),c.jsx("input",{type:"text",name:u,defaultValue:t,ref:r,className:a,placeholder:f})};export{x as F};
