@@ -1,1 +1,0 @@
-import{r as c}from"./app-BJf6ar84.js";function i(t,{onload:r}={}){c.useEffect(()=>{if(document.querySelector(`script[src="${t}"]`)){r&&r();return}const e=document.createElement("script");return e.src=t,e.async=!0,e.onload=()=>{r&&r()},e.onerror=()=>{},document.body.appendChild(e),()=>{e.remove()}},[t])}export{i as u};
