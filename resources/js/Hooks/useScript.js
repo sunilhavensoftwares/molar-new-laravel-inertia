@@ -1,31 +1,26 @@
-import { useEffect } from 'react';
+// resources/js/Hooks/useScript.js
+import { useEffect, useState } from 'react';
 
-export default function useScript(src, { onload } = {}) {
+export default function useScript(src) {
+  const [loaded, setLoaded] = useState(false);
+
   useEffect(() => {
     if (document.querySelector(`script[src="${src}"]`)) {
-      // Already loaded
-      if (onload) onload();
+      setLoaded(true);
       return;
     }
 
     const script = document.createElement('script');
     script.src = src;
     script.async = true;
-
-    script.onload = () => {
-      //console.log(`✅ Script loaded: ${src}`);
-      if (onload) onload();
-    };
-
-    script.onerror = () => {
-      //console.error(`❌ Failed to load script: ${src}`);
-    };
-
+    script.onload = () => setLoaded(true);
+    script.onerror = () => setLoaded(false);
     document.body.appendChild(script);
 
     return () => {
-      // Optional: clean up
-      script.remove();
+      document.body.removeChild(script);
     };
   }, [src]);
+
+  return loaded;
 }

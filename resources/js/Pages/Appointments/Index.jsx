@@ -182,7 +182,7 @@ const Index = ({ auth }) => {
                                                             </div>
                                                             <div className="mb-10">
                                                                 <label className="form-label fs-6 fw-semibold">Date:</label>
-                                                                <FlatpickrInput type="text"
+                                                                <FlatpickrInput type="text" placeholder='Select Date'
                                                                     className="form-control form-control-solid kt_datepicker_1" name="date" />
                                                             </div>
                                                             {/* end::Input group*/}
@@ -639,6 +639,7 @@ const Index = ({ auth }) => {
                                     {/* end::Card header*/}
                                     {/* begin::Card body*/}
                                     <div className="card-body py-4">
+                                        <div className="table-responsive">
                                         {/* begin::Table*/}
                                         <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_appointment">
                                             {/* begin::Table head*/}
@@ -977,6 +978,7 @@ const Index = ({ auth }) => {
                                             {/* end::Table body */}
                                         </table>
                                         {/* end::Table*/}
+                                        </div>
                                     </div>
                                     {/* end::Card body*/}
                                 </div>

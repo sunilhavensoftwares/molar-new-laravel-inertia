@@ -5,6 +5,8 @@ import Sidebar from './Common/sidebar';
 import JQueryMultiSelect from '@/Components/JQueryMultiSelect';
 import "/public/assets/css/multi-select.min.css";
 import FlatpickrInput from '@/Components/FlatpickrInput';
+
+import useScript from '@/Hooks/useScript';
 export default function PaymentHistory({ auth }) {
     const { patient,options } = usePage().props;
     return (

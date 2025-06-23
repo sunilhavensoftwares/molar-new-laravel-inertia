@@ -6,6 +6,7 @@ const FlatpickrInput = ({ value, onChange, options = {}, name, className, placeh
 
   useEffect(() => {
     const instance = window.flatpickr(inputRef.current, {
+       disableMobile: true, // 🚫 Prevent native mobile behavior
       ...options,
       defaultDate: value,
       onChange: ([selectedDate]) => {

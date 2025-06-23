@@ -201,7 +201,7 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['human-resources'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='All' href="/human-resources/index" />
+                            <SidebarLink title='All' href="/human-resources/nurse" />
                         </div>
                     </div>
 

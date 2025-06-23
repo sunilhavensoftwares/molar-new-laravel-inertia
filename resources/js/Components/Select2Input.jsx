@@ -1,57 +1,61 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
-const Select2Input = ({ children, value, onChange, name, className = "", multiple="", ...rest }) => {
+const Select2Input = ({
+  children,
+  value,
+  onChange,
+  name,
+  className = '',
+  multiple = false,
+  ...rest
+}) => {
   const selectRef = useRef();
 
   useEffect(() => {
-    let retries = 0;
-    const maxRetries = 10;
+    const $select = window.$(selectRef.current);
 
-    const initSelect2 = () => {
-      const $select = window.$(selectRef.current);
+    if (!$select || typeof $select.select2 !== 'function') return;
 
-      if (typeof $select.select2 !== "function") {
-        retries++;
-        if (retries < maxRetries) {
-          return setTimeout(initSelect2, 200); // Retry every 200ms
-        } else {
-          console.warn("Select2 still not available after retries.");
-          return;
-        }
+    $select.select2({
+      dropdownParent: $select.parent(),
+      placeholder: $select.data('placeholder') || 'Select',
+      allowClear: $select.data('allow-clear') === true || $select.data('allow-clear') === 'true',
+    });
+
+    // Initial value
+    if (value !== undefined) {
+      $select.val(value).trigger('change');
+    }
+
+    $select.on('change', function () {
+      if (multiple) {
+        const selected = $select.val(); // array of values
+        onChange?.(selected);
+      } else {
+        const selected = $select.val(); // string or null
+        onChange?.(selected || '');
       }
+    });
 
-      // ✅ Initialize Select2
-      $select.select2();
-      
-      // ✅ Set initial value
-      if (value !== undefined) {
-        $select.val(value).trigger("change");
-      }
-
-      // ✅ Handle change
-      $select.on("change", function (e) {
-        const selectedData = $select.select2('data'); // returns array of {id, text, ...}
-        if (onChange) onChange(selectedData); // Send the full data to the parent
-      });
-    };
-
-    initSelect2();
-
-    // ✅ Cleanup
     return () => {
-      const $select = window.$(selectRef.current);
-      if ($select && typeof $select.select2 === "function") {
-        $select.select2("destroy");
-      }
+      $select.off('change');
+      $select.select2('destroy');
     };
   }, []);
+
+  useEffect(() => {
+    const $select = window.$(selectRef.current);
+    if ($select && typeof $select.select2 === 'function') {
+      $select.val(value).trigger('change');
+    }
+  }, [value]);
 
   return (
     <select
       ref={selectRef}
       name={name}
       className={className}
-      multiple={multiple??''}
+      multiple={multiple}
       {...rest}
     >
       {children}

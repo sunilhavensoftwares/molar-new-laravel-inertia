@@ -4,6 +4,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -73,6 +74,13 @@ Route::middleware('auth')->group(function () {
             'today', 'upcoming', 'calendar', 'request'
         ]);
     });
+    //human resource
+   Route::prefix('/human-resources')->name('human_resources.')->group(function () {
+    Route::get('{human_resource}', [HumanResourceController::class, 'handleRole'])
+        ->where('human_resource', 'nurse|pharmacist|laboratorist|accountant|receptionist')
+        ->name('role');
+});
+
 });
 
 require __DIR__ . '/auth.php';

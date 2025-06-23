@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import $ from 'jquery';
 import useScript from '@/Hooks/useScript';
+
 if (typeof window !== 'undefined') {
   window.$ = $;
   window.jQuery = $;
@@ -14,18 +16,12 @@ export default function JQueryMultiSelect({
   className = '',
 }) {
   const selectRef = useRef();
-  const [scriptsReady, setScriptsReady] = useState(false);
 
-  // Load scripts once
-  useScript('/assets/js/jquery.quicksearch.min.js', {
-    onload: () => setScriptsReady(prev => prev || typeof $.fn.quicksearch === 'function'),
-  });
-  useScript('/assets/js/jquery.multi-select.min.js', {
-    onload: () => setScriptsReady(prev => prev || typeof $.fn.multiSelect === 'function'),
-  });
+  const multiSelectReady = useScript('/assets/js/jquery.multi-select.min.js');
+  const quickSearchReady = useScript('/assets/js/jquery.quicksearch.min.js');
+  const scriptsReady = multiSelectReady && quickSearchReady;
 
   useEffect(() => {
-    
     if (!scriptsReady || !$(selectRef.current).length) return;
 
     const $select = $(selectRef.current);
@@ -46,17 +42,11 @@ export default function JQueryMultiSelect({
         const selectionSearchString = `#${that.$container.attr('id')} .ms-elem-selection.ms-selected`;
 
         that.qs1 = $selectableSearch.quicksearch(selectableSearchString).on('keydown', function (e) {
-          if (e.which === 40) {
-            that.$selectableUl.focus();
-            return false;
-          }
+          if (e.which === 40) that.$selectableUl.focus();
         });
 
         that.qs2 = $selectionSearch.quicksearch(selectionSearchString).on('keydown', function (e) {
-          if (e.which === 40) {
-            that.$selectionUl.focus();
-            return false;
-          }
+          if (e.which === 40) that.$selectionUl.focus();
         });
       },
 
@@ -119,7 +109,6 @@ function oneItemSelect(value) {
   }
 }
 
-// Remove from table
 function oneItemDeSelect(value) {
   const selector = $(`.multiselect option[value="${value}"]`);
   const cat_id = selector.data('id');

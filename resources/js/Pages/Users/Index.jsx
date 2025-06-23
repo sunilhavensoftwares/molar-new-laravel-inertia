@@ -338,15 +338,15 @@ export default function Index({ auth }) {
                                                                 <Select2Input className="form-select form-select-solid fw-bold"
                                                                     data-kt-select2="true" data-placeholder="Select option"
                                                                     data-allow-clear="true" data-kt-user-table-filter="role"
-                                                                    data-hide-search="true" name="role" value={filters.role || ''} onChange={(value) => handleFilterChange('role')(value)} >
+                                                                    data-hide-search="true" name="role" value={filters.role || ''} onChange={handleFilterChange('role')} >
                                                                     <option></option>
-                                                                    <option defaultValue="administrator "> Administrator</option>
-                                                                    <option defaultValue="doctor "> Doctor</option>
-                                                                    <option defaultValue="receptionist "> Receptionist</option>
-                                                                    <option defaultValue="nurse "> Nurse</option>
-                                                                    <option defaultValue="accountant "> Accountant</option>
-                                                                    <option defaultValue="laboratorist "> Laboratorist</option>
-                                                                    <option defaultValue="pharmacist "> Pharmacist</option>
+                                                                    <option value="administrator "> Administrator</option>
+                                                                    <option value="doctor "> Doctor</option>
+                                                                    <option value="receptionist "> Receptionist</option>
+                                                                    <option value="nurse "> Nurse</option>
+                                                                    <option value="accountant "> Accountant</option>
+                                                                    <option value="laboratorist "> Laboratorist</option>
+                                                                    <option value="pharmacist "> Pharmacist</option>
                                                                 </Select2Input>
                                                             </div>
 
