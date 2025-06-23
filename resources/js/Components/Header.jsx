@@ -1,6 +1,6 @@
 import { Link } from "@inertiajs/react";
-
-export default function Header() {
+import user_logo from '@assets/media/avatars/300-1.jpg';
+export default function Header({header_logo}) {
 
     return (
         <>
@@ -31,7 +31,7 @@ export default function Header() {
 
                     <div className="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
                         <a href="dashboard/index.php" className="d-lg-none">
-                            <img alt="Logo" src={'/assets/media/logos/logo.svg'} className="h-30px" />
+                            <img alt="Logo" src={header_logo} className="h-30px" />
                         </a>
                     </div>
 
@@ -759,7 +759,7 @@ export default function Header() {
                                 <div className="cursor-pointer symbol symbol-30px symbol-md-40px"
                                     data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
                                     data-kt-menu-placement="bottom-end">
-                                    <img src={'/assets/media/avatars/300-1.jpg'} alt="user" />
+                                    <img src={user_logo} alt="user" />
                                 </div>
 
                                 <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px"
@@ -769,7 +769,7 @@ export default function Header() {
                                         <div className="menu-content d-flex align-items-center px-3">
 
                                             <div className="symbol symbol-50px me-5">
-                                                <img alt="Logo" src={'/assets/media/avatars/300-1.jpg'} />
+                                                <img alt="Logo" src={user_logo} />
                                             </div>
 
 

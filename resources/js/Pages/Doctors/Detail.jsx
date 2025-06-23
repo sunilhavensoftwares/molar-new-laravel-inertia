@@ -4,6 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { AddAppointmentModal } from '@/Modals/AddAppointmentModal';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
+import images from '@/Misc/image_map';
 export default function Detail({ auth }) {
     
     const { doctor } = usePage().props;
@@ -14,15 +15,6 @@ export default function Detail({ auth }) {
         >
             <Head title="Doctor Details" />
             <>
-                <style>{`
-                        .image-input-placeholder {
-                            backgroundImage: "url('assets/media/svg/files/blank-image.svg')";
-                        }
-                        [data-theme="dark"] .image-input-placeholder {
-                            backgroundImage: "url('assets/media/svg/files/blank-image-dark.svg')";
-                        }
-                    `}
-                </style>
                 <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
 
                     <div className="d-flex flex-column flex-column-fluid">
@@ -1338,7 +1330,7 @@ export default function Detail({ auth }) {
                                                     data-kt-image-input="true">
 
                                                     <div className="image-input-wrapper w-125px h-125px"
-                                                        style={{ backgroundImage: "url('assets/media/avatars/300-6.jpg')" }}>
+                                                        style={{ backgroundImage: `url(${images.avatar_300_6})` }}>
                                                     </div>
 
 

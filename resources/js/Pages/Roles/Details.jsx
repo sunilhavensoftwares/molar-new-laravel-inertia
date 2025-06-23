@@ -2,6 +2,7 @@ import DataTable from '@/Components/DataTable';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
+import images from '@/Misc/image_map';
 export default function Index({ auth }) {
     const { role, users, query } = usePage().props;
     const [searchQuery, setSearchQuery] = useState('');
@@ -45,7 +46,7 @@ export default function Index({ auth }) {
                     <div className="d-flex align-items-center">
                         <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                             <div className="symbol-label">
-                                <img src={user.avatar_url || 'assets/media/avatars/blank.png'} alt={user.name} className="w-100" />
+                                <img src={user.avatar_url || images.blank_avatar} alt={user.name} className="w-100" />
                             </div>
                         </div>
                         <div className="d-flex flex-column">

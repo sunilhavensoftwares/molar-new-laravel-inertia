@@ -4,6 +4,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
@@ -33,7 +34,7 @@ Route::middleware('auth')->group(function () {
     //user Management modules
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/user-detail/{id}', [UserController::class, 'show'])->name('users.show');
-    
+
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
     Route::get('/roles/role-detail/{id}', [RoleController::class, 'show'])->name('roles.show');
     Route::get('/roles/edit-role/{role}', [RoleController::class, 'edit'])->name('roles.edit');
@@ -60,8 +61,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/patients/case-material', [PatientController::class, 'case_material'])->name('patients.case_material');
     Route::get('/patients/pdocuments', [PatientController::class, 'pdocuments'])->name('patients.pdocuments');
     //schedules
-    Route::get('/schedules/holidays',[ScheduleController::class,'holidays'])->name('schedules.holidays');
-    Route::resource('/schedules',ScheduleController::class)->except(['holidays']);
+    Route::get('/schedules/holidays', [ScheduleController::class, 'holidays'])->name('schedules.holidays');
+    Route::resource('/schedules', ScheduleController::class)->except(['holidays']);
     //appointments
     Route::prefix('/appointments')->name('appointments.')->group(function () {
 
@@ -71,16 +72,26 @@ Route::middleware('auth')->group(function () {
         Route::get('request', [AppointmentController::class, 'request'])->name('request');
 
         Route::resource('/', AppointmentController::class)->except([
-            'today', 'upcoming', 'calendar', 'request'
+            'today',
+            'upcoming',
+            'calendar',
+            'request'
         ]);
     });
     //human resource
-   Route::prefix('/human-resources')->name('human_resources.')->group(function () {
-    Route::get('{human_resource}', [HumanResourceController::class, 'handleRole'])
-        ->where('human_resource', 'nurse|pharmacist|laboratorist|accountant|receptionist')
-        ->name('role');
-});
-
+    Route::prefix('/human-resources')->name('human_resources.')->group(function () {
+        Route::get('{human_resource}', [HumanResourceController::class, 'handleRole'])
+            ->where('human_resource', 'nurse|pharmacist|laboratorist|accountant|receptionist')
+            ->name('role');
+    });
+    //appointments
+    Route::prefix('/finance')->name('finance.')->group(function () {
+        Route::get('payment', [FinanceController::class, 'payment'])->name('payment');
+        Route::get('payment-category', [FinanceController::class, 'payment_category'])->name('payment_category');
+        Route::get('expense', [FinanceController::class, 'expense'])->name('expense');
+        Route::get('expense-category', [FinanceController::class, 'expense_category'])->name('expense_category');
+        Route::get('diagnostic-type', [FinanceController::class, 'diagnostic_type'])->name('diagnostic_type');
+    });
 });
 
 require __DIR__ . '/auth.php';

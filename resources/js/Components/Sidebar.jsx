@@ -127,7 +127,16 @@ export default function Sidebar() {
                     </span>
                     <div className={SidebarFunctions.getMenuClass(['patients'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title="Patients List" href="/patients" />
+                            
+                            <SidebarLink title="Patients List" href={[
+                                "/patients",
+                                "/patients/patient-detail/*",
+                                "/patients/patient-detail/*/documents",
+                                "/patients/patient-detail/*/case-history",
+                                "/patients/patient-detail/*/prescription",
+                                "/patients/patient-detail/*/timeline",
+                                "/patients/patient-detail/*/lab",
+                                "/patients/patient-detail/*/payment-history"]} />
                             <SidebarLink title="Temporary Patients" href="/patients/temporary-patients" />
                             <SidebarLink title="Case Manager" href="/patients/case-list" />
                             <SidebarLink title="Case Category" href="/patients/case-category" />
@@ -224,9 +233,9 @@ export default function Sidebar() {
 
 
                         <div className="menu-item">
-                            <SidebarLink title='Payments' href="/finance" />
+                            <SidebarLink title='Payments' href="/finance/payment" />
                             <SidebarLink title='Payment Category' href="/finance/payment-category" />
-                            <SidebarLink title='Expense' href="/finance/expenses" />
+                            <SidebarLink title='Expense' href="/finance/expense" />
                             <SidebarLink title='Expense Categories' href="/finance/expense-category" />
                             <SidebarLink title='Diagnostic Type' href="/finance/diagnostic-type" />
                         </div>

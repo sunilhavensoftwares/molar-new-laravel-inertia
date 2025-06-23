@@ -2,6 +2,7 @@ import Select2Input from '@/Components/Select2Input';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
+import images from '../../Misc/image_map';
 export default function Documents({ auth }) {
     const { patient } = usePage().props;
     
@@ -114,7 +115,7 @@ export default function Documents({ auth }) {
                                                             className="text-gray-800 text-hover-primary d-flex flex-column">
 
                                                             <div className="symbol symbol-60px mb-5">
-                                                                <img src="/assets/media/svg/misc/pdf.svg" className="theme-light-show"
+                                                                <img src={images.pdf} className="theme-light-show"
                                                                     alt="" />
                                                             </div>
 
@@ -150,7 +151,7 @@ export default function Documents({ auth }) {
                                                             className="text-gray-800 text-hover-primary d-flex flex-column">
 
                                                             <div className="symbol symbol-60px mb-5 image-input">
-                                                                <img src="/assets/media/svg/misc/doc.svg" className="theme-light-show"
+                                                                <img src={images.doc_icon} className="theme-light-show"
                                                                     alt="" />
 
                                                             </div>
@@ -188,7 +189,7 @@ export default function Documents({ auth }) {
                                                             className="text-gray-800 text-hover-primary d-flex flex-column">
 
                                                             <div className="symbol symbol-60px mb-5">
-                                                                <img src="/assets/media/email/icon-positive-vote-4.svg"
+                                                                <img src={images.icon_pv4}
                                                                     className="theme-light-show" alt="" />
                                                             </div>
 
@@ -224,7 +225,7 @@ export default function Documents({ auth }) {
                                                             className="text-gray-800 text-hover-primary d-flex flex-column">
 
                                                             <div className="symbol symbol-60px mb-5">
-                                                                <img src="/assets/media/email/icon-positive-vote-4.svg"
+                                                                <img src={images.icon_pv4}
                                                                     className="theme-light-show" alt="" />
                                                             </div>
 

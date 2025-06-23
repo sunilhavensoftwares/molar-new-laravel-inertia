@@ -1,12 +1,28 @@
 import { usePage } from '@inertiajs/react';
 const checkActive = (search, currentUrl = '') => {
-  const segments = currentUrl || usePage().url;
+  const url = currentUrl || usePage().url;
+  const path = url.split('?')[0]; // remove query string
 
   if (Array.isArray(search)) {
-    return search.some(str => segments.includes(str));
+    return search.some(pattern => matchPattern(path, pattern));
   }
 
-  return search === segments;
+  return matchPattern(path, search);
+};
+
+const matchPattern = (path, pattern) => {
+  // Support wildcard '*' in pattern like /patients/patient-detail/*/lab
+  const regex = new RegExp('^' + pattern.replace(/\*/g, '[^/]+') + '$');
+  return regex.test(path);
+};
+const checkActiveMainOrSub = (searchSegments, currentUrl = '') => {
+ const url = currentUrl || usePage().url;
+  const path = url.split('?')[0];
+  const segments = path.replace(/^\/|\/$/g, '').split('/'); // clean slashes and split
+
+  const needles = Array.isArray(searchSegments) ? searchSegments : [searchSegments];
+
+  return needles.some(needle => segments.includes(needle));
 };
 
 const exactMatchUrl = (link, currentUrl = '') => {
@@ -17,7 +33,7 @@ const exactMatchUrl = (link, currentUrl = '') => {
 
 const getMenuClass = (keys, type, currentUrl = '') => {
   let className = '';
-  const isActive = checkActive(keys, currentUrl);
+  const isActive = type === 'link' ? checkActive(keys, currentUrl) : checkActiveMainOrSub(keys, currentUrl);
 
   switch (type) {
     case 'main':
@@ -30,7 +46,7 @@ const getMenuClass = (keys, type, currentUrl = '') => {
       className = `menu-item menu-accordion ${isActive ? 'show' : ''}`;
       break;
     case 'link':
-      className = `menu-link ${exactMatchUrl(keys, currentUrl) ? 'active' : ''}`;
+      className = `menu-link ${isActive ? 'active' : ''}`;
       break;
     default:
       break;

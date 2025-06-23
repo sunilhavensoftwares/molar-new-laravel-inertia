@@ -6,6 +6,7 @@ import Select2Input from '@/Components/Select2Input';
 import DataTable from '@/Components/DataTable';
 import { useEffect, useRef, useState } from 'react';
 import Sidebar from './Common/Sidebar';
+import images from '@/Misc/image_map';
 export default function Accountant({ auth }) {
     return (
         <AuthenticatedLayout
@@ -14,18 +15,6 @@ export default function Accountant({ auth }) {
         >
             <Head title="Accountant" />
             <>
-            {/* begin::Image placeholder */}
-            <style>{`
-            .image-input-placeholder {
-                background-image: url('/assets/media/svg/files/blank-image.svg');
-            }
-
-            [data-theme="dark"] .image-input-placeholder {
-                background-image: url('/assets/media/svg/files/blank-image-dark.svg');
-            }`
-            }
-            </style>
-            {/* end::Image placeholder */}
                 {/* begin::Main */}
                 <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
                     {/* begin::Content wrapper */}
@@ -285,7 +274,7 @@ export default function Accountant({ auth }) {
                                                                                                 data-kt-image-input="true">
                                                                                                 {/* begin::Preview existing avatar */}
                                                                                                 <div className="image-input-wrapper w-125px h-125px"
-                                                                                                    style={{ backgroundImage: "url(/assets/media/avatars/300-6.jpg)"}}>
+                                                                                                    style={{ backgroundImage: `url(${images.avatar_300_6})`}}>
                                                                                                 </div>
                                                                                                 {/* end::Preview existing avatar */}
                                                                                                 {/* begin::Label */}
@@ -445,7 +434,7 @@ export default function Accountant({ auth }) {
                                                                                     <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                                         <a href="doctors/doctor-detail.php">
                                                                                             <div className="symbol-label">
-                                                                                                <img src="/assets/media/avatars/300-6.jpg" alt="accountant 1"
+                                                                                                <img src={images.avatar_300_6} alt="accountant 1"
                                                                                                     className="w-100" />
                                                                                             </div>
                                                                                         </a>
@@ -512,7 +501,7 @@ export default function Accountant({ auth }) {
                                                                                     <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                                         <a href="doctors/doctor-detail.php">
                                                                                             <div className="symbol-label">
-                                                                                                <img src="/assets/media/avatars/300-6.jpg" alt="accountant 2"
+                                                                                                <img src={images.avatar_300_6} alt="accountant 2"
                                                                                                     className="w-100" />
                                                                                             </div>
                                                                                         </a>
@@ -579,7 +568,7 @@ export default function Accountant({ auth }) {
                                                                                     <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                                         <a href="doctors/doctor-detail.php">
                                                                                             <div className="symbol-label">
-                                                                                                <img src="/assets/media/avatars/300-6.jpg" alt="accountant 3"
+                                                                                                <img src={images.avatar_300_6} alt="accountant 3"
                                                                                                     className="w-100" />
                                                                                             </div>
                                                                                         </a>
@@ -646,7 +635,7 @@ export default function Accountant({ auth }) {
                                                                                     <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                                         <a href="doctors/doctor-detail.php">
                                                                                             <div className="symbol-label">
-                                                                                                <img src="/assets/media/avatars/300-6.jpg" alt="accountant 4"
+                                                                                                <img src={images.avatar_300_6} alt="accountant 4"
                                                                                                     className="w-100" />
                                                                                             </div>
                                                                                         </a>
@@ -844,7 +833,7 @@ export default function Accountant({ auth }) {
                                                     data-kt-image-input="true">
                                                     {/* begin::Preview existing avatar */}
                                                     <div className="image-input-wrapper w-125px h-125px"
-                                                        style={{backgroundImage: "url(/assets/media/avatars/300-6.jpg)"}}>
+                                                        style={{backgroundImage: `url(${images.avatar_300_6})`}}>
                                                     </div>
                                                     {/* end::Preview existing avatar */}
                                                     {/* begin::Label */}
@@ -1017,7 +1006,7 @@ export default function Accountant({ auth }) {
                                                     data-kt-image-input="true">
                                                     {/* begin::Preview existing avatar */}
                                                     <div className="image-input-wrapper w-125px h-125px"
-                                                        style={{backgroundImage: "url(/assets/media/avatars/300-6.jpg)" }}>
+                                                        style={{backgroundImage: `url(${images.avatar_300_6})` }}>
                                                     </div>
                                                     {/* end::Preview existing avatar */}
                                                     {/* begin::Label */}
@@ -1178,7 +1167,7 @@ export default function Accountant({ auth }) {
                                                     data-kt-image-input="true">
                                                     {/* begin::Preview existing avatar */}
                                                     <div className="image-input-wrapper w-125px h-125px"
-                                                        style={{ backgroundImage: "url(/assets/media/avatars/300-6.jpg)"}}>
+                                                        style={{ backgroundImage: `url(${images.avatar_300_6})`}}>
                                                     </div>
                                                     {/* end::Preview existing avatar */}
                                                     {/* begin::Label */}
@@ -1662,7 +1651,8 @@ export default function Accountant({ auth }) {
                             {/* end::Modal content */}
                         </div>
                         {/* end::Modal dialog */}
-                    </div>+        <div className="modal fade" id="modal_add_schedule" tabIndex="-1" aria-hidden="true">
+                    </div>
+                    <div className="modal fade" id="modal_add_schedule" tabIndex="-1" aria-hidden="true">
                         {/* begin::Modal dialog */}
                         <div className="modal-dialog modal-dialog-centered">
                             {/* begin::Modal content */}
@@ -1670,7 +1660,7 @@ export default function Accountant({ auth }) {
                                 {/* begin::Modal header */}
                                 <div className="modal-header">
                                     {/* begin::Modal title */}
-                                    <h2 className="fw-bold">Add Schedule</h2>
+                                    <h2 className="fw-bold">+ Add Schedule</h2>
                                     {/* end::Modal title */}
                                     {/* begin::Close */}
                                     <div className="btn btn-icon btn-sm btn-active-icon-primary"

@@ -1,4 +1,3 @@
-import React from 'react';
 import { router, usePage } from '@inertiajs/react';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {

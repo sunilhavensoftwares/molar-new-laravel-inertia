@@ -2,29 +2,17 @@ import Select2Input from '@/Components/Select2Input';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
-import JQueryMultiSelect from '@/Components/JQueryMultiSelect';
-import "/public/assets/css/multi-select.min.css";
 import FlatpickrInput from '@/Components/FlatpickrInput';
-
-import useScript from '@/Hooks/useScript';
+import { AddPaymentModal } from '@/Modals/AddPaymentModal';
+import images from '@/Misc/image_map';
 export default function PaymentHistory({ auth }) {
-    const { patient,options } = usePage().props;
+    const { patient, options } = usePage().props;
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">patients</h2>} >
             <Head title="patients" />
             <>
-                <style>{`
-                .image-input-placeholder {
-                    background-image: url('/assets/media/avatars/blank.png');
-                }
-
-                [data-theme="dark"] .image-input-placeholder {
-                    background-image: url('/assets/media/svg/files/blank-image-dark.svg');
-                }
-                `}</style>
-
                 <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
 
                     <div className="d-flex flex-column flex-column-fluid">
@@ -355,7 +343,7 @@ export default function PaymentHistory({ auth }) {
                                                                                             data-kt-image-input="true">
 
                                                                                             <div className="image-input-wrapper w-125px h-125px"
-                                                                                                style={{ backgroundImage: `url('/assets/media/avatars/300-6.jpg')` }}>
+                                                                                                style={{ backgroundImage: `url('../../../assets/media/avatars/300-6.jpg')` }}>
                                                                                             </div>
 
 
@@ -527,7 +515,7 @@ export default function PaymentHistory({ auth }) {
                                                                                             data-kt-image-input="true">
 
                                                                                             <div className="image-input-wrapper w-125px h-125px"
-                                                                                                style={{ backgroundImage: `url('/assets/media/avatars/300-6.jpg')` }}>
+                                                                                                style={{ backgroundImage: `url('../../../assets/media/avatars/300-6.jpg')` }}>
                                                                                             </div>
 
 
@@ -1267,7 +1255,7 @@ export default function PaymentHistory({ auth }) {
                                                             <div className="col-md-12 p-2">
 
                                                                 <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100"
-                                                                    style={{ backgroundColor: "rgb(58, 29, 53)", backgroundImage: `url('/assets/media/svg/shapes/wave-bg-red.svg')` }}>
+                                                                    style={{ backgroundColor: "rgb(58, 29, 53)", backgroundImage: `url(${images.wave_bg_red})` }}>
 
                                                                     <div className="card-header pt-5 mb-3">
 
@@ -1295,7 +1283,7 @@ export default function PaymentHistory({ auth }) {
                                                             </div>
                                                             <div className="col-md-12 p-2">
 
-                                                                <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100" style={{ backgroundColor: "rgb(58, 29, 53)", backgroundImage: "url('/assets/media/svg/shapes/wave-bg-red.svg')" }}>
+                                                                <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100" style={{ backgroundColor: "rgb(58, 29, 53)", backgroundImage: `url(${images.wave_bg_red})` }}>
 
                                                                     <div className="card-header pt-5 mb-3">
 
@@ -1326,7 +1314,7 @@ export default function PaymentHistory({ auth }) {
                                                             </div>
                                                             <div className="col-md-12 p-2">
 
-                                                                <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100" style={{ backgroundColor: "#000", backgroundImage: "url('/assets/media/svg/shapes/wave-bg-red.svg')" }}>
+                                                                <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100" style={{ backgroundColor: "#000", backgroundImage: `url(${images.wave_bg_red})` }}>
 
                                                                     <div className="card-header pt-5 mb-3">
 
@@ -1449,224 +1437,7 @@ export default function PaymentHistory({ auth }) {
                         </div>
 
                     </div>
-                    <div className="modal fade" id="kt_modal_add_payment" tabIndex="-1" aria-hidden="true">
-
-
-                        <div className="modal-dialog modal-dialog-centered modal-lg">
-
-                            <div className="modal-content">
-
-                                <div className="modal-header">
-
-                                    <h2 className="fw-bold">Add Payment</h2>
-
-
-                                    <div className="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
-
-                                        <span className="svg-icon svg-icon-1">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
-                                                    transform="rotate(-45 6 17.3137)" fill="currentColor" />
-                                                <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)"
-                                                    fill="currentColor" />
-                                            </svg>
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-
-                                <div className="modal-body">
-
-                                    <form id="kt_modal_add_payment_form" className="form" action="#">
-
-                                        <div className="d-flex flex-column">
-
-
-                                            <div className="fv-row mb-7">
-                                                <div className="row g-3">
-                                                    <div className="col-md-6">
-
-                                                        <label className="required fw-semibold fs-6 mb-2">Patient</label>
-                                                        <span className="badge badge-primary badge-lg float-end" data-bs-toggle="modal"
-                                                            data-bs-target="#kt_modal_add_patient">Add</span>
-
-
-                                                        <Select2Input className="form-select form-select-solid" data-control="select2"
-                                                            aria-label="Select example" data-dropdown-parent="#kt_modal_add_payment" data-placeholder="Select Patient">
-                                                            <option value="">Select a Patient</option>
-                                                            <option value="1">John</option>
-                                                            <option value="2">Afsal</option>
-                                                            <option value="3">Ahsan</option>
-                                                            <option value="3">Kiya</option>
-                                                        </Select2Input>
-
-                                                    </div>
-                                                    <div className="col-md-6">
-
-                                                        <label className="required fw-semibold fs-6 mb-2">Doctor</label>
-                                                        <span className="badge badge-primary badge-lg float-end" data-bs-toggle="modal"
-                                                            data-bs-target="#kt_modal_add_doctor">Add</span>
-
-
-                                                        <Select2Input className="form-select form-select-solid" data-control="select2"
-                                                            aria-label="Select example" data-dropdown-parent="#kt_modal_add_payment" data-placeholder="Select Doctor">
-                                                            <option value="">Select a Doctor</option>
-                                                            <option value="1">Faisal</option>
-                                                            <option value="2">Ahmad</option>
-                                                            <option value="3">Saud</option>
-                                                        </Select2Input>
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <div className="fv-row mb-7">
-                                                <div className="row g-3">
-                                                    <div className="col-md-6">
-                                                        <JQueryMultiSelect
-                                                            id="my-multiselect"
-                                                            options={options}
-                                                        //selectedValues={['1']}
-                                                        />
-
-
-
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                        <div className="card shadow-sm border border-gray-500">
-
-                                                            <div className="card-body hover-scroll-y" style={{ height: "320px" }}>
-
-                                                                <div className="table-responsive">
-
-                                                                    <table className="table table-row-dashed align-middle gs-0 gy-4">
-
-                                                                        <thead>
-                                                                            <tr className="fs-7 fw-bold border-0 text-gray-400">
-                                                                                <th className="min-w-200px">Item</th>
-                                                                                <th className="min-w-100px text-center pe-0">Qty</th>
-                                                                            </tr>
-                                                                        </thead>
-
-
-                                                                        <tbody className="cat_payment_tbody">
-
-                                                                        </tbody>
-
-                                                                    </table>
-
-                                                                </div>
-
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="fv-row mb-7">
-                                                <div className="row g-3">
-                                                    <div className="col-md-6">
-
-                                                        <label className="required fw-semibold fs-6 mb-2">Sub Total</label>
-
-
-                                                        <input type="text" className="form-control form-control-solid" name="sub_total" />
-
-                                                    </div>
-                                                    <div className="col-md-6">
-
-                                                        <label className="required fw-semibold fs-6 mb-2">Discount (%)</label>
-
-
-                                                        <input type="text" className="form-control form-control-solid" name="discount" />
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-
-                                            <div className="fv-row mb-7">
-                                                <div className="row g-3">
-                                                    <div className="col-md-6">
-
-                                                        <label className="required fw-semibold fs-6 mb-2">Flat Discount</label>
-
-
-                                                        <input type="text" className="form-control form-control-solid" name="flat_discount" />
-
-                                                    </div>
-                                                    <div className="col-md-6">
-
-                                                        <label className="required fw-semibold fs-6 mb-2">Gross Total</label>
-
-
-                                                        <input type="text" className="form-control form-control-solid" name="gross_total" />
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div className="fv-row mb-7">
-                                                <div className="row g-3">
-                                                    <div className="col-md-6">
-
-                                                        <label className="required fw-semibold fs-6 mb-2">Note</label>
-
-
-                                                        <input type="text" className="form-control form-control-solid" name="note" />
-
-                                                    </div>
-                                                    <div className="col-md-6">
-
-                                                        <label className="required fw-semibold fs-6 mb-2">Deposit Amount</label>
-
-
-                                                        <input type="text" className="form-control form-control-solid" name="deposit_amount" />
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="fv-row mb-7">
-
-                                                <label className="required fw-semibold fs-6 mb-2">Deposit Type</label>
-
-
-
-                                                <Select2Input className="form-select form-select-solid" data-control="select2"
-                                                    aria-label="Select example" data-dropdown-parent="#kt_modal_add_payment" data-placeholder='Select Type'>
-                                                    <option defaultValue=""></option>
-                                                    <option value="1">Test</option>
-                                                    <option value="2">Test1</option>
-                                                </Select2Input>
-
-                                            </div>
-                                        </div>
-
-
-                                        <div className="text-end pt-15">
-                                            <button type="reset" className="btn btn-light me-3" data-bs-dismiss="modal">Discard</button>
-                                            <button type="submit" className="btn btn-primary" data-kt-users-modal-action="submit">
-                                                <span className="indicator-label">Submit</span>
-                                            </button>
-                                        </div>
-
-                                    </form>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                    </div>
+                    <AddPaymentModal options={options} />
                     <div className="modal fade" id="kt_modal_view_invoice" tabIndex="-1" aria-hidden="true">
 
                         <div className="modal-dialog modal-dialog-centered mw-650px">
@@ -1696,7 +1467,7 @@ export default function PaymentHistory({ auth }) {
                                                 <div className="d-flex flex-stack pb-10">
 
                                                     <a href="#">
-                                                        <img alt="Logo" src="/assets/media/logos/logo.svg" className="h-70px" />
+                                                        <img alt="Logo" src={images.logo} className="h-70px" />
                                                         <br />Molar Dental Clinic
                                                     </a>
 

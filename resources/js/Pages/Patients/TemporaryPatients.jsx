@@ -7,17 +7,6 @@ export default function TemporaryPatients({ auth }) {
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Temporary Patients</h2>} >
             <Head title="Temporary Patients" />
             <>
-                {/* begin::Image placeholder */}
-                <style>{`
-                    .image-input-placeholder {
-                        background - image: url('assets/media/svg/files/blank-image.svg');
-                    }
-
-                    [data-theme="dark"] .image-input-placeholder {
-                        background - image: url('assets/media/svg/files/blank-image-dark.svg');
-                }`}
-                </style>
-                {/* end::Image placeholder */}
                 <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
                     {/* begin::Content wrapper */}
                     <div className="d-flex flex-column flex-column-fluid">
@@ -261,7 +250,7 @@ export default function TemporaryPatients({ auth }) {
                                                                             data-kt-image-input="true">
                                                                             {/* begin::Preview existing avatar */}
                                                                             <div className="image-input-wrapper w-125px h-125px"
-                                                                                style={{backgroundImage: "url('/assets/media/avatars/300-6.jpg')"}}>
+                                                                                style={{backgroundImage: "url('../../../assets/media/avatars/300-6.jpg')"}}>
                                                                             </div>
                                                                             {/* end::Preview existing avatar */}
                                                                             {/* begin::Label */}

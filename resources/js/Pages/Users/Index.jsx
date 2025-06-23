@@ -1,11 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import FlatpickrInput from '@/Components/FlatpickrInput';
-import CalendarApp from '@/Components/CalendarApp';
 import Select2Input from '@/Components/Select2Input';
 import DataTable from '@/Components/DataTable';
 import { useEffect, useRef, useState } from 'react';
-
+import images from '@/Misc/image_map';
 export default function Index({ auth }) {
     const { users, query } = usePage().props;
     const filtersFormRef = useRef(null);
@@ -121,7 +119,7 @@ export default function Index({ auth }) {
                     <div className="d-flex align-items-center">
                         <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                             <div className="symbol-label">
-                                <img src={user.avatar_url || 'assets/media/avatars/blank.png'} alt={user.name} className="w-100" />
+                                <img src={user.avatar_url || images.blank_avatar} alt={user.name} className="w-100" />
                             </div>
                         </div>
                         <div className="d-flex flex-column">
@@ -545,7 +543,7 @@ export default function Index({ auth }) {
                                                                             data-kt-image-input="true">
 
                                                                             <div className="image-input-wrapper w-125px h-125px"
-                                                                                style={{ backgroundImage: "url('assets/media/avatars/300-6.jpg')" }} >
+                                                                                style={{ backgroundImage: `url(${images.avatar_300_6})` }} >
                                                                             </div>
 
 
@@ -860,7 +858,7 @@ export default function Index({ auth }) {
 
                                                                                     <div className="image-input-wrapper w-125px h-125px"
                                                                                         style={{
-                                                                                            backgroundImage: "url('/assets/media/avatars/300-6.jpg')",
+                                                                                            backgroundImage: "url('../../../assets/media/avatars/300-6.jpg')",
                                                                                         }}>
                                                                                     </div>
 

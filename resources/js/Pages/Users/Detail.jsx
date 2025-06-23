@@ -69,7 +69,7 @@ export default function Detail ({ auth }) {
                                                 <div className="d-flex flex-center flex-column py-5">
 
                                                     <div className="symbol symbol-100px symbol-circle mb-7">
-                                                        <img src="/assets/media/avatars/300-6.jpg" alt="image" />
+                                                        <img src={images.avatar_300_6} alt="image" />
                                                     </div>
 
 
@@ -2094,7 +2094,7 @@ export default function Detail ({ auth }) {
                                                                         data-kt-image-input="true">
 
                                                                         <div className="image-input-wrapper w-125px h-125px"
-                                                                            style={{backgroundImage: "url('/assets/media/avatars/300-6.jpg')"}} >
+                                                                            style={{backgroundImage: "url('../../../assets/media/avatars/300-6.jpg')"}} >
                                                                         </div>
 
 

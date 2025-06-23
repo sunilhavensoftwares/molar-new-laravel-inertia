@@ -1,5 +1,6 @@
 import { Head, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import images from "@/Misc/image_map";
 export default function Tooths({ auth }) {
     const { patient } = usePage().props;
     return (
@@ -347,7 +348,7 @@ export default function Tooths({ auth }) {
                                                         {/* begin::Status= */}
                                                         <td>
                                                             <div className="symbol symbol-800px">
-                                                                <img src="/assets/media/other/teeth.png" className="rounded mw-40" alt="4645646" />
+                                                                <img src={images.teeth} className="rounded mw-40" alt="4645646" />
                                                             </div>
                                                         </td>
                                                         {/* end::Status= */}
@@ -402,7 +403,7 @@ export default function Tooths({ auth }) {
                                                         {/* begin::Status= */}
                                                         <td>
                                                             <div className="symbol symbol-800px">
-                                                                <img src="/assets/media/other/teeth.png" className="rounded mw-40" alt="4645646" />
+                                                                <img src={images.teeth} className="rounded mw-40" alt="4645646" />
                                                             </div>
                                                         </td>
                                                         {/* end::Status= */}
@@ -457,7 +458,7 @@ export default function Tooths({ auth }) {
                                                         {/* begin::Status= */}
                                                         <td>
                                                             <div className="symbol symbol-800px">
-                                                                <img src="/assets/media/other/teeth.png" className="rounded mw-40" alt="4645646" />
+                                                                <img src={images.teeth} className="rounded mw-40" alt="4645646" />
                                                             </div>
                                                         </td>
                                                         {/* end::Status= */}

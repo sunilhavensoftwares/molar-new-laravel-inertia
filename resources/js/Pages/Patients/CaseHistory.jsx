@@ -11,18 +11,7 @@ export default function CaseHistory({ auth }) {
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">patients</h2>} >
             <Head title="patients" />
             <>
-                <style>{`
-                .image-input-placeholder {
-                    backgroundImage: "url('assets/media/svg/files/blank-image.svg')";
-                    }
-
-                [data-theme="dark"] .image-input-placeholder {
-                    backgroundImage: "url('assets/media/svg/files/blank-image-dark.svg')";
-                }`
-                }
-                </style>
-
-                <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
+                   <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
 
                     <div className="d-flex flex-column flex-column-fluid">
 

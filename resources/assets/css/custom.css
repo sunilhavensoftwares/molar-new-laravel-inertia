@@ -1,0 +1,16 @@
+body {
+    zoom: 90%;
+}
+.modal-backdrop {
+    width: 100% !important;
+    height: 100% !important;
+}
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+#kt_app_sidebar_menu_wrapper{
+    height: 100vh;
+     overflow-y: auto;
+}

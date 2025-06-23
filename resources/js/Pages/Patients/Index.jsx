@@ -1,12 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import FlatpickrInput from '@/Components/FlatpickrInput';
-import CalendarApp from '@/Components/CalendarApp';
 import Select2Input from '@/Components/Select2Input';
 import DataTable from '@/Components/DataTable';
 import { useEffect, useRef, useState } from 'react';
-import TextInput from '@/Components/TextInput';
-
+import images from '@/Misc/image_map';
 export default function Index({ auth }) {
     const { patients, query, routeUrl } = usePage().props;
     const filtersFormRef = useRef(null);
@@ -134,7 +131,7 @@ export default function Index({ auth }) {
                     <div className="d-flex align-items-center">
                         <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                             <div className="symbol-label">
-                                <img src={patient.img_url || 'assets/media/avatars/blank.png'} alt={patient.name} className="w-100" />
+                                <img src={patient.img_url || images.blank_avatar } alt={patient.name} className="w-100" />
                             </div>
                         </div>
                         <div className="d-flex flex-column">
@@ -201,15 +198,6 @@ export default function Index({ auth }) {
         >
             <Head title="patients" />
             <>
-                <style> {`
-                    .image-input-placeholder {
-                        backgroundImage: "url('assets/media/svg/files/blank-image.svg')";
-                    }
-
-                    [data-theme="dark"] .image-input-placeholder {
-                        backgroundImage: "url('assets/media/svg/files/blank-image-dark.svg')";
-                    }
-                `}</style>
                 <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
 
                     <div className="d-flex flex-column flex-column-fluid">

@@ -2,6 +2,7 @@ import Select2Input from '@/Components/Select2Input';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
+import images from '@/Misc/image_map';
 export default function TimeLine({ auth }) {
     const { patient } = usePage().props;
     return (
@@ -238,7 +239,7 @@ export default function TimeLine({ auth }) {
 
                                                                                 <div className="symbol symbol-circle symbol-60px">
                                                                                     <img alt="Doctor" className="me-3"
-                                                                                        src="/assets/media/avatars/300-1.jpg" />
+                                                                                        src={images.avatar_300_1} />
                                                                                 </div>
 
 
@@ -428,7 +429,7 @@ export default function TimeLine({ auth }) {
                                                                             className="d-flex align-items-center border border-dashed border-gray-300 rounded min-w-450px px-7 py-3 mb-5">
                                                                             <div className="min-w-175px pe-2">
                                                                                 <div className="symbol symbol-60px mb-5">
-                                                                                    <img src="/assets/media/svg/misc/pdf.svg"
+                                                                                    <img src={images.pdf}
                                                                                         className="theme-light-show" alt="" />
                                                                                 </div>
                                                                             </div>

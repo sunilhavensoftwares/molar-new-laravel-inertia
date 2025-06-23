@@ -1,12 +1,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import FlatpickrInput from '@/Components/FlatpickrInput';
-import CalendarApp from '@/Components/CalendarApp';
-import Select2Input from '@/Components/Select2Input';
 import DataTable from '@/Components/DataTable';
 import { useEffect, useRef, useState } from 'react';
 import toastr from '@/Misc/toastr';
-
+import images from '@/Misc/image_map';
 export default function Index({ auth }) {
     const { doctors, query, routeUrl } = usePage().props;
     const filtersFormRef = useRef(null);
@@ -134,7 +132,7 @@ export default function Index({ auth }) {
                     <div className="d-flex align-items-center">
                         <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                             <div className="symbol-label">
-                                <img src={doctor.image_url || 'assets/media/avatars/blank.png'} alt={doctor.name} className="w-100" />
+                                <img src={doctor.image_url || images.blank_avatar } alt={doctor.name} className="w-100" />
                             </div>
                         </div>
                         <div className="d-flex flex-column">
@@ -218,16 +216,6 @@ export default function Index({ auth }) {
             <Head title="doctors" />
             <>
                 <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
-                    <style>{`
-                                    .image-input-placeholder {
-                                        backgroundImage: "url('assets/media/svg/files/blank-image.svg')";
-                                    }
-
-                                    [data-theme="dark"] .image-input-placeholder {
-                                        backgroundImage: "url('assets/media/svg/files/blank-image-dark.svg')";
-                                    }
-                                    `}
-                    </style>
                     <div className="d-flex flex-column flex-column-fluid">
 
                         <div id="kt_app_toolbar" className="app-toolbar py-3 py-lg-6">
@@ -538,7 +526,7 @@ export default function Index({ auth }) {
                                                                         <div className="image-input image-input-outline image-input-placeholder"
                                                                             data-kt-image-input="true">
 
-                                                                            <div className="image-input-wrapper w-125px h-125px" style={{ backgroundImage: `url('assets/media/avatars/300-6.jpg')` }} >
+                                                                            <div className="image-input-wrapper w-125px h-125px" style={{ backgroundImage: `url(${images.avatar_300_6})` }} >
                                                                             </div>
 
 
@@ -754,7 +742,7 @@ export default function Index({ auth }) {
                                                     data-kt-image-input="true">
 
                                                     <div className="image-input-wrapper w-125px h-125px"
-                                                        style={{ backgroundImage: `url('assets/media/avatars/300-6.jpg')` }} >
+                                                        style={{ backgroundImage: `url(${images.avatar_300_6})` }} >
                                                     </div>
 
 

@@ -1,5 +1,5 @@
 import { Link, usePage } from "@inertiajs/react";
-
+import images from '@/Misc/image_map'
 export default function Sidebar({ patient = '' }) {
     const { url } = usePage();
     const currentPath = url.split('?')[0];
@@ -19,13 +19,13 @@ export default function Sidebar({ patient = '' }) {
                     <div className="d-flex flex-column text-center mb-9 px-9">
 
                         <div className="symbol symbol-80px symbol-lg-150px mb-4">
-                            <img src="/assets/media/avatars/300-1.jpg" className="" alt="" />
+                            <img src={images.avatar_300_1} className="" alt="" />
                         </div>
 
 
                         <div className="text-center">
 
-                            <Link href="#"
+                            <Link preserveScroll href="#"
                                 className="text-gray-800 fw-bold text-hover-primary fs-4">John Smith</Link>
 
 
@@ -83,7 +83,7 @@ export default function Sidebar({ patient = '' }) {
                         <ul className="nav nav-pills nav-pills-custom flex-column border-transparent fs-5 fw-bold">
 
                             <li className="nav-item mt-5">
-                                <Link className={getClasses(`/patients/patient-detail/${patient.id}`)}
+                                <Link preserveScroll className={getClasses(`/patients/patient-detail/${patient.id}`)}
                                     href={`/patients/patient-detail/${patient.id}`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -107,7 +107,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/documents`)}
+                                <Link preserveScroll className={getClasses(`/patients/patient-detail/${patient.id}/documents`)}
                                     href={`/patients/patient-detail/${patient.id}/documents`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -129,7 +129,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/case-history`)}
+                                <Link preserveScroll className={getClasses(`/patients/patient-detail/${patient.id}/case-history`)}
                                     href={`/patients/patient-detail/${patient.id}/case-history`}>
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -154,7 +154,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/prescription`)}
+                                <Link preserveScroll className={getClasses(`/patients/patient-detail/${patient.id}/prescription`)}
                                     href={`/patients/patient-detail/${patient.id}/prescription`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -178,7 +178,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/timeline`)}
+                                <Link preserveScroll className={getClasses(`/patients/patient-detail/${patient.id}/timeline`)}
                                     href={`/patients/patient-detail/${patient.id}/timeline`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -202,7 +202,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/lab`)}
+                                <Link preserveScroll className={getClasses(`/patients/patient-detail/${patient.id}/lab`)}
                                     href={`/patients/patient-detail/${patient.id}/lab`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">
@@ -226,7 +226,7 @@ export default function Sidebar({ patient = '' }) {
 
 
                             <li className="nav-item mt-5">
-                                <Link className={getClasses(`/patients/patient-detail/${patient.id}/payment-history`)}
+                                <Link preserveScroll className={getClasses(`/patients/patient-detail/${patient.id}/payment-history`)}
                                     href={`/patients/patient-detail/${patient.id}/payment-history`} >
 
                                     <span className="svg-icon svg-icon-3 svg-icon-muted me-3">

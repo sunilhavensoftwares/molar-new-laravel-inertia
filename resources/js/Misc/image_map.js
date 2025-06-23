@@ -1,0 +1,14 @@
+import blank_image from '@assets/media/svg/files/blank-image.svg';
+import blank_image_dark from '@assets/media/svg/files/blank-image-dark.svg';
+import blank_avatar from '@assets/media/avatars/blank.png';
+import avatar_300_1 from '@assets/media/avatars/300-1.jpg';
+import avatar_300_6 from '@assets/media/avatars/300-6.jpg';
+import implant from '@assets/media/other/implant.jpg';
+import rct from '@assets/media/other/rct.jpeg';
+import teeth from '@assets/media/other/teeth.png';
+import pdf from '@assets/media/svg/misc/pdf.svg';
+import doc_icon from '@assets/media/svg/misc/doc.svg';
+import logo from '@assets/media/logos/logo.svg';
+import wave_bg_red from '@assets/media/svg/shapes/wave-bg-red.svg';
+import icon_pv4 from '@assets/media/email/icon-positive-vote-4.svg';
+export default {blank_image,blank_image_dark,blank_avatar,avatar_300_1,avatar_300_6,implant,rct,teeth,pdf,doc_icon,logo,wave_bg_red,icon_pv4};

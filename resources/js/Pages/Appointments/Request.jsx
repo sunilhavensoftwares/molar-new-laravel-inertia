@@ -3,23 +3,12 @@ import Select2Input from "@/Components/Select2Input"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import { AddAppointmentModal } from "@/Modals/AddAppointmentModal"
 import { Head } from "@inertiajs/react"
+import images from '@/Misc/image_map';
 export default function Request ({ auth })  {
     return (
         <AuthenticatedLayout user={auth} header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Requested Appointments</h2>}>
             <Head title="Requested Appointments" />
             <>
-                {/* begin::Image placeholder*/}
-                <style>
-                    {`
-                .image-input-placeholder {
-                    background-image: url('/assets/media/svg/files/blank-image.svg');
-                }
-
-                [data-theme="dark"] .image-input-placeholder {
-                    background-image: url('/assets/media/svg/files/blank-image-dark.svg');
-                } `}
-                </style>
-                {/* end::Image placeholder*/}
                 {/* begin::Main*/}
                 <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
                     {/* begin::Content wrapper*/}
@@ -349,7 +338,7 @@ export default function Request ({ auth })  {
                                                                         data-kt-image-input="true">
                                                                         {/* begin::Preview existing avatar*/}
                                                                         <div className="image-input-wrapper w-125px h-125px"
-                                                                            style={{ backgroundImage: "url(assets/media/avatars/300-6.jpg)" }}>
+                                                                            style={{ backgroundImage: `url(${images.avatar_300_6})` }}>
                                                                         </div>
                                                                         {/* end::Preview existing avatar*/}
                                                                         {/* begin::Label*/}
@@ -992,7 +981,7 @@ export default function Request ({ auth })  {
                                                     data-kt-image-input="true">
                                                     {/* begin::Preview existing avatar*/}
                                                     <div className="image-input-wrapper w-125px h-125px"
-                                                        style={{ backgroundImage: "url(assets/media/avatars/300-6.jpg)" }}>
+                                                        style={{ backgroundImage: `url(${images.avatar_300_6})` }}>
                                                     </div>
                                                     {/* end::Preview existing avatar*/}
                                                     {/* begin::Label*/}
@@ -1168,7 +1157,7 @@ export default function Request ({ auth })  {
                                                     data-kt-image-input="true">
                                                     {/* begin::Preview existing avatar*/}
                                                     <div className="image-input-wrapper w-125px h-125px"
-                                                        style={{ backgroundImage: "url(assets/media/avatars/300-6.jpg)" }}>
+                                                        style={{ backgroundImage: `url(${images.avatar_300_6})` }}>
                                                     </div>
                                                     {/* end::Preview existing avatar*/}
                                                     {/* begin::Label*/}

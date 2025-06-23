@@ -1,4 +1,3 @@
-import React from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Select2Input from '@/Components/Select2Input';

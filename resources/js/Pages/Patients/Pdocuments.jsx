@@ -1,6 +1,7 @@
 import { Head, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Select2Input from "@/Components/Select2Input";
+import images from '@/Misc/image_map';
 export default function Pdocuments({ auth }) {
     const { patient } = usePage().props;
     return (
@@ -406,7 +407,7 @@ export default function Pdocuments({ auth }) {
                                                             <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                 <a href="patient/detail.php">
                                                                     <div className="symbol-label">
-                                                                        <img src="/assets/media/avatars/300-6.jpg" alt="Emma Smith"
+                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
                                                                             className="w-100" />
                                                                     </div>
                                                                 </a>
@@ -432,7 +433,7 @@ export default function Pdocuments({ auth }) {
 
                                                         <td>
                                                             <div className="symbol symbol-80px mb-5">
-                                                                <img src="/assets/media/svg/misc/pdf.svg" className="theme-light-show"
+                                                                <img src={images.pdf} className="theme-light-show"
                                                                     alt="" />
                                                             </div>
                                                         </td>
@@ -482,7 +483,7 @@ export default function Pdocuments({ auth }) {
                                                             <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                 <a href="patient/detail.php">
                                                                     <div className="symbol-label">
-                                                                        <img src="/assets/media/avatars/300-6.jpg" alt="Emma Smith"
+                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
                                                                             className="w-100" />
                                                                     </div>
                                                                 </a>
@@ -507,7 +508,7 @@ export default function Pdocuments({ auth }) {
                                                         {/*end::Role= */}
                                                         <td>
                                                             <div className="symbol symbol-80px mb-5">
-                                                                <img src="/assets/media/svg/misc/doc.svg" className="theme-light-show"
+                                                                <img src={images.pdf} className="theme-light-show"
                                                                     alt="" />
                                                             </div>
                                                         </td>
@@ -557,7 +558,7 @@ export default function Pdocuments({ auth }) {
                                                             <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                 <a href="patient/detail.php">
                                                                     <div className="symbol-label">
-                                                                        <img src="/assets/media/avatars/300-6.jpg" alt="Emma Smith"
+                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
                                                                             className="w-100" />
                                                                     </div>
                                                                 </a>
@@ -582,7 +583,7 @@ export default function Pdocuments({ auth }) {
 
                                                         <td>
                                                             <div className="symbol symbol-80px mb-5">
-                                                                <img src="/assets/media/svg/misc/pdf.svg" className="theme-light-show"
+                                                                <img src={images.pdf} className="theme-light-show"
                                                                     alt="" />
                                                             </div>
                                                         </td>
@@ -632,7 +633,7 @@ export default function Pdocuments({ auth }) {
                                                             <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                 <a href="patient/detail.php">
                                                                     <div className="symbol-label">
-                                                                        <img src="/assets/media/avatars/300-6.jpg" alt="Emma Smith"
+                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
                                                                             className="w-100" />
                                                                     </div>
                                                                 </a>
@@ -658,7 +659,7 @@ export default function Pdocuments({ auth }) {
 
                                                         <td>
                                                             <div className="symbol symbol-80px mb-5">
-                                                                <img src="/assets/media/svg/misc/pdf.svg" className="theme-light-show"
+                                                                <img src={images.pdf} className="theme-light-show"
                                                                     alt="" />
                                                             </div>
                                                         </td>
@@ -707,7 +708,7 @@ export default function Pdocuments({ auth }) {
                                                             <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                 <a href="patient/detail.php">
                                                                     <div className="symbol-label">
-                                                                        <img src="/assets/media/avatars/300-6.jpg" alt="Emma Smith"
+                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
                                                                             className="w-100" />
                                                                     </div>
                                                                 </a>
@@ -732,7 +733,7 @@ export default function Pdocuments({ auth }) {
                                                         {/*end::Role= */}
                                                         <td>
                                                             <div className="symbol symbol-80px mb-5">
-                                                                <img src="/assets/media/svg/misc/doc.svg" className="theme-light-show"
+                                                                <img src={images.doc_icon} className="theme-light-show"
                                                                     alt="" />
                                                             </div>
                                                         </td>
@@ -782,7 +783,7 @@ export default function Pdocuments({ auth }) {
                                                             <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
                                                                 <a href="patient/detail.php">
                                                                     <div className="symbol-label">
-                                                                        <img src="/assets/media/avatars/300-6.jpg" alt="Emma Smith"
+                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
                                                                             className="w-100" />
                                                                     </div>
                                                                 </a>
@@ -807,7 +808,7 @@ export default function Pdocuments({ auth }) {
                                                         {/*end::Role= */}
                                                         <td>
                                                             <div className="symbol symbol-80px mb-5">
-                                                                <img src="/assets/media/avatars/300-1.jpg" className="theme-light-show"
+                                                                <img src={images.avatar_300_1} className="theme-light-show"
                                                                     alt="" />
                                                             </div>
                                                         </td>

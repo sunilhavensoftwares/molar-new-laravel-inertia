@@ -23,7 +23,7 @@ export default function ForgotPassword({ status }) {
                 <div className="d-flex flex-center flex-lg-start flex-column">
 
                     <a href="#" className="mb-7">
-                        <img alt="Logo" src="assets/media/logos/logo-white.png" className="h-150px h-md-100 " />
+                        <img alt="Logo" src="@assets/media/logos/logo-white.png" className="h-150px h-md-100 " />
                     </a>
 
                 </div>

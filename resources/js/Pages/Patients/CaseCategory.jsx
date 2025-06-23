@@ -1,5 +1,7 @@
 import { Head, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import images from "@/Misc/image_map";
+
 export default function CaseCategory({ auth }) {
     const { patient } = usePage().props;
     return (
@@ -332,7 +334,7 @@ export default function CaseCategory({ auth }) {
                                                         {/* begin::Status= */}
                                                         <td>
                                                             <div className="symbol symbol-60px">
-                                                                <img src="/assets/media/other/rct.jpeg" className="rounded mw-40" alt="4645646" />
+                                                                <img src={images.rct} className="rounded mw-40" alt="4645646" />
                                                             </div>
                                                         </td>
                                                         {/* end::Status= */}
@@ -386,7 +388,7 @@ export default function CaseCategory({ auth }) {
                                                         {/* begin::Status= */}
                                                         <td>
                                                             <div className="symbol symbol-60px">
-                                                                <img src="/assets/media/other/implant.jpg" className="rounded mw-40" alt="4645646" />
+                                                                <img src={images.implant} className="rounded mw-40" alt="4645646" />
                                                             </div>
                                                         </td>
                                                         {/* end::Status= */}
