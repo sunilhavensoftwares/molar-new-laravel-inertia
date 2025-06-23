@@ -3,7 +3,7 @@ import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
-
+import images from '@/Misc/image_map';
 export default function ForgotPassword({ status }) {
     const { data, setData, post, processing, errors } = useForm({
         email: '',
@@ -23,7 +23,7 @@ export default function ForgotPassword({ status }) {
                 <div className="d-flex flex-center flex-lg-start flex-column">
 
                     <a href="#" className="mb-7">
-                        <img alt="Logo" src="@assets/media/logos/logo-white.png" className="h-150px h-md-100 " />
+                        <img alt="Logo" src={images.logo_white} className="h-150px h-md-100 " />
                     </a>
 
                 </div>

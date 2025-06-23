@@ -6,7 +6,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
-import logo_white_image from '@assets/media/logos/logo-white.png';
+import images from '@/Misc/image_map';
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
@@ -59,7 +59,7 @@ export default function Login({ status, canResetPassword }) {
                 <div className="d-flex flex-center flex-lg-start flex-column">
 
                     <a href="#" className="mb-7">
-                        <img alt="Logo" src={logo_white_image} className="h-150px h-md-100 " />
+                        <img alt="Logo" src={images.logo_white} className="h-150px h-md-100 " />
                     </a>
 
                 </div>

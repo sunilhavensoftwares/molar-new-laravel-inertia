@@ -14,10 +14,7 @@
         'resources/js/app.jsx',
         "resources/js/Pages/{$page['component']}.jsx",
         // You can import CSS in app.jsx as well, but OK to include here:
-        'resources/assets/plugins/global/plugins.bundle.css',
-        'resources/assets/css/style.bundle.css',
-        'resources/assets/css/custom.css',
-        'resources/assets/plugins/custom/fullcalendar/fullcalendar.bundle.css',
+        
     ])
 
     @routes

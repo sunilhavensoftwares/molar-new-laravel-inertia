@@ -11,4 +11,5 @@ import doc_icon from '@assets/media/svg/misc/doc.svg';
 import logo from '@assets/media/logos/logo.svg';
 import wave_bg_red from '@assets/media/svg/shapes/wave-bg-red.svg';
 import icon_pv4 from '@assets/media/email/icon-positive-vote-4.svg';
-export default {blank_image,blank_image_dark,blank_avatar,avatar_300_1,avatar_300_6,implant,rct,teeth,pdf,doc_icon,logo,wave_bg_red,icon_pv4};
+import logo_white from '@assets/media/logos/logo-white.png';
+export default {blank_image,blank_image_dark,blank_avatar,avatar_300_1,avatar_300_6,implant,rct,teeth,pdf,doc_icon,logo,wave_bg_red,icon_pv4,logo_white};
