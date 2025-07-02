@@ -1,39 +1,40 @@
+
 import { useEffect, useState } from 'react';
-// import ApplicationLogo from '@/Components/ApplicationLogo';
-// import Dropdown from '@/Components/Dropdown';
-// import NavLink from '@/Components/NavLink';
-// import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import useScript from '@/Hooks/useScript';
-import { Link, router } from '@inertiajs/react';
+import * as bootstrap from 'bootstrap';
+import * as Popper from '@popperjs/core';
+window.Popper = Popper;
+window.bootstrap = bootstrap; // If legacy code still expects it globally
 import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import Sidebar from '@/Components/Sidebar';
-import { useMetronicInit } from '../Misc/use_metronics_init';
 import './css/AuthenticatedLayout.css';
-import '@assets/js/widgets.bundle.js';
-import '@assets/js/custom/widgets.js';
-import '@assets/js/custom/apps/chat/chat.js';
-import '@assets/js/custom/utilities/modals/upgrade-plan.js';
-import '@assets/js/custom/utilities/modals/create-app.js';
-import '@assets/js/custom/utilities/modals/users-search.js';
-import header_logo from '@assets/media/logos/logo.svg';
-import blank_image from '@assets/media/svg/files/blank-image.svg';
-import blank_image_dark from '@assets/media/svg/files/blank-image-dark.svg';
+// import '@assets/js/widgets.bundle.js';
+// import '@assets/js/custom/widgets.js';
+// import '@assets/js/custom/apps/chat/chat.js';
+// import '@assets/js/custom/utilities/modals/upgrade-plan.js';
+// import '@assets/js/custom/utilities/modals/create-app.js';
+// import '@assets/js/custom/utilities/modals/users-search.js';
+import images from "@Misc/image_map";
+import { useMetronicInit } from '@/Misc/useMetronicInit';
 export default function Authenticated({ user, header, children, bodyClass = 'app-default' }) {
+const header_logo = images.logo;
+const blank_image = images.blank_image;
+const blank_image_dark = images.blank_image_dark;
+    // useEffect(() => {
+    //     const loadPlugins = async () => {
+    //         await import('@/metronic/globalPlugins.js');
+    //     };
+    //     loadPlugins();
+    // }, []);
     useMetronicInit();
     useEffect(() => {
         document.body.className = bodyClass;
     }, [bodyClass]);
     useEffect(() => {
-        const triggers = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        triggers.forEach(el => new window.bootstrap.Tooltip(el));
-
-        return () => {
-            triggers.forEach(el => {
-                const instance = window.bootstrap.Tooltip.getInstance(el);
-                if (instance) instance.dispose();
-            });
-        };
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach(el => {
+            new bootstrap.Tooltip(el);
+        });
     }, []);
     useEffect(() => {
         const onScroll = () => {
@@ -77,7 +78,7 @@ export default function Authenticated({ user, header, children, bodyClass = 'app
 
                 <div className="app-page flex-column flex-column-fluid" id="kt_app_page">
 
-                    <Header logo={header_logo} />
+                    <Header />
 
                     <div className="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
 

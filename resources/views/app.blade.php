@@ -7,7 +7,7 @@
 
     <!-- Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
-
+    <link rel="stylesheet" href="/plugins/select2/dist/css/select2.min.css" />
     <!-- Vite: React & Page JS + CSS -->
     @viteReactRefresh
     @vite([
@@ -35,10 +35,16 @@
     @inertia
 
     <!-- Load Metronic JS from public directory -->
-    <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+    <!-- <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script>
         window.$ = window.jQuery = jQuery;
-    </script>
-    <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
+    </script> -->
+    
+    <script src="{{asset('/plugins/jquery/dist/jquery.min.js')}}" ></script>
+    <script src="{{asset('/plugins/select2/dist/js/select2.full.min.js')}}"></script>
+    <script src="{{ asset('/assets/js/scripts.bundle.js') }}"></script>
+   
+
+
 </body>
 </html>

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-
+import ApexCharts from 'apexcharts';
+window.ApexCharts = ApexCharts; // For legacy code
 const IncomeExpenseChart = () => {
   const chartRef = useRef(null);
 

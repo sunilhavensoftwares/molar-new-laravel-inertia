@@ -7,6 +7,7 @@ import ThisMonthIncomeExpenseChart from '../../components/ThisMonthIncomeExpense
 import FlatpickrInput from '../../components/FlatpickrInput';
 import CalendarApp from '../../Components/CalendarApp';
 import Select2Input from '../../Components/Select2Input';
+
 export default function Dashboard({ auth }) {
     const { currentDate, years } = usePage().props;
     return (
@@ -453,8 +454,6 @@ export default function Dashboard({ auth }) {
                                                                                 {years && years.map((year) => (
                                                                                         <option defaultValue={year}  key={year}>{year}</option>
                                                                                 ))}
-
-
                                                                             </Select2Input>
                                                                         </div>
                                                                     </td>

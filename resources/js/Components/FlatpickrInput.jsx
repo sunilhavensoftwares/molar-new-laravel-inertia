@@ -1,11 +1,12 @@
 // components/FlatpickrInput.jsx
 import { useEffect, useRef } from "react";
-
+import Flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 const FlatpickrInput = ({ value, onChange, options = {}, name, className, placeholder }) => {
   const inputRef = useRef();
 
   useEffect(() => {
-    const instance = window.flatpickr(inputRef.current, {
+    const instance = Flatpickr(inputRef.current, {
        disableMobile: true, // 🚫 Prevent native mobile behavior
       ...options,
       defaultDate: value,

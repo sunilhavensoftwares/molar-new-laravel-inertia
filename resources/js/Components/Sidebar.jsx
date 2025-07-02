@@ -248,7 +248,7 @@ export default function Sidebar() {
 
 
                 <div className="menu-item">
-                    <SidebarLink title='Prescription' href="/prescription/index" faClass="fa-solid fa-stethoscope" />
+                    <SidebarLink title='Prescription' href="/prescription" faClass="fa-solid fa-stethoscope" />
                 </div>
 
 

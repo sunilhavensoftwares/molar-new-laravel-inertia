@@ -1,9 +1,18 @@
 import { Link } from "@inertiajs/react";
 import user_logo from '@assets/media/avatars/300-1.jpg';
-export default function Header({header_logo}) {
-
+import images from "@/Misc/image_map";
+export default function Header() {
+const header_logo = images.logo;
     return (
         <>
+            <style>{`
+                .logout-btn{
+                text-decoration: none;
+                width: 100%;
+                border: none;
+                background: none;
+                }`}
+            </style>
             <div id="kt_app_header" className="app-header">
 
                 <div className="app-container container-fluid d-flex align-items-stretch justify-content-between no-print"
@@ -112,7 +121,7 @@ export default function Header({header_logo}) {
                                     data-kt-menu="true">
 
                                     <div className="d-flex flex-column bgi-no-repeat rounded-top"
-                                        style={{ backgroundImage: 'url(/assets/media/misc/menu-header-bg.jpg)' }} >
+                                        style={{ backgroundImage: `url(${images.menu_header_bg})` }} >
 
                                         <h3 className="text-white fw-semibold px-9 mt-10 mb-6">Notifications
                                             <span className="fs-8 opacity-75 ps-3">24 reports</span>
@@ -803,8 +812,8 @@ export default function Header({header_logo}) {
                                         <Link
                                             href={route('logout')}
                                             method="post"
-                                            className="menu-link px-5"
-                                            as="a"
+                                            className="menu-link px-5 logout-btn"
+                                            as="button"
                                         >
                                             Log Out
                                         </Link>

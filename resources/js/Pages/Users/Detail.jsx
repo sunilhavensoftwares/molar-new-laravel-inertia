@@ -1,5 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import images from '@/Misc/image_map';
 export default function Detail ({ auth }) {
     return (
         <AuthenticatedLayout

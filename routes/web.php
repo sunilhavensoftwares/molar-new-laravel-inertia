@@ -7,6 +7,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScheduleController;
@@ -84,7 +85,7 @@ Route::middleware('auth')->group(function () {
             ->where('human_resource', 'nurse|pharmacist|laboratorist|accountant|receptionist')
             ->name('role');
     });
-    //appointments
+    //finance
     Route::prefix('/finance')->name('finance.')->group(function () {
         Route::get('payment', [FinanceController::class, 'payment'])->name('payment');
         Route::get('payment-category', [FinanceController::class, 'payment_category'])->name('payment_category');
@@ -92,6 +93,8 @@ Route::middleware('auth')->group(function () {
         Route::get('expense-category', [FinanceController::class, 'expense_category'])->name('expense_category');
         Route::get('diagnostic-type', [FinanceController::class, 'diagnostic_type'])->name('diagnostic_type');
     });
+     //prescription
+    Route::resource('prescription',PrescriptionController::class);
 });
 
 require __DIR__ . '/auth.php';

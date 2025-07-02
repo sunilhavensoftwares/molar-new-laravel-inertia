@@ -1,6 +1,6 @@
 toastr.options = {
     "closeButton": true,
     "progressBar": true,
-    "positionClass": "toastr-top-center",
+    "positionClass": "toastr-top-right",
 };
 export default toastr;
