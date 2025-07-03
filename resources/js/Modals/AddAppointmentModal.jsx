@@ -1,7 +1,7 @@
 import FlatpickrInput from "@/Components/FlatpickrInput"
 import Select2Input from "@/Components/Select2Input"
 
-export const AddAppointmentModal = () => {
+export default function AddAppointmentModal (){
     return (
         <div className="modal fade" id="modal_add_appointment" tabIndex="-1" aria-hidden="true">
 

@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\HumanResourceController;
+use App\Http\Controllers\LabController;
+use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\ProfileController;
@@ -93,8 +95,18 @@ Route::middleware('auth')->group(function () {
         Route::get('expense-category', [FinanceController::class, 'expense_category'])->name('expense_category');
         Route::get('diagnostic-type', [FinanceController::class, 'diagnostic_type'])->name('diagnostic_type');
     });
-     //prescription
-    Route::resource('prescription',PrescriptionController::class);
+    //prescription
+    Route::resource('prescription', PrescriptionController::class);
+    //lab
+    Route::prefix('/lab')->name('lab.')->group(function () {
+        Route::get('/report', [LabController::class, 'report'])->name('report');
+        Route::get('/report-templates', [LabController::class, 'report_templates'])->name('report_templates');
+    });
+    //medicine
+    Route::prefix('/medicine')->name('medicine.')->group(function () {
+        Route::get('/', [MedicineController::class, 'index'])->name('listing');
+        Route::get('/category', [MedicineController::class, 'category'])->name('category');
+    });
 });
 
 require __DIR__ . '/auth.php';

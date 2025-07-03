@@ -35,9 +35,9 @@ class PrescriptionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Prescription $prescription)
+    public function show()//Prescription $prescription)
     {
-        //
+         return Inertia::render('Prescription/Detail');
     }
 
     /**

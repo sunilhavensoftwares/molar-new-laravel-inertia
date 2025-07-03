@@ -1,7 +1,7 @@
 import FlatpickrInput from "@/Components/FlatpickrInput"
 import Select2Input from "@/Components/Select2Input"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
-import { AddAppointmentModal } from "@/Modals/AddAppointmentModal"
+import AddAppointmentModal from "@/Modals/AddAppointmentModal"
 import { Head } from "@inertiajs/react"
 export default function Index({ auth }) {
     return (

@@ -1,6 +1,6 @@
 import "@assets/css/multi-select.min.css";
 import JQueryMultiSelect from '@/Components/JQueryMultiSelect';
-export const AddPaymentModal = ({options}) => {
+export default function AddPaymentModal ({options}) {
     return (
         <div className="modal fade" id="kt_modal_add_payment" tabIndex="-1" aria-hidden="true">
 

@@ -1,10 +1,8 @@
 
 import './bootstrap';
-
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import MetronicPluginLoader from '@/metronic/MetronicPluginLoader';
 import '@assets/plugins/global/plugins.bundle.css';
 import '@assets/css/style.bundle.css';
 import '@assets/css/custom.css';
@@ -17,7 +15,6 @@ createInertiaApp({
 
         root.render(
             <>
-                <MetronicPluginLoader />
                 <App {...props} />
             </>
         );

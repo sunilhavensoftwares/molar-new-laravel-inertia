@@ -35,15 +35,14 @@
     @inertia
 
     <!-- Load Metronic JS from public directory -->
-    <!-- <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
-    <script>
-        window.$ = window.jQuery = jQuery;
-    </script> -->
+    <!-- <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script> -->
     
     <script src="{{asset('/plugins/jquery/dist/jquery.min.js')}}" ></script>
     <script src="{{asset('/plugins/select2/dist/js/select2.full.min.js')}}"></script>
     <script src="{{ asset('/assets/js/scripts.bundle.js') }}"></script>
-   
+    <script>
+        window.$ = window.jQuery = jQuery;
+    </script>
 
 
 </body>

@@ -2,7 +2,7 @@ import FlatpickrInput from "@/Components/FlatpickrInput"
 import JQueryMultiSelect from "@/Components/JQueryMultiSelect"
 import Select2Input from "@/Components/Select2Input"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
-import {AddPaymentModal} from "@/Modals/AddPaymentModal"
+import AddPaymentModal from "@/Modals/AddPaymentModal"
 import "../../../assets/css/multi-select.min.css";
 import { Head, usePage } from "@inertiajs/react"
 export default function Payment({ auth }) {

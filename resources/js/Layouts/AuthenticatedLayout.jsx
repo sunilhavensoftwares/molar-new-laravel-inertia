@@ -8,12 +8,6 @@ import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import Sidebar from '@/Components/Sidebar';
 import './css/AuthenticatedLayout.css';
-// import '@assets/js/widgets.bundle.js';
-// import '@assets/js/custom/widgets.js';
-// import '@assets/js/custom/apps/chat/chat.js';
-// import '@assets/js/custom/utilities/modals/upgrade-plan.js';
-// import '@assets/js/custom/utilities/modals/create-app.js';
-// import '@assets/js/custom/utilities/modals/users-search.js';
 import images from "@Misc/image_map";
 import { useMetronicInit } from '@/Misc/useMetronicInit';
 export default function Authenticated({ user, header, children, bodyClass = 'app-default' }) {

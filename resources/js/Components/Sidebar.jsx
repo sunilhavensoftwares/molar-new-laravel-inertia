@@ -265,7 +265,7 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['lab'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='All' href="/lab/index?tab=reports"/>
+                            <SidebarLink title='All' href={["/lab/report","/lab/report-templates"]}/>
                         </div>
                     </div>
 
@@ -285,8 +285,8 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['medicine'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='All' href="/medicine/index"/>
-                            <SidebarLink title='Medicine Category' href="/medicine/medicine-category"/>
+                            <SidebarLink title='All' href="/medicine"/>
+                            <SidebarLink title='Medicine Category' href="/medicine/category"/>
                         </div>
                     </div>
                 </div>
