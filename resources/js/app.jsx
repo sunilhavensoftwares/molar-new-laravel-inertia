@@ -3,6 +3,7 @@ import './bootstrap';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import PageLoader from '@/Components/PageLoader';
 import '@assets/plugins/global/plugins.bundle.css';
 import '@assets/css/style.bundle.css';
 import '@assets/css/custom.css';
@@ -14,9 +15,9 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <>
+            <PageLoader>
                 <App {...props} />
-            </>
+            </PageLoader>
         );
     },
     progress: {

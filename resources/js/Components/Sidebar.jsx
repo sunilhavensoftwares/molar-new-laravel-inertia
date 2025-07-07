@@ -305,29 +305,33 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['pharmacy'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='All' href="/pharmacy/index?tab=dashboard"/>
+                            <SidebarLink title='Dashboard' href="/pharmacy/dashboard"/>
+                            <SidebarLink title='Sales' href="/pharmacy/sales"/>
+                            <SidebarLink title='Expense' href="/pharmacy/expense"/>
+                            <SidebarLink title='Expense Categories' href="/pharmacy/expense-categories"/>
+                            <SidebarLink title='Pharmacy Report' href="/pharmacy/pharmacy-report"/>
                         </div>
-
-
                     </div>
 
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className={SidebarFunctions.getMenuClass(['report'], 'main')}>
+                <div data-kt-menu-trigger="click" className={SidebarFunctions.getMenuClass(['reports'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
                             <i className="fa-solid fa-file fs-3"></i>
                         </span>
-                        <span className="menu-title">Report</span>
+                        <span className="menu-title">Reports</span>
                         <span className="menu-arrow"></span>
                     </span>
 
 
-                    <div className={SidebarFunctions.getMenuClass(['report'], 'sub')}>
+                    <div className={SidebarFunctions.getMenuClass(['reports'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='All' href="/report/index?tab=financial-report"/>
+                            <SidebarLink title='Financial Report' href="/reports/financial-report"/>
+                            <SidebarLink title='Doctors Commission' href="/reports/doctors-commission"/>
+                            <SidebarLink title='User Activity Report' href="/reports/user-activity-report"/>
                         </div>
                     </div>
 
@@ -347,7 +351,7 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['email'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='Email List' href="/email/index"/>
+                            <SidebarLink title='Email List' href="/email/email-list"/>
                         </div>
                     </div>
 

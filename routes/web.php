@@ -4,6 +4,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\LabController;
@@ -14,6 +15,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PharmacyController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -106,6 +109,24 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/medicine')->name('medicine.')->group(function () {
         Route::get('/', [MedicineController::class, 'index'])->name('listing');
         Route::get('/category', [MedicineController::class, 'category'])->name('category');
+    });
+    //pharmacy
+    Route::prefix('/pharmacy')->name('pharmacy.')->group(function () {
+        Route::get('/dashboard', [PharmacyController::class, 'dashboard'])->name('dashboard');
+        Route::get('/sales', [PharmacyController::class, 'sales'])->name('sales');
+        Route::get('/expense', [PharmacyController::class, 'expense'])->name('expense');
+        Route::get('/expense-categories', [PharmacyController::class, 'expense_categories'])->name('expense_categories');
+        Route::get('/pharmacy-report', [PharmacyController::class, 'pharmacy_report'])->name('pharmacy_report');
+    });
+    //reports
+    Route::prefix('/reports')->name('reports.')->group(function () {
+        Route::get('/financial-report', [ReportController::class, 'financial_report'])->name('financial_report');
+        Route::get('/doctors-commission', [ReportController::class, 'doctors_commission'])->name('doctors_commission');
+        Route::get('/user-activity-report', [ReportController::class, 'user_activity_report'])->name('user_activity_report');
+    });
+    //email
+    Route::prefix('/email')->name('email.')->group(function () {
+        Route::get('/email-list', [EmailController::class, 'email_list'])->name('email_list');
     });
 });
 
