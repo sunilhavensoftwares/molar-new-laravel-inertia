@@ -10,17 +10,18 @@ import Sidebar from '@/Components/Sidebar';
 import './css/AuthenticatedLayout.css';
 import images from "@Misc/image_map";
 import { useMetronicInit } from '@/Misc/useMetronicInit';
+import { usePage } from '@inertiajs/react';
+import cleanupDrawerOverlays from '@/Misc/cleanupDrawer';
+
 export default function Authenticated({ user, header, children, bodyClass = 'app-default' }) {
+const page = usePage();
 const header_logo = images.logo;
 const blank_image = images.blank_image;
 const blank_image_dark = images.blank_image_dark;
-    // useEffect(() => {
-    //     const loadPlugins = async () => {
-    //         await import('@/metronic/globalPlugins.js');
-    //     };
-    //     loadPlugins();
-    // }, []);
     useMetronicInit();
+    cleanupDrawerOverlays();
+  
+
     useEffect(() => {
         document.body.className = bodyClass;
     }, [bodyClass]);

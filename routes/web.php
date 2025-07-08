@@ -17,6 +17,8 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SmsController;
+use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -127,6 +129,20 @@ Route::middleware('auth')->group(function () {
     //email
     Route::prefix('/email')->name('email.')->group(function () {
         Route::get('/email-list', [EmailController::class, 'email_list'])->name('email_list');
+    });
+    //sms
+    Route::prefix('/sms')->name('sms.')->group(function () {
+        Route::get('new-sms', [SmsController::class, 'new_sms'])->name('new_sms');
+        Route::get('sms-settings', [SmsController::class, 'sms_settings'])->name('sms_settings');
+        Route::get('whatsapp-settings', [SmsController::class, 'whatsapp_settings'])->name('whatsapp_settings');
+        Route::get('sms-templates', [SmsController::class, 'sms_templates'])->name('sms_templates');
+        Route::get('whatsapp-reply', [SmsController::class, 'whatsapp_reply'])->name('whatsapp_reply');
+    });
+     //website
+    Route::prefix('/website')->name('website.')->group(function () {
+        Route::get('slides', [WebsiteController::class, 'slides'])->name('slides');
+        Route::get('services', [WebsiteController::class, 'services'])->name('services');
+        Route::get('featured-doctors', [WebsiteController::class, 'featured_doctors'])->name('featured_doctors');
     });
 });
 

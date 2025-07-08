@@ -3,28 +3,36 @@ import { useEffect, useState } from "react";
 import SidebarFunctions from './Common/SidebarFunctions'
 import { SidebarLink } from './Common/SidebarLink';
 export default function Sidebar() {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+//     const [sidebarOpen, setSidebarOpen] = useState(true);
 
-    useEffect(() => {
-        const sidebarEl = document.getElementById('kt_app_sidebar_menu');
-        if (!sidebarEl) return;
+//    useEffect(() => {
+//     const sidebarEl = document.getElementById('kt_app_sidebar_menu');
+//     if (!sidebarEl) return;
 
-        // Defensive: check if KTAppSidebar exists
-        if (window.KTAppSidebar && typeof window.KTAppSidebar.getInstance === 'function') {
-            let sidebar = window.KTAppSidebar.getInstance(sidebarEl);
+//     // Defensive: Initialize once
+//     let sidebar = window.KTAppSidebar?.getInstance?.(sidebarEl);
+//     if (!sidebar) {
+//         sidebar = new window.KTAppSidebar(sidebarEl);
+//     }
 
-            // If instance does not exist yet, create it
-            if (!sidebar) {
-                sidebar = new window.KTAppSidebar(sidebarEl);
-            }
+//     // Clean up duplicate overlays if any
+//     const overlays = document.querySelectorAll('.drawer-overlay');
+//     overlays.forEach((overlay, index) => {
+//         if (index > 0) overlay.remove(); // Keep only the first one
+//     });
 
-            if (sidebarOpen) {
-                sidebar.show();
-            } else {
-                sidebar.hide();
-            }
-        }
-    }, [sidebarOpen]);
+//     // Show or hide the sidebar
+//     if (sidebarOpen) {
+//         sidebar.show();
+//     } else {
+//         sidebar.hide();
+//     }
+
+//     return () => {
+//         // Optional: sidebar.dispose(); if needed
+//     };
+// }, [sidebarOpen]);
+
     return (
         <>
             <div className="menu menu-column menu-rounded menu-sub-indention px-3" id="#kt_app_sidebar_menu"
@@ -374,9 +382,9 @@ export default function Sidebar() {
 
                         <div className="menu-item">
                             <SidebarLink title='Write Sms' href="/sms/new-sms"/>
-                            <SidebarLink title='Sms Settings' href="/sms/sms-settings"/>
+                            <SidebarLink title='Sms Settings' href={["/sms/sms-settings","/sms/whatsapp-settings"]}/>
                             <SidebarLink title='SMS Template' href="/sms/sms-templates"/>
-                            <SidebarLink title='Whatsapp Reply' href="/sms/whatsapp"/>
+                            <SidebarLink title='Whatsapp Reply' href="/sms/whatsapp-reply"/>
                         </div>
 
 
@@ -400,7 +408,7 @@ export default function Sidebar() {
 
 
                         <div className="menu-item">
-                            <SidebarLink title='All' href="/website/index?tab=slides"/>
+                            <SidebarLink title='All' href={["/website/slides","/website/services","/website/featured-doctors"]}/>
                         </div>
 
 
