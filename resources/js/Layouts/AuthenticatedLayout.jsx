@@ -8,10 +8,12 @@ import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import Sidebar from '@/Components/Sidebar';
 import './css/AuthenticatedLayout.css';
+import '../../css/drawer-overlay-fix.css';
 import images from "@Misc/image_map";
 import { useMetronicInit } from '@/Misc/useMetronicInit';
 import { usePage } from '@inertiajs/react';
 import cleanupDrawerOverlays from '@/Misc/cleanupDrawer';
+import drawerOverlayManager from '@/Misc/drawerOverlayManager';
 
 export default function Authenticated({ user, header, children, bodyClass = 'app-default' }) {
 const page = usePage();
@@ -20,6 +22,15 @@ const blank_image = images.blank_image;
 const blank_image_dark = images.blank_image_dark;
     useMetronicInit();
     cleanupDrawerOverlays();
+    
+    // Initialize drawer overlay manager
+    useEffect(() => {
+        drawerOverlayManager.init();
+        
+        return () => {
+            drawerOverlayManager.destroy();
+        };
+    }, []);
   
 
     useEffect(() => {

@@ -1,0 +1,57 @@
+/* Drawer Overlay Fix - Prevent Multiple Overlays */
+
+/* Ensure only one drawer overlay exists at a time */
+.drawer-overlay {
+    pointer-events: auto;
+    z-index: 1049;
+}
+
+/* Hide duplicate overlays if they somehow exist */
+.drawer-overlay:not(:last-of-type) {
+    display: none !important;
+}
+
+/* Enhanced mobile drawer overlay handling */
+@media (max-width: 991.98px) {
+    .drawer-overlay {
+        background-color: rgba(0, 0, 0, 0.25);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1049;
+    }
+    
+    /* Ensure smooth transitions */
+    .drawer-overlay.fade-in {
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+    
+    .drawer-overlay.fade-out {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    /* Prevent body scroll when drawer is open */
+    body.drawer-open {
+        overflow: hidden;
+    }
+}
+
+/* Additional fix for app-sidebar drawer in mobile */
+#kt_app_sidebar.drawer-on .drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    z-index: 1049;
+}
+
+/* Ensure proper cleanup when drawer is hidden */
+.drawer-overlay.d-none {
+    display: none !important;
+}

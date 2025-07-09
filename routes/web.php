@@ -17,6 +17,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
@@ -143,6 +144,16 @@ Route::middleware('auth')->group(function () {
         Route::get('slides', [WebsiteController::class, 'slides'])->name('slides');
         Route::get('services', [WebsiteController::class, 'services'])->name('services');
         Route::get('featured-doctors', [WebsiteController::class, 'featured_doctors'])->name('featured_doctors');
+    });
+    //settings
+    Route::prefix('/settings')->name('settings.')->group(function () {
+        Route::get('general', [SettingController::class, 'general'])->name('general');
+        Route::get('reminder', [SettingController::class, 'reminder'])->name('reminder');
+        Route::get('password-backup-page', [SettingController::class, 'password_backup_page'])->name('password_backup_page');
+        Route::get('notification', [SettingController::class, 'notification'])->name('notification');
+        Route::get('email', [SettingController::class, 'email'])->name('email');
+        Route::get('payment-gateways', [SettingController::class, 'payment_gateways'])->name('payment_gateways');
+        
     });
 });
 

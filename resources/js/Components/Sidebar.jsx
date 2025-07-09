@@ -428,7 +428,7 @@ export default function Sidebar() {
                     </span>
                     <div className={SidebarFunctions.getMenuClass(['settings'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='System Settings' href="/settings/index"/>
+                            <SidebarLink title='System Settings' href="/settings/general"/>
                         </div>
                     </div>
 
