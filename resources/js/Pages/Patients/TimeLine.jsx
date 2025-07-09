@@ -1,6 +1,6 @@
 import Select2Input from '@/Components/Select2Input';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
 import images from '@/Misc/image_map';
 export default function TimeLine({ auth }) {
@@ -28,7 +28,7 @@ export default function TimeLine({ auth }) {
                                     <ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 
                                         <li className="breadcrumb-item text-muted">
-                                            <a href="dashboard/index.php" className="text-muted text-hover-primary">Home</a>
+                                            <Link href="/dashboard" className="text-muted text-hover-primary">Home</Link>
                                         </li>
 
 

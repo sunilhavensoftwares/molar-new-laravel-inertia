@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
 import FlatpickrInput from '@/Components/FlatpickrInput';
 import Select2Input from '@/Components/Select2Input';
@@ -28,7 +28,7 @@ export default function CaseHistory({ auth }) {
                                     <ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 
                                         <li className="breadcrumb-item text-muted">
-                                            <a href="dashboard/index.php" className="text-muted text-hover-primary">Home</a>
+                                            <Link href="/dashboard" className="text-muted text-hover-primary">Home</Link>
                                         </li>
 
 

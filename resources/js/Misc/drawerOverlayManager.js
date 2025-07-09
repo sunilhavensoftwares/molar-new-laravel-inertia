@@ -156,7 +156,7 @@ class DrawerOverlayManager {
     this.cleanupCallbacks = [];
     this.initialized = false;
     
-    console.log('DrawerOverlayManager destroyed');
+    //console.log('DrawerOverlayManager destroyed');
   }
 }
 

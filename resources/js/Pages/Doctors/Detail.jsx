@@ -32,7 +32,7 @@ export default function Detail({ auth }) {
                                     <ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 
                                         <li className="breadcrumb-item text-muted">
-                                            <Link href="dashboard" className="text-muted text-hover-primary">Home</Link>
+                                            <Link href="/dashboard" className="text-muted text-hover-primary">Home</Link>
                                         </li>
 
 

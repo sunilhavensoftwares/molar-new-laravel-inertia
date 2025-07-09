@@ -11,12 +11,12 @@ import './css/AuthenticatedLayout.css';
 import '../../css/drawer-overlay-fix.css';
 import images from "@Misc/image_map";
 import { useMetronicInit } from '@/Misc/useMetronicInit';
-import { usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import cleanupDrawerOverlays from '@/Misc/cleanupDrawer';
 import drawerOverlayManager from '@/Misc/drawerOverlayManager';
 
 export default function Authenticated({ user, header, children, bodyClass = 'app-default' }) {
-const page = usePage();
+
 const header_logo = images.logo;
 const blank_image = images.blank_image;
 const blank_image_dark = images.blank_image_dark;
@@ -84,7 +84,7 @@ const blank_image_dark = images.blank_image_dark;
 
                 <div className="app-page flex-column flex-column-fluid" id="kt_app_page">
 
-                    <Header />
+                    <Header user={user} />
 
                     <div className="app-wrapper flex-column flex-row-fluid" id="kt_app_wrapper">
 
@@ -100,12 +100,12 @@ const blank_image_dark = images.blank_image_dark;
 
                             <div className="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
 
-                                <a href="dashboard">
+                                <Link href="/dashboard">
                                     <img alt="Logo" src={header_logo}
                                         className="h-50px app-sidebar-logo-default theme-light-show" />
                                     <img alt="Logo" src={header_logo}
                                         className="h-30px app-sidebar-logo-minimize" />
-                                </a>
+                                </Link>
 
 
                                 <div id="kt_app_sidebar_toggle"

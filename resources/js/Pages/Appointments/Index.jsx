@@ -4,7 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import AddAppointmentModal from "@/Modals/AddAppointmentModal"
 import AddDoctor from "@/Modals/AddDoctor"
 import AddPatient from "@/Modals/AddPatient"
-import { Head } from "@inertiajs/react"
+import { Head, Link } from "@inertiajs/react"
 import images from '@/Misc/image_map';
 const Index = ({ auth }) => {
     return (
@@ -29,7 +29,7 @@ const Index = ({ auth }) => {
                                     <ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                                         {/* begin::Item*/}
                                         <li className="breadcrumb-item text-muted">
-                                            <a href="dashboard/index.php" className="text-muted text-hover-primary">Home</a>
+                                            <Link href="/dashboard" className="text-muted text-hover-primary">Home</Link>
                                         </li>
                                         {/* end::Item*/}
                                         {/* begin::Item*/}

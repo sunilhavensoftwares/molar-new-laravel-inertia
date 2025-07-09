@@ -1,11 +1,12 @@
 import Select2Input from '@/Components/Select2Input';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
 import FlatpickrInput from '@/Components/FlatpickrInput';
 import AddPaymentModal from '@/Modals/AddPaymentModal';
 import images from '@/Misc/image_map';
 import AddPatient  from "@/Modals/AddPatient"
+import AddDoctor from '@/Modals/AddDoctor'
 export default function PaymentHistory({ auth }) {
     const { patient, options } = usePage().props;
     return (
@@ -31,7 +32,7 @@ export default function PaymentHistory({ auth }) {
                                     <ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
 
                                         <li className="breadcrumb-item text-muted">
-                                            <a href="dashboard/index.php" className="text-muted text-hover-primary">Home</a>
+                                            <Link href="/dashboard" className="text-muted text-hover-primary">Home</Link>
                                         </li>
 
 

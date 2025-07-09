@@ -2,7 +2,7 @@ import FlatpickrInput from "@/Components/FlatpickrInput"
 import Select2Input from "@/Components/Select2Input"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import AddAppointmentModal from "@/Modals/AddAppointmentModal"
-import { Head } from "@inertiajs/react"
+import { Head, Link } from "@inertiajs/react"
 export default function Index({ auth }) {
     return (
         <AuthenticatedLayout user={auth} header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Diagnostic Type</h2>}>
@@ -26,7 +26,7 @@ export default function Index({ auth }) {
                                     <ul className="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
                                         {/* begin::Item*/}
                                         <li className="breadcrumb-item text-muted">
-                                            <a href="dashboard/index.php" className="text-muted text-hover-primary">Home</a>
+                                            <Link href="/dashboard" className="text-muted text-hover-primary">Home</Link>
                                         </li>
                                         {/* end::Item*/}
                                         {/* begin::Item*/}

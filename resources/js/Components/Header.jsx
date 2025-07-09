@@ -1,7 +1,7 @@
 import { Link } from "@inertiajs/react";
 import user_logo from '@assets/media/avatars/300-1.jpg';
 import images from "@/Misc/image_map";
-export default function Header() {
+export default function Header({user}) {
 const header_logo = images.logo;
     return (
         <>
@@ -39,9 +39,9 @@ const header_logo = images.logo;
 
 
                     <div className="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
-                        <a href="dashboard/index.php" className="d-lg-none">
+                        <Link href="/dashboard" className="d-lg-none">
                             <img alt="Logo" src={header_logo} className="h-30px" />
-                        </a>
+                        </Link>
                     </div>
 
 
@@ -785,7 +785,7 @@ const header_logo = images.logo;
                                             <div className="d-flex flex-column">
                                                 <div className="fw-bold d-flex align-items-center fs-5">Admin</div>
                                                 <a href="#"
-                                                    className="fw-semibold text-muted text-hover-primary fs-7">admin@kt.com</a>
+                                                    className="fw-semibold text-muted text-hover-primary fs-7">{user.email}</a>
                                             </div>
 
                                         </div>
