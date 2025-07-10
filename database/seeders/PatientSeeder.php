@@ -18,7 +18,7 @@ class PatientSeeder extends Seeder
     public function run(): void
     {
          $faker = Faker::create();
-        $statusArr = ['soft_deleted', 'active', 'deleted'];
+        $statusArr = [0,1];
         $patientIds = User::query()->hasRole('patient')->pluck('id')->toArray();
         $patientEmail = User::query()->hasRole('patient')->pluck('email')->toArray();
         
@@ -46,7 +46,7 @@ class PatientSeeder extends Seeder
                 'user_id' => $faker->randomElement($patientIds),
                 'status' => $statusArr[array_rand($statusArr)],
                 'is_visible' => $faker->boolean(90),
-                'is_temporary' => $faker->boolean(10),
+                'is_temporary' =>$statusArr[array_rand($statusArr)],
             ]);
         }
     }

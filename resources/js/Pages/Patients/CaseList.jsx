@@ -1,9 +1,203 @@
-import { Head, usePage, Link } from "@inertiajs/react";
+import { Head, usePage, Link, router } from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Select2Input from "@/Components/Select2Input";
 import FlatpickrInput from "@/Components/FlatpickrInput";
+import DataTable from '@/Components/DataTable';
+import { useEffect, useRef, useState } from 'react';
+import images from '@/Misc/image_map'
 export default function CaseList({ auth }) {
-    const { patient } = usePage().props;
+    const { medical_histories,query,routeUrl } = usePage().props;
+    console.log(medical_histories);
+  
+    const filtersFormRef = useRef(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({});
+    const [appliedFilters, setAppliedFilters] = useState({});
+    const [processing, setProcessing] = useState({});
+    const searchTimeout = useRef(null);
+
+    useEffect(() => {
+        if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+        // Skip firing on empty input if it's the same as what's already in the query
+        if (searchQuery === '' && !query?.name) return;
+
+        searchTimeout.current = setTimeout(() => {
+            router.get(route(route().current()), {
+                ...appliedFilters,
+                page: 1,
+                perPage: medical_histories.meta.per_page,
+                sort: query?.sort,
+                order: query?.order,
+                name: searchQuery || undefined, // don't include empty string in URL
+            }, {
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }, 400);
+
+        return () => clearTimeout(searchTimeout.current);
+    }, [searchQuery]);
+
+
+    const handleFilterChange = (key) => (value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const handleFilterReset = () => {
+        setFilters({});
+        setAppliedFilters({});
+        filtersFormRef.current.reset();
+        $(filtersFormRef.current).find('input').val(null).trigger('change');
+        $(filtersFormRef.current).find('select').val(null).trigger('change');
+
+        router.get(route(route().current()), {
+            page: 1,
+            perPage: medical_histories.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const applyFilters = (e) => {
+        e.preventDefault();
+        setAppliedFilters(filters);
+
+        router.get(route(route().current()), {
+            ...filters,
+            sort: query?.sort,
+            order: query?.order,
+            page: 1,
+            perPage: medical_histories.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const handleToggle = (patientId, key) => async (e) => {
+        const value = e.target.checked;
+        setProcessing((prev) => ({ ...prev, [patientId]: true }));
+        setChecked(prev => ({
+            ...prev,
+            [patientId]: {
+                ...prev[patientId],
+                [key]: value,
+            },
+        }));
+        try {
+            const response = await axios.post(`/patients/${patientId}/visibility`, {
+                [key]: value,
+            });
+            response.data.success && toastr.success(response.data.message);
+            !response.data.success && toastr.error(response.data.message);
+        } catch (error) {
+            toastr.error('Error updating visibility:', error);
+        } finally {
+            setProcessing((prev) => ({ ...prev, [patientId]: false }));
+        }
+    };
+    const columns = [
+        { label: 'ID', key: 'id', thProps: { className: 'min-w-50px ps-4' },tdProps: { className: 'ps-4' }, 'sort_key': 'medical_histories.id', 'sortable': 1 },
+        { label: 'Date', key: 'date', thProps: { className: 'min-w-150px ps-4' },tdProps: { className: 'd-flex align-items-center' }, 'sort_key': 'medical_histories.email', 'sortable': 1 },
+        { label: 'Doctor', key: 'doctor', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'doctors.name', 'sortable': 1 },
+        { label: 'Title', key: 'title', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'medical_histories.title', 'sortable': 1 },
+        { label: 'Patient', key: 'patient', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'patients.name', 'sortable': 1 },
+        { label: 'Category', key: 'category', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'medical_history_categories.name', 'sortable': 1 },
+        { label: 'Status', key: 'status', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'medical_histories.status', 'sortable': 1 },
+        { label: 'Actions', key: 'actions', thProps: { className: 'text-end pe-4 min-w-100px' },tdProps: { className: 'text-end pe-4' } },
+    ];
+    const data = medical_histories.data.map((medical_history, index) => (
+        {
+            id: medical_history.id || '',
+            date: medical_history.date_formatted,
+            doctor: {
+                sortValue: medical_history.doctor.name.toLowerCase(),
+                content: (
+                    <div className="d-flex align-items-center">
+                        <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                            <div className="symbol-label">
+                                <img src={medical_history.doctor.img_url || images.blank_avatar} alt={medical_history.doctor.name} className="w-100" />
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <Link href={`/doctors/doctor-detail/${medical_history.doctor.id}`} className="text-gray-800 text-hover-primary mb-1">{medical_history.doctor.name}</Link>
+                            <span>{medical_history.doctor.phone}</span>
+                        </div>
+                    </div>
+                )
+            },
+            title: medical_history.title,
+            patient: {
+                sortValue: medical_history.patient.name.toLowerCase(),
+                content: (
+                    <div className="d-flex align-items-center">
+                        <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                            <div className="symbol-label">
+                                <img src={medical_history.patient.img_url || images.blank_avatar} alt={medical_history.patient.name} className="w-100" />
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <Link href={`/patients/patient-detail/${medical_history.patient.id}`} className="text-gray-800 text-hover-primary mb-1">{medical_history.patient.name}</Link>
+                            <span>{medical_history.patient.phone}</span>
+                        </div>
+                    </div>
+                )
+            },
+            category: medical_history.category.name || '',
+            status: medical_history.status || '',
+            actions: (
+                <>
+                <a className="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click"
+                    data-kt-menu-placement="bottom-end">Actions
+                    {/* begin::Svg Icon | path: icons/duotune/arrows/arr072.svg*/}
+                    <span className="svg-icon svg-icon-5 m-0">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
+                                fill="currentColor" />
+                        </svg>
+                    </span>
+                    {/* end::Svg Icon*/}
+                </a>
+                {/* begin::Menu*/}
+                <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
+                    data-kt-menu="true">
+
+                    {/* begin::Menu item*/}
+                    <div className="menu-item">
+                        <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Edit</a>
+                    </div>
+                    {/* end::Menu item*/}
+                    {/* begin::Menu item*/}
+                    <div className="menu-item">
+                        <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Delete</a>
+                    </div>
+                    {/* end::Menu item*/}
+                    {/* begin::Menu item*/}
+                    <div className="menu-item">
+                        <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Refer To</a>
+                    </div>
+                    {/* end::Menu item*/}
+                    {/* begin::Menu item*/}
+                    <div className="menu-item">
+                        <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Set Reminder</a>
+                    </div>
+                    {/* end::Menu item*/}
+                    {/* begin::Menu item*/}
+                    <div className="menu-item">
+                        <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Material</a>
+                    </div>
+                    {/* end::Menu item*/}
+                </div>
+                {/* end::Menu*/}
+                </>
+            )
+        }));
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -93,7 +287,7 @@ export default function CaseList({ auth }) {
                                                 </span>
                                                 {/* end::Svg Icon*/}
                                                 <input type="text" data-kt-user-table-filter="search"
-                                                    className="form-control form-control-solid w-250px ps-14" placeholder="Search" />
+                                                    className="form-control form-control-solid w-250px ps-14" placeholder="Search" onChange={(e) => setSearchQuery(e.target.value)} />
                                             </div>
                                             {/* end::Search*/}
                                         </div>
@@ -249,7 +443,7 @@ export default function CaseList({ auth }) {
                                                                             data-placeholder="Select Doctor"
                                                                             className="form-select form-select-solid fw-bold"
                                                                             data-dropdown-parent="#modal_case_refer">
-                                                                                <option></option>
+                                                                            <option></option>
                                                                             <option value="faisal">Faisal</option>
                                                                             <option value="saud">Saud</option>
                                                                             <option value="ibh">Ibrahim</option>
@@ -572,209 +766,17 @@ export default function CaseList({ auth }) {
                                     {/* begin::Card body*/}
                                     <div className="card-body py-4">
                                         {/* begin::Table*/}
-                                        <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
-                                            {/* begin::Table head*/}
-                                            <thead>
-                                                {/* begin::Table row*/}
-                                                <tr className="text-start text-muted fw-bold bg-light fs-7 text-uppercase gs-0">
-                                                    <th className="min-w-50px">Id</th>
-                                                    <th className="min-w-50px">Date</th>
-                                                    <th className="min-w-105px">Doctor</th>
-                                                    <th className="min-w-85px">Tooth</th>
-                                                    <th className="min-w-105px">Patient</th>
-                                                    <th className="min-w-115px">Category</th>
-                                                    <th className="min-w-95px">Status</th>
-                                                    <th className="text-end min-w-140px">Actions</th>
-                                                </tr>
-                                                {/* end::Table row*/}
-                                            </thead>
-                                            {/* end::Table head*/}
-                                            {/* begin::Table body*/}
-                                            <tbody className="text-gray-600 fw-semibold">
-                                                <tr>
-                                                    <td>
-                                                        1
-                                                    </td>
-                                                    {/* begin::Checkbox */}
-                                                    <td>
-                                                        <div className="badge badge-light">10 March 2023</div>
-                                                    </td>
-                                                    {/* end::Checkbox*/}
-                                                    {/* begin::Customer=*/}
-                                                    <td>
-                                                        <span className="text-gray-800 text-hover-primary mb-1">John Smith</span>
-                                                    </td>
-                                                    {/* end::Customer=*/}
-                                                    {/* begin::Status=*/}
-                                                    <td>
-                                                        28,32
-                                                    </td>
-                                                    {/* end::Status=*/}
-                                                    {/* begin::Billing=*/}
-                                                    <td>
-                                                        <a href="patient/detail.php" className="text-gray-800 text-hover-primary mb-1">Emma
-                                                            Smith</a>
-                                                        <p>smith@kpmg.com <br/> 8559072770</p>
-                                                    </td>
-                                                    {/* end::Billing=*/}
-                                                    <td>
-
-                                                        Implant
-                                                    </td>
-                                                    <td>
-                                                        <span className="badge badge-light-success fs-7 fw-bold">Success</span>
-                                                    </td>
-                                                    {/* begin::Action=*/}
-                                                    <td className="text-end">
-                                                        <a className="btn btn-light btn-active-light-primary btn-sm"
-                                                            data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                                            {/* begin::Svg Icon | path: icons/duotune/arrows/arr072.svg*/}
-                                                            <span className="svg-icon svg-icon-5 m-0">
-                                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                    xmlns="http://www.w3.org/2000/svg">
-                                                                    <path
-                                                                        d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
-                                                                        fill="currentColor" />
-                                                                </svg>
-                                                            </span>
-                                                            {/* end::Svg Icon*/}
-                                                        </a>
-                                                        {/* begin::Menu*/}
-                                                        <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                                            data-kt-menu="true">
-
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a href="#" className="menu-link"
-                                                                    data-kt-users-table-filter="delete_row">Edit</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a href="#" className="menu-link"
-                                                                    data-kt-users-table-filter="delete_row">Delete</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a className="menu-link" data-bs-toggle="modal"
-                                                                    data-bs-target="#modal_case_refer">Refer To</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a href="#" className="menu-link" data-bs-toggle="modal"
-                                                                    data-bs-target="#modal_set_reminder">Set Reminder</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a href="#" className="menu-link" data-bs-toggle="modal"
-                                                                    data-bs-target="#modal_add_material">Material</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                            {/* begin::Menu item*/}
-                                                            {/* <div className="menu-item">
-                                                <a href="#" className="menu-link" data-bs-toggle="modal"
-                                                    data-bs-target="#modal_send_feedback">Send Feedback</a>
-                                            </div> */}
-                                                            {/* end::Menu item*/}
-                                                        </div>
-                                                        {/* end::Menu*/}
-                                                    </td>
-                                                    {/* end::Action */}
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        2
-                                                    </td>
-                                                    {/* begin::Checkbox*/}
-                                                    <td>
-                                                        <div className="badge badge-light">10 March 2023</div>
-                                                    </td>
-                                                    {/* end::Checkbox*/}
-                                                    {/* begin::Customer=*/}
-                                                    <td>
-                                                        <span className="text-gray-800 text-hover-primary mb-1">John Smith</span>
-                                                    </td>
-                                                    {/* end::Customer=*/}
-                                                    {/* begin::Status=*/}
-                                                    <td>
-                                                        28,32
-                                                    </td>
-                                                    {/* end::Status=*/}
-                                                    {/* begin::Billing=*/}
-                                                    <td>
-                                                        <a href="patient/detail.php" className="text-gray-800 text-hover-primary mb-1">Emma
-                                                            Smith</a>
-                                                        <p>smith@kpmg.com <br/> 8559072770</p>
-                                                    </td>
-                                                    {/* end::Billing=*/}
-                                                    <td>
-                                                        Implant
-                                                    </td>
-                                                    <td>
-                                                        <span className="badge badge-light-danger fs-7 fw-bold">In Progress</span>
-                                                    </td>
-
-
-                                                    {/* begin::Action=*/}
-                                                    <td className="text-end">
-                                                        <a className="btn btn-light btn-active-light-primary btn-sm"
-                                                            data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                                            {/* begin::Svg Icon | path: icons/duotune/arrows/arr072.svg*/}
-                                                            <span className="svg-icon svg-icon-5 m-0">
-                                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                    xmlns="http://www.w3.org/2000/svg">
-                                                                    <path
-                                                                        d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
-                                                                        fill="currentColor" />
-                                                                </svg>
-                                                            </span>
-                                                            {/* end::Svg Icon*/}
-                                                        </a>
-                                                        {/* begin::Menu*/}
-                                                        <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                                            data-kt-menu="true">
-
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a href="#" className="menu-link"
-                                                                    data-kt-users-table-filter="delete_row">Edit</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a href="#" className="menu-link"
-                                                                    data-kt-users-table-filter="delete_row">Delete</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a href="#" className="menu-link"
-                                                                    data-kt-users-table-filter="delete_row">Refer To</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a href="#" className="menu-link"
-                                                                    data-kt-users-table-filter="delete_row">Set Reminder</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                            {/* begin::Menu item*/}
-                                                            <div className="menu-item">
-                                                                <a href="#" className="menu-link"
-                                                                    data-kt-users-table-filter="delete_row">Material</a>
-                                                            </div>
-                                                            {/* end::Menu item*/}
-                                                        </div>
-                                                        {/* end::Menu*/}
-                                                    </td>
-                                                    {/* end::Action=*/}
-                                                </tr>
-                                            </tbody>
-                                            {/* end::Table body*/}
-                                        </table>
+                                        <DataTable
+                                                columns={columns}
+                                                data={data}
+                                                tableProps={{ className: 'table align-middle table-row-dashed fs-6 gy-5' }}
+                                                currentPage={medical_histories.meta.current_page}
+                                                perPage={medical_histories.meta.per_page}
+                                                total={medical_histories.meta.total}
+                                                sortKey={query?.sort}
+                                                sortOrder={query?.order}
+                                                searchQuery={filters.name}
+                                                appliedFilters={appliedFilters} />
                                         {/* end::Table*/}
                                     </div>
                                     {/* end::Card body*/}
@@ -877,17 +879,10 @@ export default function CaseList({ auth }) {
                                             {/* begin::Input group*/}
                                             <div className="fv-row mb-7">
                                                 {/* begin::Label*/}
-                                                <label className="required fw-semibold fs-6 mb-2">Select Tooth</label>
+                                                <label className="required fw-semibold fs-6 mb-2">Title</label>
                                                 {/* end::Label*/}
                                                 {/* begin::Input*/}
-                                                <Select2Input name="format" data-control="select2" data-placeholder="Select tooth"
-                                                    className="form-select form-select-solid fw-bold"
-                                                    data-dropdown-parent="#kt_modal_add_case">
-                                                    <option></option>
-                                                    <option value="31">#31</option>
-                                                    <option value="21">#21</option>
-                                                    <option value="11">#11</option>
-                                                </Select2Input>
+                                                <input type="text" name="tooth" className="form-control form-control-lg form-control-solid" />
                                                 {/* end::Input*/}
                                             </div>
                                             {/* end::Input group */}

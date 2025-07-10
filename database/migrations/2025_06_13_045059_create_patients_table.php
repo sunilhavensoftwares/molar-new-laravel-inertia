@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -23,10 +24,11 @@ return new class extends Migration
             $table->string('birthdate', 100)->nullable()->default('NULL');
             $table->string('age', 100)->nullable()->default('NULL');
             $table->string('bloodgroup', 100)->nullable()->default('NULL');
-            $table->string('user_id', 100)->nullable()->default('NULL');
-            $table->enum('status', ['active', 'deleted', 'soft_deleted'])->default('active');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->boolean('status')->default(1)->comment('0=>inactive,1=>active');
             $table->boolean('is_visible')->default('1');
-            $table->boolean('is_temporary')->default('2');
+            $table->boolean('is_temporary')->default('1')->comment('0=>not temp,1=>temp');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -36,6 +38,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('patients');
+          DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+          Schema::dropIfExists('patients');
+          DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 };

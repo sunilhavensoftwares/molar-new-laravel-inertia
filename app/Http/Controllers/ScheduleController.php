@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\HolidayResource;
 use App\Http\Resources\ScheduleResource;
+use App\Models\Holiday;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -49,20 +51,63 @@ class ScheduleController extends Controller
         }
 
         $schedules = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
-        
-        return Inertia::render('Schedule/Index',
-        [
-            'schedules' =>ScheduleResource::collection($schedules),
-            'query' => $request->all(),
-            'routeUrl' => route('schedules.index'),
-        ]);
+
+        return Inertia::render(
+            'Schedule/Index',
+            [
+                'schedules' => ScheduleResource::collection($schedules),
+                'query' => $request->all(),
+                'routeUrl' => route('schedules.index'),
+            ]
+        );
     }
     /**
      * Display a listing of the resource.
      */
-    public function holidays()
+    public function holidays(Request $request)
     {
-        return Inertia::render('Schedule/Holidays');
+        $query = Holiday::query()->with('doctor');
+
+        $sort = $request->get('sort', 'holidays.date');
+        $order = strtolower($request->get('order', 'asc'));
+
+        $allowedSorts = [
+            'holidays.id',
+            'doctor.email',
+            'holidays.date'
+        ];
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'holidays.date';
+        }
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'asc';
+        }
+
+        if ($request->filled('name')) {
+            $query->whereHas('doctor', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->name . '%');
+                $q->orWhere('email', 'like', '%' . $request->name . '%');
+            });
+        }
+
+        // Handle sorting
+
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $order);
+        }
+
+        $holidays = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
+
+        return Inertia::render(
+            'Schedule/Holidays',
+            [
+                'holidays' => HolidayResource::collection($holidays),
+                'query' => $request->all(),
+                'routeUrl' => route('schedules.holidays'),
+            ]
+        );
     }
 
     /**
