@@ -1,9 +1,153 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import Select2Input from '@/Components/Select2Input';
 import images from '@/Misc/image_map';
 import AddDoctor from '@/Modals/AddDoctor';
+import DataTable from '@/Components/DataTable';
+import { useEffect, useRef, useState } from 'react';
 function Index({ auth }) {
+    const filtersFormRef = useRef(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({});
+    const [appliedFilters, setAppliedFilters] = useState({});
+    const { schedules, query } = usePage().props;
+    
+        const searchTimeout = useRef(null);
+    
+        useEffect(() => {
+            if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    
+            // Skip firing on empty input if it's the same as what's already in the query
+            if (searchQuery === '' && !query?.name) return;
+    
+            searchTimeout.current = setTimeout(() => {
+                router.get(route(route().current()), {
+                    ...appliedFilters,
+                    page: 1,
+                    perPage: schedules.meta.per_page,
+                    sort: query?.sort,
+                    order: query?.order,
+                    name: searchQuery || undefined, // don't include empty string in URL
+                }, {
+                    preserveScroll: true,
+                    preserveState: true,
+                });
+            }, 400);
+    
+            return () => clearTimeout(searchTimeout.current);
+        }, [searchQuery]);
+    
+    
+        const handleFilterChange = (key) => (value) => {
+            setFilters((prev) => ({
+                ...prev,
+                [key]: value,
+            }));
+        };
+    
+        const handleFilterReset = () => {
+            setFilters({});
+            setAppliedFilters({});
+            filtersFormRef.current.reset();
+            $(filtersFormRef.current).find('select').val(null).trigger('change');
+    
+            router.get(route(route().current()), {
+                page: 1,
+                perPage: schedules.meta.per_page,
+            }, {
+                preserveScroll: true,
+                preserveState: true,
+            });
+        };
+    
+        const applyFilters = (e) => {
+            e.preventDefault();
+            setAppliedFilters(filters);
+    
+            router.get(route(route().current()), {
+                ...filters,
+                sort: query?.sort,
+                order: query?.order,
+                page: 1,
+                perPage: schedules.meta.per_page,
+            }, {
+                preserveScroll: true,
+                preserveState: true,
+            });
+        };
+    const columns = [
+        { label: 'ID', key: 'id', thProps: { className: 'min-w-50px ps-4 dt-type-numeric dt-orderable-none' }, tdProps: {className: 'ps-4'}, 'sort_key': 'schedules.id', 'sortable': 1 },
+        { label: 'Doctor', key: 'doctor', thProps: { className: 'min-w-50px ps-4' }, tdProps: {className: 'd-flex align-items-center'}, 'sort_key': 'doctors.email', 'sortable': 1 },
+        { label: 'Weekday', key: 'weekday', thProps: { className: 'min-w-125px' }, tdProps: {className: ''}, 'sort_key': 'schdeules.weekday', 'sortable': 1 },
+        { label: 'Start Time', key: 'start_time', thProps: { className: 'min-w-105px' }, tdProps: {className: ''}, 'sort_key': 'schdeules.s_time', 'sortable': 1 },
+        { label: 'End Time', key: 'end_time', thProps: { className: 'min-w-125px' }, tdProps: {className: ''}, 'sort_key': 'schdeules.e_time', 'sortable': 1 },
+        { label: 'Duration', key: 'duration', thProps: { className: 'min-w-125px' }, tdProps: {className: ''}, 'sort_key': 'schdeules.duration', 'sortable': 1 },
+        { label: 'Actions', key: 'actions', thProps: { className: 'pe-4 min-w-100px' }, tdProps: {className: ''} },
+    ];
+    const data = schedules.data.map((schedule, index) => (
+        {
+            id: schedule.id,
+            doctor: {
+                sortValue: schedule.doctor.name.toLowerCase(),
+                content: (
+                    <div className="d-flex align-items-center">
+                        <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                            <div className="symbol-label">
+                                <img src={schedule.doctor.img_url || images.blank_avatar} alt={schedule.doctor.name} className="w-100" />
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <Link href={`/doctors/doctor-detail/${schedule.doctor.id}`} className="text-gray-800 text-hover-primary mb-1">{schedule.doctor.name}</Link>
+                            <span>{schedule.doctor.email}</span>
+                        </div>
+                    </div>
+                )
+            },
+            weekday: <span className="text-hover-primary text-gray-600">{schedule.weekday_name}</span>,
+            start_time: <span className="badge badge-light-success fs-7 fw-bold"> {schedule.s_time_formatted} </span>,
+            end_time: <span className="badge badge-light-danger fs-7 fw-bold">{schedule.e_time_formatted}</span>,
+            duration: <span className="text-hover-primary text-gray-600">{schedule.duration}</span>,
+            actions: (
+                <>
+                    <a data-bs-target="#modal_add_schedule" data-bs-toggle="modal"
+                        className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                        {/* begin::Svg Icon | path: icons/duotune/art/art005.svg*/}
+                        <span className="svg-icon svg-icon-3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.3"
+                                    d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z"
+                                    fill="currentColor" />
+                                <path
+                                    d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z"
+                                    fill="currentColor" />
+                            </svg>
+                        </span>
+                        {/* end::Svg Icon*/}
+                    </a>
+                    <a href="#"
+                        className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                        {/* begin::Svg Icon | path: icons/duotune/general/gen027.svg*/}
+                        <span className="svg-icon svg-icon-3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z"
+                                    fill="currentColor" />
+                                <path opacity="0.5"
+                                    d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z"
+                                    fill="currentColor" />
+                                <path opacity="0.5"
+                                    d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z"
+                                    fill="currentColor" />
+                            </svg>
+                        </span>
+                        {/* end::Svg Icon*/}
+                    </a>
+                </>
+            )
+        }));
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -93,8 +237,8 @@ function Index({ auth }) {
                                                     </svg>
                                                 </span>
                                                 {/* end::Svg Icon*/}
-                                                <input type="text" data-kt-user-table-filter="search"
-                                                    className="form-control form-control-solid w-250px ps-14" placeholder="Search user" />
+                                                <input type="text" data-kt-schedule-table-filter="search"
+                                                    className="form-control form-control-solid w-250px ps-14" placeholder="Search schedule" onChange={(e) => setSearchQuery(e.target.value)} />
                                             </div>
                                             {/* end::Search*/}
                                         </div>
@@ -102,10 +246,10 @@ function Index({ auth }) {
                                         {/* begin::Card toolbar*/}
                                         <div className="card-toolbar">
                                             {/* begin::Toolbar*/}
-                                            <div className="d-flex justify-content-end" data-kt-user-table-toolbar="base">
+                                            <div className="d-flex justify-content-end" data-kt-schedule-table-toolbar="base">
                                                 {/* begin::Export*/}
                                                 <button type="button" className="btn btn-light-primary me-3" data-bs-toggle="modal"
-                                                    data-bs-target="#kt_modal_export_users">
+                                                    data-bs-target="#kt_modal_export_schedules">
                                                     {/* begin::Svg Icon | path: icons/duotune/arrows/arr078.svg*/}
                                                     <span className="svg-icon svg-icon-2">
                                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -127,16 +271,16 @@ function Index({ auth }) {
                                             {/* end::Toolbar*/}
                                             {/* begin::Group actions*/}
                                             <div className="d-flex justify-content-end align-items-center d-none"
-                                                data-kt-user-table-toolbar="selected">
+                                                data-kt-schedule-table-toolbar="selected">
                                                 <div className="fw-bold me-5">
-                                                    <span className="me-2" data-kt-user-table-select="selected_count"></span>Selected
+                                                    <span className="me-2" data-kt-schedule-table-select="selected_count"></span>Selected
                                                 </div>
                                                 <button type="button" className="btn btn-danger"
-                                                    data-kt-user-table-select="delete_selected">Delete Selected</button>
+                                                    data-kt-schedule-table-select="delete_selected">Delete Selected</button>
                                             </div>
                                             {/* end::Group actions*/}
                                             {/* begin::Modal - Adjust Balance*/}
-                                            <div className="modal fade" id="kt_modal_export_users" tabIndex="-1" aria-hidden="true">
+                                            <div className="modal fade" id="kt_modal_export_schedules" tabIndex="-1" aria-hidden="true">
                                                 {/* begin::Modal dialog*/}
                                                 <div className="modal-dialog modal-dialog-centered mw-500px">
                                                     {/* begin::Modal content*/}
@@ -168,7 +312,7 @@ function Index({ auth }) {
                                                         {/* begin::Modal body*/}
                                                         <div className="modal-body scroll-y">
                                                             {/* begin::Form*/}
-                                                            <form id="kt_modal_export_users_form" className="form" >
+                                                            <form id="kt_modal_export_schedules_form" className="form" >
 
                                                                 {/* begin::Input group*/}
                                                                 <div className="fv-row mb-10">
@@ -194,7 +338,7 @@ function Index({ auth }) {
                                                                     <button type="reset" className="btn btn-light me-3"
                                                                         data-bs-dismiss="modal">Discard</button>
                                                                     <button type="submit" className="btn btn-primary"
-                                                                        data-kt-users-modal-action="submit">
+                                                                        data-kt-schedules-modal-action="submit">
                                                                         <span className="indicator-label">Submit</span>
                                                                         <span className="indicator-progress">Please wait...
                                                                             <span
@@ -347,7 +491,7 @@ function Index({ auth }) {
                                                                     <button type="reset" className="btn btn-light me-3"
                                                                         data-bs-dismiss="modal">Discard</button>
                                                                     <button type="submit" className="btn btn-primary"
-                                                                        data-kt-users-modal-action="submit">
+                                                                        data-kt-schedules-modal-action="submit">
                                                                         <span className="indicator-label">Submit</span>
                                                                     </button>
                                                                 </div>
@@ -370,369 +514,18 @@ function Index({ auth }) {
                                     <div className="card-body py-4">
                                         {/* begin::Table*/}
                                         <div className="table-responsive">
-                                            <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
-                                                {/* begin::Table head*/}
-                                                <thead>
-                                                    {/* begin::Table row*/}
-                                                    <tr className="text-start text-muted fw-bold fs-7 text-uppercase bg-light gs-0">
-                                                        <th className="min-w-50px ps-4">ID</th>
-                                                        <th className="min-w-125px">Doctor</th>
-                                                        <th className="min-w-125px">Weekday</th>
-                                                        <th className="min-w-105px">Start Time</th>
-                                                        <th className="min-w-125px">End Time</th>
-                                                        <th className="min-w-125px">Duration</th>
-                                                        <th className="pe-4 min-w-100px">Actions</th>
-                                                    </tr>
-                                                    {/* end::Table row*/}
-                                                </thead>
-                                                {/* end::Table head*/}
-                                                {/*  begin::Table body */}
-                                                <tbody className="text-gray-600 fw-semibold">
-                                                    {/* begin::Table row*/}
-                                                    <tr>
-                                                        <td className="ps-4">11</td>
-                                                        {/* begin::User=*/}
-                                                        <td className="d-flex align-items-center">
-                                                            {/* begin::User details*/}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="#"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/* begin::User details*/}
-                                                        </td>
-                                                        {/* end::User=*/}
-                                                        {/* begin::Role=*/}
-                                                        <td><span className="text-hover-primary text-gray-600">Sunday</span>
-                                                        </td>
-                                                        {/* end::Role=*/}
-                                                        {/* begin::Last login=*/}
-                                                        <td>
-                                                            <span className="badge badge-light-success fs-7 fw-bold">4:30
-                                                                AM</span>
-                                                        </td>
-                                                        {/* end::Last login=*/}
-                                                        <td><span className="badge badge-light-danger fs-7 fw-bold">5:00 Am</span></td>
-                                                        <td>30 Minutes</td>
-                                                        {/* begin::Action=*/}
-                                                        <td className="">
-
-                                                            <a data-bs-target="#modal_add_schedule" data-bs-toggle="modal"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                                                {/* begin::Svg Icon | path: icons/duotune/art/art005.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path opacity="0.3"
-                                                                            d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z"
-                                                                            fill="currentColor" />
-                                                                        <path
-                                                                            d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                            <a href="#"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                                                {/* begin::Svg Icon | path: icons/duotune/general/gen027.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                        </td>
-                                                        {/* end::Action=*/}
-                                                    </tr>
-                                                    {/* end::Table row*/}
-                                                    {/* begin::Table row*/}
-                                                    <tr>
-                                                        <td className="ps-4">12</td>
-                                                        {/* begin::User=*/}
-                                                        <td className="d-flex align-items-center">
-                                                            {/* begin::User details*/}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="#"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/* begin::User details*/}
-                                                        </td>
-                                                        {/* end::User=*/}
-                                                        {/* begin::Role=*/}
-                                                        <td><span className="text-hover-primary text-gray-600">Sunday</span>
-                                                        </td>
-                                                        {/* end::Role=*/}
-                                                        {/* begin::Last login=*/}
-                                                        <td>
-                                                            <span className="badge badge-light-success fs-7 fw-bold">4:30 AM</span>
-                                                        </td>
-                                                        {/* end::Last login=*/}
-                                                        <td>
-                                                            <span className="badge badge-light-danger fs-7 fw-bold">5:00 Am</span>
-                                                        </td>
-                                                        <td>30 Minutes</td>
-                                                        {/* begin::Action=*/}
-                                                        <td className="">
-                                                            <a data-bs-target="#modal_add_schedule" data-bs-toggle="modal"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                                                {/* begin::Svg Icon | path: icons/duotune/art/art005.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path opacity="0.3"
-                                                                            d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z"
-                                                                            fill="currentColor" />
-                                                                        <path
-                                                                            d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                            <a href="#"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                                                {/* begin::Svg Icon | path: icons/duotune/general/gen027.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                        </td>
-                                                        {/* end::Action=*/}
-                                                    </tr>
-                                                    {/* end::Table row*/}
-                                                    {/* begin::Table row*/}
-                                                    <tr>
-                                                        <td className="ps-4">13</td>
-                                                        {/* begin::User=*/}
-                                                        <td className="d-flex align-items-center">
-                                                            {/* begin::User details*/}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="#"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/* begin::User details*/}
-                                                        </td>
-                                                        {/* end::User=*/}
-                                                        {/* begin::Role=*/}
-                                                        <td><span className="text-hover-primary text-gray-600">Sunday</span>
-                                                        </td>
-                                                        {/* end::Role=*/}
-                                                        {/* begin::Last login=*/}
-                                                        <td>
-                                                            <span className="badge badge-light-success fs-7 fw-bold">4:30
-                                                                AM</span>
-                                                        </td>
-                                                        {/* end::Last login=*/}
-                                                        <td><span className="badge badge-light-danger fs-7 fw-bold">5:00 Am</span></td>
-                                                        <td>30 Minutes</td>
-                                                        {/* begin::Action=*/}
-                                                        <td className="">
-
-                                                            <a data-bs-target="#modal_add_schedule" data-bs-toggle="modal"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                                                {/* begin::Svg Icon | path: icons/duotune/art/art005.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path opacity="0.3"
-                                                                            d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z"
-                                                                            fill="currentColor" />
-                                                                        <path
-                                                                            d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                            <a href="#"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                                                {/* begin::Svg Icon | path: icons/duotune/general/gen027.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                        </td>
-                                                        {/* end::Action=*/}
-                                                    </tr>
-                                                    {/* end::Table row*/}
-                                                    {/* begin::Table row*/}
-                                                    <tr>
-                                                        <td className="ps-4">14</td>
-                                                        {/* begin::User=*/}
-                                                        <td className="d-flex align-items-center">
-                                                            {/* begin::User details*/}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="#"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/* begin::User details*/}
-                                                        </td>
-                                                        {/* end::User=*/}
-                                                        {/* begin::Role=*/}
-                                                        <td><span className="text-hover-primary text-gray-600">Sunday</span>
-                                                        </td>
-                                                        {/* end::Role=*/}
-                                                        {/* begin::Last login=*/}
-                                                        <td>
-                                                            <span className="badge badge-light-success fs-7 fw-bold">4:30
-                                                                AM</span>
-                                                        </td>
-                                                        {/* end::Last login=*/}
-                                                        <td><span className="badge badge-light-danger fs-7 fw-bold">5:00 Am</span></td>
-                                                        <td>30 Minutes</td>
-                                                        {/* begin::Action=*/}
-                                                        <td className="">
-
-                                                            <a data-bs-target="#modal_add_schedule" data-bs-toggle="modal"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                                                {/* begin::Svg Icon | path: icons/duotune/art/art005.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path opacity="0.3"
-                                                                            d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z"
-                                                                            fill="currentColor" />
-                                                                        <path
-                                                                            d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                            <a href="#"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                                                {/* begin::Svg Icon | path: icons/duotune/general/gen027.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                        </td>
-                                                        {/* end::Action=*/}
-                                                    </tr>
-                                                    {/* end::Table row*/}
-                                                    {/* begin::Table row*/}
-                                                    <tr>
-                                                        <td className="ps-4">15</td>
-                                                        {/* begin::User=*/}
-                                                        <td className="d-flex align-items-center">
-                                                            {/* begin::User details*/}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="#"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/* begin::User details*/}
-                                                        </td>
-                                                        {/* end::User=*/}
-                                                        {/* begin::Role=*/}
-                                                        <td><span className="text-hover-primary text-gray-600">Sunday</span>
-                                                        </td>
-                                                        {/* end::Role=*/}
-                                                        {/* begin::Last login=*/}
-                                                        <td>
-                                                            <span className="badge badge-light-success fs-7 fw-bold">4:30 AM</span>
-                                                        </td>
-                                                        {/* end::Last login=*/}
-                                                        <td>
-                                                            <span className="badge badge-light-danger fs-7 fw-bold">5:00 Am</span>
-                                                        </td>
-                                                        <td>30 Minutes</td>
-                                                        {/* begin::Action=*/}
-                                                        <td className="">
-
-                                                            <a data-bs-target="#modal_add_schedule" data-bs-toggle="modal"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                                                {/* begin::Svg Icon | path: icons/duotune/art/art005.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path opacity="0.3"
-                                                                            d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z"
-                                                                            fill="currentColor" />
-                                                                        <path
-                                                                            d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                            <a href="#"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                                                {/* begin::Svg Icon | path: icons/duotune/general/gen027.svg*/}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon*/}
-                                                            </a>
-                                                        </td>
-                                                        {/* end::Action=*/}
-                                                    </tr>
-                                                    {/* end::Table row*/}
-
-                                                </tbody>
-                                                {/*  end::Table body */}
-                                            </table>
+                                            <DataTable
+                                                columns={columns}
+                                                data={data}
+                                                tableProps={{ className: 'table align-middle table-row-dashed fs-6 gy-5' }}
+                                                currentPage={schedules.meta.current_page}
+                                                perPage={schedules.meta.per_page}
+                                                total={schedules.meta.total}
+                                                sortKey={query?.sort}
+                                                sortOrder={query?.order}
+                                                searchQuery={filters.name}
+                                                appliedFilters={appliedFilters}
+                                            />
                                             {/* end::Table*/}
                                         </div>
                                     </div>
@@ -747,7 +540,7 @@ function Index({ auth }) {
                     {/*  end::Content wrapper */}
 
                     {/* begin::Modal - Add Doctor*/}
-                    <AddDoctor/>
+                    <AddDoctor />
                     {/* end::Modal - Add Doctor*/}
                 </div>
                 {/* end:::Main*/}

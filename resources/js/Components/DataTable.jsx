@@ -117,7 +117,7 @@ const DataTable = ({
     <div className="table-responsive">
       <table {...tableProps}>
         <thead>
-          <tr>
+          <tr className='text-start text-muted fw-bold fs-7 text-uppercase bg-light gs-0'>
             {columns.map((col, idx) => (
               <th
                 key={idx}

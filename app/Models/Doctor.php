@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Doctor extends Model
 {
     use HasFactory;
+    public function schedules(){
+        return $this->hasMany(Schedule::class);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ScheduleResource;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,9 +12,50 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Schedule/Index');
+        $query = Schedule::query()->with('doctor');
+
+        $sort = $request->get('sort', 'schedules.weekday');
+        $order = strtolower($request->get('order', 'asc'));
+
+        $allowedSorts = [
+            'doctor.email',
+            'schedules.weekday',
+            'schedules.start_time',
+            'schedules.end_time',
+            'schedules.duration',
+        ];
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'schedules.weekday';
+        }
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'asc';
+        }
+
+        if ($request->filled('name')) {
+            $query->whereHas('doctor', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->name . '%');
+                $q->orWhere('email', 'like', '%' . $request->name . '%');
+            });
+        }
+
+        // Handle sorting
+
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $order);
+        }
+
+        $schedules = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
+        
+        return Inertia::render('Schedule/Index',
+        [
+            'schedules' =>ScheduleResource::collection($schedules),
+            'query' => $request->all(),
+            'routeUrl' => route('schedules.index'),
+        ]);
     }
     /**
      * Display a listing of the resource.
