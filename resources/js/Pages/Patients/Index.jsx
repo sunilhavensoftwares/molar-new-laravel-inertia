@@ -5,8 +5,9 @@ import DataTable from '@/Components/DataTable';
 import { useEffect, useRef, useState } from 'react';
 import images from '@/Misc/image_map';
 import AddPatient  from "@/Modals/AddPatient"
+import {showSuccessToast, showErrorToast} from "@/Misc/loadToastr";
 export default function Index({ auth }) {
-    const { patients, query, routeUrl } = usePage().props;
+    const { patients, query} = usePage().props;
     const filtersFormRef = useRef(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState({});
@@ -105,10 +106,10 @@ export default function Index({ auth }) {
             const response = await axios.post(`/patients/${patientId}/visibility`, {
                 [key]: value,
             });
-            response.data.success && toastr.success(response.data.message);
-            !response.data.success && toastr.error(response.data.message);
+            response.data.success && showSuccessToast(response.data.message);
+            !response.data.success && showErrorToast(response.data.message);
         } catch (error) {
-            toastr.error('Error updating visibility:', error);
+            showErrorToast('Error updating visibility:', error);
         } finally {
             setProcessing((prev) => ({ ...prev, [patientId]: false }));
         }

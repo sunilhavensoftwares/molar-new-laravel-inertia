@@ -25,6 +25,9 @@ class MedicalHistory extends Model
             $this->attributes['status'] = $index;
         }
     }
+    public function medical_history_statuses(){
+        return $this->hasOne(MedicalHistoryStatus::class, 'id', 'medical_history_status_id');
+    }
     public function medical_history_category()
     {
         return $this->belongsTo(MedicalHistoryCategory::class);
@@ -36,5 +39,9 @@ class MedicalHistory extends Model
     public function patient()
     {
         return $this->belongsTo(Patient::class);
+    }
+    public function teeth()
+    {
+        return $this->belongsToMany(Tooth::class, 'medical_history_tooth');
     }
 }

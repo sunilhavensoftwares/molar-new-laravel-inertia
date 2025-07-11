@@ -20,6 +20,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\WebsiteController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,7 +33,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/patients/case-category', [PatientController::class, 'case_category'])->name('patients.case_category');
     Route::get('/patients/tooth', [PatientController::class, 'tooth'])->name('patients.tooth');
     Route::get('/patients/case-status', [PatientController::class, 'case_status'])->name('patients.case_status');
+    Route::post('/patients/case_status/{medical_history_status}/update-status', [PatientController::class, 'update_status'])->name('patients.case_status.update_status');
     Route::get('/patients/case-refer', [PatientController::class, 'case_refer'])->name('patients.case_refer');
     Route::get('/patients/case-material', [PatientController::class, 'case_material'])->name('patients.case_material');
     Route::get('/patients/pdocuments', [PatientController::class, 'pdocuments'])->name('patients.pdocuments');

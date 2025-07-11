@@ -4,7 +4,7 @@ import AddPatient from "@/Modals/AddPatient"
 import DataTable from '@/Components/DataTable';
 import { useEffect, useRef, useState } from 'react';
 export default function TemporaryPatients({ auth }) {
-    const { patients, query, routeUrl } = usePage().props;
+    const { patients, query} = usePage().props;
     const filtersFormRef = useRef(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState({});

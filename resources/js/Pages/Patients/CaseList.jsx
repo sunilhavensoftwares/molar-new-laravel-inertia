@@ -3,11 +3,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Select2Input from "@/Components/Select2Input";
 import FlatpickrInput from "@/Components/FlatpickrInput";
 import DataTable from '@/Components/DataTable';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import images from '@/Misc/image_map'
 export default function CaseList({ auth }) {
-    const { medical_histories,query,routeUrl } = usePage().props;
-    console.log(medical_histories);
+    const { medical_histories,query} = usePage().props;
   
     const filtersFormRef = useRef(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -105,10 +104,10 @@ export default function CaseList({ auth }) {
         { label: 'ID', key: 'id', thProps: { className: 'min-w-50px ps-4' },tdProps: { className: 'ps-4' }, 'sort_key': 'medical_histories.id', 'sortable': 1 },
         { label: 'Date', key: 'date', thProps: { className: 'min-w-150px ps-4' },tdProps: { className: 'd-flex align-items-center' }, 'sort_key': 'medical_histories.email', 'sortable': 1 },
         { label: 'Doctor', key: 'doctor', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'doctors.name', 'sortable': 1 },
-        { label: 'Title', key: 'title', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'medical_histories.title', 'sortable': 1 },
+        { label: 'Tooth', key: 'tooth', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' } },
         { label: 'Patient', key: 'patient', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'patients.name', 'sortable': 1 },
         { label: 'Category', key: 'category', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'medical_history_categories.name', 'sortable': 1 },
-        { label: 'Status', key: 'status', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'medical_histories.status', 'sortable': 1 },
+        { label: 'Status', key: 'status', thProps: { className: 'min-w-80px ps-4' },tdProps: { className: '' }, 'sort_key': 'medical_history_statuses.name', 'sortable': 1 },
         { label: 'Actions', key: 'actions', thProps: { className: 'text-end pe-4 min-w-100px' },tdProps: { className: 'text-end pe-4' } },
     ];
     const data = medical_histories.data.map((medical_history, index) => (
@@ -131,7 +130,7 @@ export default function CaseList({ auth }) {
                     </div>
                 )
             },
-            title: medical_history.title,
+            tooth: medical_history?.teeth?.map(t => t.code).join(', '),
             patient: {
                 sortValue: medical_history.patient.name.toLowerCase(),
                 content: (
@@ -149,7 +148,7 @@ export default function CaseList({ auth }) {
                 )
             },
             category: medical_history.category.name || '',
-            status: medical_history.status || '',
+            status: <span className={`badge fs-7 fw-bold badge-light-${medical_history.medical_history_statuses.color_name}`}>{medical_history.medical_history_statuses.name}</span>,
             actions: (
                 <>
                 <a className="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click"

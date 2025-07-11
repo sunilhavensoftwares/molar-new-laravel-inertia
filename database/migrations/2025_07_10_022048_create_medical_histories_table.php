@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->foreignId('doctor_id')->constrained()->onDelete('cascade');
             $table->foreignId('medical_history_category_id')->constrained()->onDelete('cascade');
-            $table->string('title',100);
+            $table->foreignId('medical_history_status_id')->constrained()->onDelete('cascade');
             $table->string('description',10000);
             $table->boolean('status')->default(1);
             $table->date('date');

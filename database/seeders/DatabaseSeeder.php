@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
-use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -26,13 +24,15 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleModulePermissionSeeder::class);
         $this->call(RoleUserSeeder::class);
         $this->call(DoctorSeeder::class);
-
         $this->call(PatientSeeder::class);
-
         $this->call(PatientDoctorSeeder::class);
         $this->call(ScheduleSeeder::class);
         $this->call(HolidaySeeder::class);
+        $this->call(ToothSeeder::class);
+        $this->call(MedicalHistoryStatusSeeder::class);
         $this->call(MedicalHistoryCategorySeeder::class);
         $this->call(MedicalHistorySeeder::class);
+        $this->call(MedicalHistoryToothSeeder::class);
+        $this->call(CaseReferHistorySeeder::class); //CaseReferHistorySeeder
     }
 }

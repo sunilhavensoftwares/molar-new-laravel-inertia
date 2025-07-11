@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
+
 return new class extends Migration
 {
     /**
@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('medical_history_categories', function (Blueprint $table) {
+        Schema::create('teeth', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('image',100);
-            $table->string('slug')->nullable();
-            $table->boolean('status')->default(0);
+            $table->integer('code')->nullable();
+            $table->string('name',50)->nullable();
+            $table->string('image',50)->nullable();
+            $table->boolean('status')->default(0)->comment('0=>inactive,1=>active');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -27,8 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Schema::dropIfExists('medical_history_categories');
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        Schema::dropIfExists('teeth');
     }
 };

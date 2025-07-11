@@ -1,8 +1,168 @@
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, Link, usePage, router } from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Select2Input from "@/Components/Select2Input";
+import DataTable from '@/Components/DataTable';
+import React, { useEffect, useRef, useState } from 'react';
+import {showSuccessToast, showErrorToast} from "@/Misc/loadToastr";
 export default function CaseStatus({ auth }) {
-    const { patient } = usePage().props;
+    const { medical_history_statuses, query } = usePage().props;
+
+    const filtersFormRef = useRef(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({});
+    const [appliedFilters, setAppliedFilters] = useState({});
+    const [processing, setProcessing] = useState({});
+    // Initialize all your checkbox states here
+    const [checked, setChecked] = useState({});
+    // Initialize checked state when patients load/change
+    useEffect(() => {
+        if (!medical_history_statuses) return;
+
+        const initChecked = {};
+        medical_history_statuses.data.forEach(medical_history_status => {
+            initChecked[medical_history_status.id] = {
+                status: !!medical_history_status.status
+            };
+        });
+        setChecked(initChecked);
+    }, [medical_history_statuses]);
+    const searchTimeout = useRef(null);
+    useEffect(() => {
+        if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+        // Skip firing on empty input if it's the same as what's already in the query
+        if (searchQuery === '' && !query?.name) return;
+
+        searchTimeout.current = setTimeout(() => {
+            router.get(route(route().current()), {
+                ...appliedFilters,
+                page: 1,
+                perPage: medical_history_statuses.meta.per_page,
+                sort: query?.sort,
+                order: query?.order,
+                name: searchQuery || undefined, // don't include empty string in URL
+            }, {
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }, 400);
+
+        return () => clearTimeout(searchTimeout.current);
+    }, [searchQuery]);
+
+
+    const handleFilterChange = (key) => (value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const handleFilterReset = () => {
+        setFilters({});
+        setAppliedFilters({});
+        filtersFormRef.current.reset();
+        $(filtersFormRef.current).find('input').val(null).trigger('change');
+        $(filtersFormRef.current).find('select').val(null).trigger('change');
+
+        router.get(route(route().current()), {
+            page: 1,
+            perPage: medical_history_statuses.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const applyFilters = (e) => {
+        e.preventDefault();
+        setAppliedFilters(filters);
+
+        router.get(route(route().current()), {
+            ...filters,
+            sort: query?.sort,
+            order: query?.order,
+            page: 1,
+            perPage: medical_history_statuses.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const handleToggle = (medical_history_status_Id, key) => async (e) => {
+        const value = e.target.checked;
+        setProcessing((prev) => ({ ...prev, [medical_history_status_Id]: true }));
+        setChecked(prev => ({
+            ...prev,
+            [medical_history_status_Id]: {
+                ...prev[medical_history_status_Id],
+                [key]: value,
+            },
+        }));
+        try {
+            const response = await axios.post(`/patients/case_status/${medical_history_status_Id}/update-status`, {
+                [key]: value,
+            });
+            response.data.success && showSuccessToast(response.data.message);
+            !response.data.success && showErrorToast(response.data.message);
+        } catch (error) {
+            showErrorToast('Error updating case_status:'+ error);
+        } finally {
+            setProcessing((prev) => ({ ...prev, [medical_history_status_Id]: false }));
+        }
+    };
+    const columns = [
+        { label: 'ID', key: 'id', thProps: { className: 'min-w-50px ps-4' }, tdProps: { className: 'ps-4' }, 'sort_key': 'medical_history_statuses.id', 'sortable': 1 },
+        { label: 'Name', key: 'name', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'medical_history_statuses.name', 'sortable': 1 },
+        { label: 'Color Name', key: 'color_name', thProps: { className: 'min-w-150px ps-4' }, tdProps: { className: 'd-flex align-items-center' }, 'sort_key': 'medical_history_statuses.color_name', 'sortable': 1 },
+        { label: 'Status', key: 'status', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'medical_history_statuses.status', 'sortable': 1 },
+        { label: 'Actions', key: 'actions', thProps: { className: 'text-end pe-4 min-w-100px' }, tdProps: { className: 'text-end pe-4' } },
+    ];
+    const data = medical_history_statuses.data.map((medical_history_status, index) => (
+        {
+            id: medical_history_status.id || '',
+            name: medical_history_status.name,
+            color_name: medical_history_status.color_name,
+            status: (
+                <div className="form-check form-switch form-check-custom form-check-success form-check-solid">
+                    <input
+                        disabled={!!processing[medical_history_status.id]}
+                        type="checkbox"
+                        className="form-check-input"
+                        name={`medical_history_status_${medical_history_status.id}`}
+                        checked={!!checked[medical_history_status.id]?.status}
+                        onChange={handleToggle(medical_history_status.id, 'status')}
+                    />
+                </div>
+            ),
+            actions: (
+                <>
+                    <a href="#" className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                        {/* begin::Svg Icon | path: icons/duotune/art/art005.svg */}
+                        <span className="svg-icon svg-icon-3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="currentColor" />
+                                <path d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z" fill="currentColor" />
+                            </svg>
+                        </span>
+                        {/* end::Svg Icon */}
+                    </a>
+                    <a href="#" className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                        {/* begin::Svg Icon | path: icons/duotune/general/gen027.svg */}
+                        <span className="svg-icon svg-icon-3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z" fill="currentColor" />
+                                <path opacity="0.5" d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z" fill="currentColor" />
+                                <path opacity="0.5" d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z" fill="currentColor" />
+                            </svg>
+                        </span>
+                        {/* end::Svg Icon */}
+                    </a>
+                    {/* end::Menu*/}
+                </>
+            )
+        }));
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -92,7 +252,7 @@ export default function CaseStatus({ auth }) {
                                                 </span>
                                                 {/* end::Svg Icon */}
                                                 <input type="text" data-kt-user-table-filter="search"
-                                                    className="form-control form-control-solid w-250px ps-14" placeholder="Search Status" />
+                                                    className="form-control form-control-solid w-250px ps-14" placeholder="Search Status" onChange={(e) => setSearchQuery(e.target.value)} />
                                             </div>
                                             {/* end::Search */}
                                         </div>
@@ -302,162 +462,17 @@ export default function CaseStatus({ auth }) {
                                     <div className="card-body py-4">
                                         <div id="" className="table-responsive">
                                             {/* begin::Table */}
-                                            <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
-                                                {/* begin::Table head */}
-                                                <thead>
-                                                    {/* begin::Table row */}
-                                                    <tr className="text-start text-muted fw-bold fs-7 text-uppercase bg-light gs-0">
-                                                        <th className="min-w-100px ps-4">ID</th>
-                                                        <th className="min-w-100px">Name</th>
-                                                        <th className="min-w-125px">Color Name</th>
-                                                        <th className="min-w-125px">Status</th>
-                                                        <th className="text-center min-w-90px">Actions</th>
-                                                    </tr>
-                                                    {/* end::Table row */}
-                                                </thead>
-                                                {/* end::Table head */}
-                                                {/* begin::Table body */}
-                                                <tbody className="text-gray-600 fw-semibold">
-                                                    <tr>
-                                                        {/* begin::Checkbox */}
-                                                        <td className="ps-4">
-                                                            1
-                                                        </td>
-                                                        {/* end::Checkbox */}
-                                                        {/* begin::Customer= */}
-                                                        <td>
-                                                            <a href="#"
-                                                                className="text-dark fw-bold text-hover-primary d-block mb-1 fs-6">Completed</a>
-                                                        </td>
-                                                        <td>
-                                                            <span className="badge badge-light-success fs-7 fw-bold">Success</span>
-                                                        </td>
-                                                        {/* end::Customer= */}
-
-
-                                                        {/* begin::Billing= */}
-                                                        <td>
-                                                            <div
-                                                                className="form-check form-switch form-check-custom form-check-success form-check-solid">
-                                                                <input className="form-check-input " type="checkbox" defaultValue="" defaultChecked
-                                                                    id="kt_flexSwitchCustomDefault_1_1" />
-                                                            </div>
-                                                        </td>
-                                                        {/* end::Billing= */}
-
-                                                        {/* begin::Action= */}
-                                                        <td className="text-center">
-
-                                                            <a href="#"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                                                {/* begin::Svg Icon | path: icons/duotune/art/art005.svg */}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path opacity="0.3"
-                                                                            d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z"
-                                                                            fill="currentColor" />
-                                                                        <path
-                                                                            d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon */}
-                                                            </a>
-                                                            <a href="#"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                                                {/* begin::Svg Icon | path: icons/duotune/general/gen027.svg */}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon */}
-                                                            </a>
-                                                        </td>
-                                                        {/* end::Action= */}
-                                                    </tr>
-                                                    <tr>
-                                                        {/* begin::Checkbox */}
-                                                        <td className="ps-4">
-                                                            2
-                                                        </td>
-                                                        {/* end::Checkbox */}
-                                                        {/* begin::Customer= */}
-                                                        <td>
-                                                            <a href="#"
-                                                                className="text-dark fw-bold text-hover-primary d-block mb-1 fs-6">In
-                                                                Process</a>
-                                                        </td>
-                                                        <td>
-                                                            <span className="badge badge-light-danger fs-7 fw-bold">In Progress</span>
-                                                        </td>
-                                                        {/* end::Customer= */}
-
-                                                        {/* begin::Billing= */}
-                                                        <td>
-                                                            <div
-                                                                className="form-check form-switch form-check-custom form-check-success form-check-solid">
-                                                                <input className="form-check-input" type="checkbox" defaultValue="" defaultChecked
-                                                                    id="kt_flexSwitchCustomDefault_1_1" />
-                                                            </div>
-                                                        </td>
-                                                        {/* end::Billing= */}
-
-                                                        {/* begin::Action= */}
-                                                        <td className="text-center">
-
-                                                            <a href="#"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                                                {/* begin::Svg Icon | path: icons/duotune/art/art005.svg */}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path opacity="0.3"
-                                                                            d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z"
-                                                                            fill="currentColor" />
-                                                                        <path
-                                                                            d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon */}
-                                                            </a>
-                                                            <a href="#"
-                                                                className="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                                                {/* begin::Svg Icon | path: icons/duotune/general/gen027.svg */}
-                                                                <span className="svg-icon svg-icon-3">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M5 9C5 8.44772 5.44772 8 6 8H18C18.5523 8 19 8.44772 19 9V18C19 19.6569 17.6569 21 16 21H8C6.34315 21 5 19.6569 5 18V9Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5V5C19 5.55228 18.5523 6 18 6H6C5.44772 6 5 5.55228 5 5V5Z"
-                                                                            fill="currentColor" />
-                                                                        <path opacity="0.5"
-                                                                            d="M9 4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V4H9V4Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/* end::Svg Icon */}
-                                                            </a>
-                                                        </td>
-                                                        {/* end::Action= */}
-                                                    </tr>
-
-                                                </tbody>
-                                                {/* end::Table body */}
-                                            </table>
+                                            <DataTable
+                                                columns={columns}
+                                                data={data}
+                                                tableProps={{ className: 'table align-middle table-row-dashed fs-6 gy-5' }}
+                                                currentPage={medical_history_statuses.meta.current_page}
+                                                perPage={medical_history_statuses.meta.per_page}
+                                                total={medical_history_statuses.meta.total}
+                                                sortKey={query?.sort}
+                                                sortOrder={query?.order}
+                                                searchQuery={filters.name}
+                                                appliedFilters={appliedFilters} />
                                             {/* end::Table */}
                                         </div>
                                     </div>

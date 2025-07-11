@@ -1,7 +1,126 @@
-import { Head, usePage, Link } from "@inertiajs/react";
+import { Head, usePage, Link,router  } from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DataTable from '@/Components/DataTable';
+import React, { useEffect, useRef, useState } from 'react';
 export default function CaseRefer({ auth }) {
-    const { patient } = usePage().props;
+    const { case_refer_histories, query } = usePage().props;
+    const filtersFormRef = useRef(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({});
+    const [appliedFilters, setAppliedFilters] = useState({});
+    const [processing, setProcessing] = useState({});
+    const searchTimeout = useRef(null);
+    useEffect(() => {
+        if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+        // Skip firing on empty input if it's the same as what's already in the query
+        if (searchQuery === '' && !query?.name) return;
+
+        searchTimeout.current = setTimeout(() => {
+            router.get(route(route().current()), {
+                ...appliedFilters,
+                page: 1,
+                perPage: case_refer_histories.meta.per_page,
+                sort: query?.sort,
+                order: query?.order,
+                name: searchQuery || undefined, // don't include empty string in URL
+            }, {
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }, 400);
+
+        return () => clearTimeout(searchTimeout.current);
+    }, [searchQuery]);
+
+
+    const handleFilterChange = (key) => (value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const handleFilterReset = () => {
+        setFilters({});
+        setAppliedFilters({});
+        filtersFormRef.current.reset();
+        $(filtersFormRef.current).find('input').val(null).trigger('change');
+        $(filtersFormRef.current).find('select').val(null).trigger('change');
+
+        router.get(route(route().current()), {
+            page: 1,
+            perPage: case_refer_histories.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const applyFilters = (e) => {
+        e.preventDefault();
+        setAppliedFilters(filters);
+
+        router.get(route(route().current()), {
+            ...filters,
+            sort: query?.sort,
+            order: query?.order,
+            page: 1,
+            perPage: case_refer_histories.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const handleToggle = (patientId, key) => async (e) => {
+        const value = e.target.checked;
+        setProcessing((prev) => ({ ...prev, [patientId]: true }));
+        setChecked(prev => ({
+            ...prev,
+            [patientId]: {
+                ...prev[patientId],
+                [key]: value,
+            },
+        }));
+        try {
+            const response = await axios.post(`/patients/${patientId}/visibility`, {
+                [key]: value,
+            });
+            response.data.success && toastr.success(response.data.message);
+            !response.data.success && toastr.error(response.data.message);
+        } catch (error) {
+            toastr.error('Error updating visibility:', error);
+        } finally {
+            setProcessing((prev) => ({ ...prev, [patientId]: false }));
+        }
+    };
+    const columns = [
+        { label: 'ID', key: 'id', thProps: { className: 'min-w-50px ps-4' }, tdProps: { className: 'ps-4' }, 'sort_key': 'case_refer_histories.id', 'sortable': 1 },
+        { label: 'Patient', key: 'patient', thProps: { className: 'min-w-150px ps-4' }, tdProps: { className: 'ps-4' }, 'sort_key': 'patients.id', 'sortable': 1 },
+        { label: 'Case', key: 'case', thProps: { className: 'min-w-150px ps-4' }, tdProps: { className: 'ps-4' }, 'sort_key': 'medical_histories.id', 'sortable': 1 },
+        { label: 'From', key: 'from', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'dt_from.name', 'sortable': 1 },
+        { label: 'To', key: 'to', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'dt_to.name', 'sortable': 1 },
+        { label: 'Refferer', key: 'refferer', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'users.name', 'sortable': 1 },
+        { label: 'Actions', key: 'actions', thProps: { className: 'text-center min-w-150px' }, tdProps: { className: 'text-end' } },
+    ];
+    const data = case_refer_histories.data.map((case_refer_history, index) => (
+        {
+            id: case_refer_history.id || '',
+            patient: <span className="text-gray-800 text-hover-primary mb-1">{case_refer_history.patient.name}</span>,
+            case: case_refer_history.medical_history.id,
+            from: <span className="badge badge-light-danger fw-semibold me-1">{case_refer_history.from_doctor.name}</span>,
+            to: <span className="badge badge-light-info fw-semibold me-1">{case_refer_history.to_doctor.name}</span>,
+            refferer: <span className="text-dark fw-bold text-hover-primary d-block mb-1 fs-6">{case_refer_history.referrer_user.name}</span>,
+            actions: (
+                <>
+                    {/* start::Menu*/}
+                     <a href="#" className="btn btn-bg-light btn-primary btn-sm me-1">Mark as Read</a>
+                    <a href="#" className="btn btn-icon btn-info btn-sm"><i className="fa-solid fa-eye"></i></a>
+                    {/* end::Menu*/}
+                </>
+            )
+        }));
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -80,7 +199,7 @@ export default function CaseRefer({ auth }) {
                                                 </span>
                                                 {/* end::Svg Icon */}
                                                 <input type="text" data-kt-user-table-filter="search"
-                                                    className="form-control form-control-solid w-250px ps-14" placeholder="Search" />
+                                                    className="form-control form-control-solid w-250px ps-14" placeholder="Search" onChange={(e)=>setSearchQuery(e.target.value)} />
                                             </div>
                                             {/* end::Search */}
                                         </div>
@@ -208,97 +327,17 @@ export default function CaseRefer({ auth }) {
                                     {/* begin::Card body */}
                                     <div className="card-body py-4">
                                         {/* begin::Table */}
-                                        <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
-                                            {/* begin::Table head */}
-                                            <thead>
-                                                {/* begin::Table row */}
-                                                <tr className="text-start text-muted fw-bold fs-7 text-uppercase bg-light gs-0">
-                                                    <th className="min-w-60px ps-4">ID</th>
-                                                    <th className="min-w-125px">Patient</th>
-                                                    <th className="min-w-100px">Case</th>
-                                                    <th className="min-w-125px">From</th>
-                                                    <th className="min-w-125px">To</th>
-                                                    <th className="min-w-125px">Refer By</th>
-                                                    <th className="text-center min-w-150px">Actions</th>
-                                                </tr>
-                                                {/* end::Table row */}
-                                            </thead>
-                                            {/* end::Table head */}
-                                            {/* begin::Table body */}
-                                            <tbody className="text-gray-600 fw-semibold">
-                                                <tr>
-                                                    {/* begin::Checkbox */}
-                                                    <td className="ps-4">1</td>
-                                                    {/* end::Checkbox */}
-                                                    {/* begin::Customer= */}
-                                                    <td>
-                                                        <span className="text-gray-800 text-hover-primary mb-1">Emma Smith</span>
-                                                    </td>
-                                                    {/* end::Customer= */}
-                                                    {/* begin::Status= */}
-                                                    <td>28</td>
-                                                    {/* end::Status= */}
-                                                    <td><span className="badge badge-light-danger fw-semibold me-1">Faisal</span></td>
-                                                    <td><span className="badge badge-light-info fw-semibold me-1">Saud</span></td>
-                                                    <td><span
-                                                        className="text-dark fw-bold text-hover-primary d-block mb-1 fs-6">Admin</span>
-                                                    </td>
-
-
-                                                    {/* begin::Action= */}
-                                                    <td className="text-end">
-
-                                                        <a href="#" className="btn btn-bg-light btn-primary btn-sm me-1">
-                                                            {/* begin::Svg Icon | path: icons/duotune/art/art005.svg */}
-                                                            Mark as Read
-                                                            {/* end::Svg Icon */}
-                                                        </a>
-                                                        <a href="#" className="btn btn-icon btn-info btn-sm">
-                                                            <i className="fa-solid fa-eye"></i>
-                                                        </a>
-                                                    </td>
-                                                    {/* end::Action= */}
-                                                </tr>
-                                                <tr>
-                                                    {/* begin::Checkbox */}
-                                                    <td className="ps-4">2</td>
-                                                    {/* end::Checkbox */}
-                                                    {/* begin::Customer= */}
-                                                    <td>
-                                                        <span className="text-gray-800 text-hover-primary mb-1">Abdul Malik</span>
-                                                    </td>
-                                                    {/* end::Customer= */}
-                                                    {/* begin::Status= */}
-                                                    <td>255</td>
-                                                    {/* end::Status= */}
-                                                    <td>
-                                                        <span className="badge badge-light-danger fw-semibold me-1">John</span>
-                                                    </td>
-                                                    <td>
-                                                        <span className="badge badge-light-info fw-semibold me-1">Jeff</span>
-                                                    </td>
-                                                    <td>
-                                                        <span
-                                                            className="text-dark fw-bold text-hover-primary d-block mb-1 fs-6">Admin</span>
-                                                    </td>
-
-                                                    {/* begin::Action= */}
-                                                    <td className="text-end">
-
-                                                        <a href="#" className="btn btn-bg-light btn-primary btn-sm me-1">
-                                                            {/* begin::Svg Icon | path: icons/duotune/art/art005.svg */}
-                                                            Mark as Read
-                                                            {/* end::Svg Icon */}
-                                                        </a>
-                                                        <a href="#" className="btn btn-icon btn-info btn-sm">
-                                                            <i className="fa-solid fa-eye"></i>
-                                                        </a>
-                                                    </td>
-                                                    {/* end::Action= */}
-                                                </tr>
-                                            </tbody>
-                                            {/* end::Table body */}
-                                        </table>
+                                        <DataTable
+                                            columns={columns}
+                                            data={data}
+                                            tableProps={{ className: 'table align-middle table-row-dashed fs-6 gy-5' }}
+                                            currentPage={case_refer_histories.meta.current_page}
+                                            perPage={case_refer_histories.meta.per_page}
+                                            total={case_refer_histories.meta.total}
+                                            sortKey={query?.sort}
+                                            sortOrder={query?.order}
+                                            searchQuery={filters.name}
+                                            appliedFilters={appliedFilters} />
                                         {/* end::Table */}
                                     </div>
                                     {/* end::Card body */}

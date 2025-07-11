@@ -21,13 +21,26 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //shared url info for sidebar menu
-         Inertia::share([
-        'route' => function () {
-            return [
-                'url'=>request()->segments(),
-            ];
-        },
-    ]);
+        try {
+            // Inertia::share([
+            //     'route' => function () {
+            //         $segments = request()->segments();
+            //         return [
+            //             'url' => is_array($segments) ? $segments : [],
+            //         ];
+            //     },
+            //     'routeUrl' => function () {
+            //         $currentRoute = \Route::current();
+            //         if ($currentRoute) {
+            //             $routeName = \Route::currentRouteName();
+            //             return $routeName ? route($routeName, $currentRoute->parameters()) : '';
+            //         }
+            //         return '';
+            //     },
+            // ]);
+        } catch (\Exception $e) {
+            // Handle any exceptions that may occur
+            //\Log::error('An error occurred while sharing data with Inertia: ' . $e->getMessage());
+        }
     }
 }

@@ -7,7 +7,7 @@ import { showSuccessToast, showErrorToast } from '@/Misc/loadToastr';;
 import images from '@/Misc/image_map';
 import AddDoctor  from "@/Modals/AddDoctor"
 export default function Index({ auth }) {
-    const { doctors, query, routeUrl } = usePage().props;
+    const { doctors, query} = usePage().props;
     const filtersFormRef = useRef(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState({});

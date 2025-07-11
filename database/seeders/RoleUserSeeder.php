@@ -17,6 +17,8 @@ class RoleUserSeeder extends Seeder
         foreach (User::all() as $user) {
             if (str_contains($user->email, 'patient')) {
                 $user->roles()->syncWithoutDetaching([$roles['patient']]);
+            } elseif (str_contains($user->email, 'admin')) {
+                $user->roles()->syncWithoutDetaching([$roles['admin']]);
             } elseif (str_contains($user->email, 'doctor')) {
                 $user->roles()->syncWithoutDetaching([$roles['doctor']]);
             } elseif (str_contains($user->email, 'receptionist')) {
