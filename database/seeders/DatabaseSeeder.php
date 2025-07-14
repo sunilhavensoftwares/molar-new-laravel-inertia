@@ -34,5 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MedicalHistorySeeder::class);
         $this->call(MedicalHistoryToothSeeder::class);
         $this->call(CaseReferHistorySeeder::class); //CaseReferHistorySeeder
+        $this->call(CaseMaterialSeeder::class); //CaseMaterialSeeder
+        $this->call(PatientDoctorSeeder::class); //PatientDoctorSeeder
     }
 }

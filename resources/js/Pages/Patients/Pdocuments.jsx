@@ -1,9 +1,179 @@
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, Link, usePage, router } from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Select2Input from "@/Components/Select2Input";
 import images from '@/Misc/image_map';
+import DataTable from '@/Components/DataTable';
+import React, { useEffect, useRef, useState } from 'react';
+import LazyImage from '@/Components/LazyImage';
+import doc_type_images from '@/Misc/doc_type_images';
 export default function Pdocuments({ auth }) {
-    const { patient } = usePage().props;
+    const { patient_documents, query } = usePage().props;
+    
+    const filtersFormRef = useRef(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({});
+    const [appliedFilters, setAppliedFilters] = useState({});
+    const [processing, setProcessing] = useState({});
+    const searchTimeout = useRef(null);
+
+    useEffect(() => {
+        if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+        // Skip firing on empty input if it's the same as what's already in the query
+        if (searchQuery === '' && !query?.name) return;
+
+        searchTimeout.current = setTimeout(() => {
+            router.get(route(route().current()), {
+                ...appliedFilters,
+                page: 1,
+                perPage: patient_documents.meta.per_page,
+                sort: query?.sort,
+                order: query?.order,
+                name: searchQuery || undefined, // don't include empty string in URL
+            }, {
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }, 400);
+
+        return () => clearTimeout(searchTimeout.current);
+    }, [searchQuery]);
+
+
+    const handleFilterChange = (key) => (value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const handleFilterReset = () => {
+        setFilters({});
+        setAppliedFilters({});
+        filtersFormRef.current.reset();
+        $(filtersFormRef.current).find('input').val(null).trigger('change');
+        $(filtersFormRef.current).find('select').val(null).trigger('change');
+
+        router.get(route(route().current()), {
+            page: 1,
+            perPage: patient_documents.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const applyFilters = (e) => {
+        e.preventDefault();
+        setAppliedFilters(filters);
+
+        router.get(route(route().current()), {
+            ...filters,
+            sort: query?.sort,
+            order: query?.order,
+            page: 1,
+            perPage: patient_documents.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const handleToggle = (patientId, key) => async (e) => {
+        const value = e.target.checked;
+        setProcessing((prev) => ({ ...prev, [patientId]: true }));
+        setChecked(prev => ({
+            ...prev,
+            [patientId]: {
+                ...prev[patientId],
+                [key]: value,
+            },
+        }));
+        try {
+            const response = await axios.post(`/patients/${patientId}/visibility`, {
+                [key]: value,
+            });
+            response.data.success && toastr.success(response.data.message);
+            !response.data.success && toastr.error(response.data.message);
+        } catch (error) {
+            toastr.error('Error updating visibility:', error);
+        } finally {
+            setProcessing((prev) => ({ ...prev, [patientId]: false }));
+        }
+    };
+    const columns = [
+        { label: 'ID', key: 'id', thProps: { className: 'min-w-50px ps-4' }, tdProps: { className: 'ps-4' }, 'sort_key': 'patient_documents.id', 'sortable': 1 },
+        { label: 'Patient', key: 'patient', thProps: { className: 'min-w-150px ps-4' }, tdProps: { className: 'd-flex align-items-center' }, 'sort_key': 'patients.name', 'sortable': 1 },
+        { label: 'Date', key: 'date', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'patient_documents.date', 'sortable': 1 },
+        { label: 'Description', key: 'description', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'patient_documents.description', 'sortable': 1 },
+        { label: 'Document', key: 'document', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' } },
+        { label: 'Actions', key: 'actions', thProps: { className: 'text-end pe-4 min-w-100px' }, tdProps: { className: 'text-end pe-4' } },
+    ];
+    const data = patient_documents.data.map((patient_document, index) => (
+        {
+            id: patient_document.id || '',
+            patient: {
+                sortValue: patient_document.patient.name.toLowerCase(),
+                content: (
+                    <div className="d-flex align-items-center">
+                        <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                            <div className="symbol-label">
+                                <LazyImage loading="lazy" src={patient_document.patient.img_url || images.blank_avatar } alt={patient_document.patient.name} className="w-100" />
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <Link href={`/patients/patient-detail/${patient_document.patient.id}`} className="text-gray-800 text-hover-primary mb-1">{patient_document.patient.name}</Link>
+                            <span>{patient_document.patient.email}</span>
+                        </div>
+                    </div>
+                )
+            },
+            date: <div className="badge badge-light">{patient_document.date_formatted}</div>,
+            description: patient_document.description,
+            document: (
+                patient_document.document_path &&
+                <div className="symbol symbol-80px mb-5">
+                    {
+                        doc_type_images[patient_document?.document_path?.split('.')?.pop()] ?
+                            <img src={doc_type_images[patient_document.document_path.split('.').pop()]} className="theme-light-show" alt="" /> :
+                            <img src={patient_document.document_path} className="theme-light-show" alt="" />
+                    }
+                </div>
+            ),
+            actions: (
+                <>
+                    <a className="btn btn-light btn-active-light-primary btn-sm"
+                        data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
+                        {/*begin::Svg Icon | path: icons/duotune/arrows/arr072.svg */}
+                        <span className="svg-icon svg-icon-5 m-0">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
+                                    fill="currentColor" />
+                            </svg>
+                        </span>
+                        {/*end::Svg Icon */}
+                    </a>
+                    {/*begin::Menu */}
+                    <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
+                        data-kt-menu="true">
+                        {/*begin::Menu item */}
+                        <div className="menu-item px-3">
+                            <Link href="#" className="menu-link px-3">Download</Link>
+                        </div>
+                        {/*end::Menu item */}
+                        {/*begin::Menu item */}
+                        <div className="menu-item px-3">
+                            <a href="#" className="menu-link px-3"
+                                data-kt-users-table-filter="delete_row">Delete</a>
+                        </div>
+                        {/*end::Menu item */}
+                    </div>
+                    {/*end::Menu */}
+                </>
+            )
+        }));
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -92,7 +262,7 @@ export default function Pdocuments({ auth }) {
                                                 {/*end::Svg Icon */}
                                                 <input type="text" data-kt-user-table-filter="search"
                                                     className="form-control form-control-solid w-250px ps-14"
-                                                    placeholder="Search documents" />
+                                                    placeholder="Search patient" onChange={(event)=>setSearchQuery(event.target.value)} />
                                             </div>
                                             {/*end::Search */}
                                         </div>
@@ -380,477 +550,17 @@ export default function Pdocuments({ auth }) {
                                     <div className="card-body py-4">
                                         <div id="" className="table-responsive">
                                             {/*begin::Table */}
-                                            <table className="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
-                                                {/*begin::Table head */}
-                                                <thead>
-                                                    {/*begin::Table row */}
-                                                    <tr className="text-start text-muted bg-light fw-bold fs-7 text-uppercase gs-0">
-
-                                                        <th className="min-w-70px ps-4">ID</th>
-                                                        <th className="min-w-105px">Patient</th>
-                                                        <th className="min-w-105px">Date</th>
-                                                        <th className="min-w-105px">Description</th>
-                                                        <th className="min-w-105px">Document</th>
-                                                        <th className="text-center min-w-100px">Actions</th>
-                                                    </tr>
-                                                    {/*end::Table row */}
-                                                </thead>
-                                                {/*end::Table head */}
-                                                {/* begin::Table body */}
-                                                <tbody className="text-gray-600 fw-semibold">
-                                                    {/*begin::Table row */}
-                                                    <tr>
-                                                        <td className="ps-4">94</td>
-                                                        {/*begin::User= */}
-                                                        <td className="d-flex align-items-center">
-                                                            {/*begin:: Avatar */}
-                                                            <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                                <a href="patient/detail.php">
-                                                                    <div className="symbol-label">
-                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
-                                                                            className="w-100" />
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                            {/*end::Avatar */}
-                                                            {/*begin::User details */}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="patient/detail.php"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/*begin::User details */}
-                                                        </td>
-                                                        {/*end::User= */}
-                                                        {/*begin::Last login= */}
-                                                        <td>
-                                                            <div className="badge badge-light">10 March 2023</div>
-                                                        </td>
-                                                        {/*end::Last login= */}
-                                                        {/*begin::Role= */}
-                                                        <td>8559072770</td>
-                                                        {/*end::Role= */}
-
-                                                        <td>
-                                                            <div className="symbol symbol-80px mb-5">
-                                                                <img src={images.pdf} className="theme-light-show"
-                                                                    alt="" />
-                                                            </div>
-                                                        </td>
-
-                                                        {/*begin::Action= */}
-                                                        <td className="text-center">
-                                                            <a className="btn btn-light btn-active-light-primary btn-sm"
-                                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                                                {/*begin::Svg Icon | path: icons/duotune/arrows/arr072.svg */}
-                                                                <span className="svg-icon svg-icon-5 m-0">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/*end::Svg Icon */}
-                                                            </a>
-                                                            {/*begin::Menu */}
-                                                            {/*begin::Menu */}
-                                                            <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                                                data-kt-menu="true">
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3">Download</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3"
-                                                                        data-kt-users-table-filter="delete_row">Delete</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                            </div>
-                                                            {/*end::Menu */}
-                                                        </td>
-                                                        {/*end::Action= */}
-                                                    </tr>
-                                                    {/*end::Table row */}
-                                                    {/*begin::Table row */}
-                                                    <tr>
-                                                        <td className="ps-4">36</td>
-                                                        {/*begin::User= */}
-                                                        <td className="d-flex align-items-center">
-                                                            {/*begin:: Avatar */}
-                                                            <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                                <a href="patient/detail.php">
-                                                                    <div className="symbol-label">
-                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
-                                                                            className="w-100" />
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                            {/*end::Avatar */}
-                                                            {/*begin::User details */}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="patient/detail.php"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/*begin::User details */}
-                                                        </td>
-                                                        {/*end::User= */}
-                                                        {/*begin::Last login= */}
-                                                        <td>
-                                                            <div className="badge badge-light">10 March 2023</div>
-                                                        </td>
-                                                        {/*end::Last login= */}
-                                                        {/*begin::Role= */}
-                                                        <td>7485969685</td>
-                                                        {/*end::Role= */}
-                                                        <td>
-                                                            <div className="symbol symbol-80px mb-5">
-                                                                <img src={images.pdf} className="theme-light-show"
-                                                                    alt="" />
-                                                            </div>
-                                                        </td>
-
-                                                        {/*begin::Action= */}
-                                                        <td className="text-center">
-                                                            <a className="btn btn-light btn-active-light-primary btn-sm"
-                                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                                                {/*begin::Svg Icon | path: icons/duotune/arrows/arr072.svg */}
-                                                                <span className="svg-icon svg-icon-5 m-0">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/*end::Svg Icon */}
-                                                            </a>
-                                                            {/*begin::Menu */}
-                                                            {/*begin::Menu */}
-                                                            <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                                                data-kt-menu="true">
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3">Download</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3"
-                                                                        data-kt-users-table-filter="delete_row">Delete</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                            </div>
-                                                            {/*end::Menu */}
-                                                        </td>
-                                                        {/*end::Action= */}
-                                                    </tr>
-                                                    {/*end::Table row */}
-                                                    {/*begin::Table row */}
-                                                    <tr>
-                                                        <td className="ps-4">48</td>
-                                                        {/*begin::User= */}
-                                                        <td className="d-flex align-items-center">
-                                                            {/*begin:: Avatar */}
-                                                            <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                                <a href="patient/detail.php">
-                                                                    <div className="symbol-label">
-                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
-                                                                            className="w-100" />
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                            {/*end::Avatar */}
-                                                            {/*begin::User details */}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="patient/detail.php"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/*begin::User details */}
-                                                        </td>
-                                                        {/*end::User= */}
-                                                        {/*begin::Last login= */}
-                                                        <td>
-                                                            <div className="badge badge-light">10 March 2023</div>
-                                                        </td>
-                                                        {/*end::Last login= */}
-                                                        {/*begin::Role= */}
-                                                        <td>3214567891</td>
-
-                                                        <td>
-                                                            <div className="symbol symbol-80px mb-5">
-                                                                <img src={images.pdf} className="theme-light-show"
-                                                                    alt="" />
-                                                            </div>
-                                                        </td>
-
-                                                        {/*begin::Action= */}
-                                                        <td className="text-center">
-                                                            <a className="btn btn-light btn-active-light-primary btn-sm"
-                                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                                                {/*begin::Svg Icon | path: icons/duotune/arrows/arr072.svg */}
-                                                                <span className="svg-icon svg-icon-5 m-0">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/*end::Svg Icon */}
-                                                            </a>
-                                                            {/*begin::Menu */}
-                                                            {/*begin::Menu */}
-                                                            <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                                                data-kt-menu="true">
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3">Download</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3"
-                                                                        data-kt-users-table-filter="delete_row">Delete</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                            </div>
-                                                            {/*end::Menu */}
-                                                        </td>
-                                                        {/*end::Action= */}
-                                                    </tr>
-                                                    {/*end::Table row */}
-                                                    {/*begin::Table row */}
-                                                    <tr>
-                                                        <td className="ps-4">96</td>
-                                                        {/*begin::User= */}
-                                                        <td className="d-flex align-items-center">
-                                                            {/*begin:: Avatar */}
-                                                            <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                                <a href="patient/detail.php">
-                                                                    <div className="symbol-label">
-                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
-                                                                            className="w-100" />
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                            {/*end::Avatar */}
-                                                            {/*begin::User details */}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="patient/detail.php"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/*begin::User details */}
-                                                        </td>
-                                                        {/*end::User= */}
-                                                        {/*begin::Last login= */}
-                                                        <td>
-                                                            <div className="badge badge-light">10 March 2023</div>
-                                                        </td>
-                                                        {/*end::Last login= */}
-                                                        {/*begin::Role= */}
-                                                        <td>9638527142</td>
-                                                        {/*end::Role= */}
-
-                                                        <td>
-                                                            <div className="symbol symbol-80px mb-5">
-                                                                <img src={images.pdf} className="theme-light-show"
-                                                                    alt="" />
-                                                            </div>
-                                                        </td>
-
-                                                        {/*begin::Action= */}
-                                                        <td className="text-center">
-                                                            <a className="btn btn-light btn-active-light-primary btn-sm"
-                                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                                                {/*begin::Svg Icon | path: icons/duotune/arrows/arr072.svg */}
-                                                                <span className="svg-icon svg-icon-5 m-0">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/*end::Svg Icon */}
-                                                            </a>
-                                                            {/*begin::Menu */}
-                                                            {/*begin::Menu */}
-                                                            <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                                                data-kt-menu="true">
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3">Download</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3">Delete</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                            </div>
-                                                            {/*end::Menu */}
-                                                        </td>
-                                                        {/*end::Action= */}
-                                                    </tr>
-                                                    {/*end::Table row */}
-                                                    {/*begin::Table row */}
-                                                    <tr>
-                                                        <td className="ps-4">54</td>
-                                                        {/*begin::User= */}
-                                                        <td className="d-flex align-items-center">
-                                                            {/*begin:: Avatar */}
-                                                            <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                                <a href="patient/detail.php">
-                                                                    <div className="symbol-label">
-                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
-                                                                            className="w-100" />
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                            {/*end::Avatar */}
-                                                            {/*begin::User details */}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="patient/detail.php"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/*begin::User details */}
-                                                        </td>
-                                                        {/*end::User= */}
-                                                        {/*begin::Last login= */}
-                                                        <td>
-                                                            <div className="badge badge-light">10 March 2023</div>
-                                                        </td>
-                                                        {/*end::Last login= */}
-                                                        {/*begin::Role= */}
-                                                        <td>125874963</td>
-                                                        {/*end::Role= */}
-                                                        <td>
-                                                            <div className="symbol symbol-80px mb-5">
-                                                                <img src={images.doc_icon} className="theme-light-show"
-                                                                    alt="" />
-                                                            </div>
-                                                        </td>
-
-                                                        {/*begin::Action= */}
-                                                        <td className="text-center">
-                                                            <a className="btn btn-light btn-active-light-primary btn-sm"
-                                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                                                {/*begin::Svg Icon | path: icons/duotune/arrows/arr072.svg */}
-                                                                <span className="svg-icon svg-icon-5 m-0">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/*end::Svg Icon */}
-                                                            </a>
-                                                            {/*begin::Menu */}
-                                                            {/*begin::Menu */}
-                                                            <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                                                data-kt-menu="true">
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3">Download</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3"
-                                                                        data-kt-users-table-filter="delete_row">Delete</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                            </div>
-                                                            {/*end::Menu */}
-                                                        </td>
-                                                        {/*end::Action= */}
-                                                    </tr>
-                                                    {/*end::Table row */}
-                                                    {/*begin::Table row */}
-                                                    <tr>
-                                                        <td className="ps-4">45</td>
-                                                        {/*begin::User= */}
-                                                        <td className="d-flex align-items-center">
-                                                            {/*begin:: Avatar */}
-                                                            <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                                <a href="patient/detail.php">
-                                                                    <div className="symbol-label">
-                                                                        <img src={images.avatar_300_6} alt="Emma Smith"
-                                                                            className="w-100" />
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                            {/*end::Avatar */}
-                                                            {/*begin::User details */}
-                                                            <div className="d-flex flex-column">
-                                                                <a href="patient/detail.php"
-                                                                    className="text-gray-800 text-hover-primary mb-1">Emma Smith</a>
-                                                                <span>smith@kpmg.com</span>
-                                                            </div>
-                                                            {/*begin::User details */}
-                                                        </td>
-                                                        {/*end::User= */}
-                                                        {/*begin::Last login= */}
-                                                        <td>
-                                                            <div className="badge badge-light">10 March 2023</div>
-                                                        </td>
-                                                        {/*end::Last login= */}
-                                                        {/*begin::Role= */}
-                                                        <td>9696807458</td>
-                                                        {/*end::Role= */}
-                                                        <td>
-                                                            <div className="symbol symbol-80px mb-5">
-                                                                <img src={images.avatar_300_1} className="theme-light-show"
-                                                                    alt="" />
-                                                            </div>
-                                                        </td>
-
-                                                        {/*begin::Action= */}
-                                                        <td className="text-center">
-                                                            <a className="btn btn-light btn-active-light-primary btn-sm"
-                                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
-                                                                {/*begin::Svg Icon | path: icons/duotune/arrows/arr072.svg */}
-                                                                <span className="svg-icon svg-icon-5 m-0">
-                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg">
-                                                                        <path
-                                                                            d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
-                                                                            fill="currentColor" />
-                                                                    </svg>
-                                                                </span>
-                                                                {/*end::Svg Icon */}
-                                                            </a>
-                                                            {/*begin::Menu */}
-                                                            <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
-                                                                data-kt-menu="true">
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3">Download</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                                {/*begin::Menu item */}
-                                                                <div className="menu-item px-3">
-                                                                    <a href="#" className="menu-link px-3"
-                                                                        data-kt-users-table-filter="delete_row">Delete</a>
-                                                                </div>
-                                                                {/*end::Menu item */}
-                                                            </div>
-                                                            {/*end::Menu */}
-                                                        </td>
-                                                        {/*end::Action= */}
-                                                    </tr>
-                                                    {/*end::Table row */}
-                                                </tbody>
-                                                {/* end::Table body */}
-                                            </table>
+                                            <DataTable
+                                                columns={columns}
+                                                data={data}
+                                                tableProps={{ className: 'table align-middle table-row-dashed fs-6 gy-5' }}
+                                                currentPage={patient_documents.meta.current_page}
+                                                perPage={patient_documents.meta.per_page}
+                                                total={patient_documents.meta.total}
+                                                sortKey={query?.sort}
+                                                sortOrder={query?.order}
+                                                searchQuery={filters.name}
+                                                appliedFilters={appliedFilters} />
                                             {/*end::Table */}
                                         </div>
                                     </div>

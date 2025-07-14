@@ -65,10 +65,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/patients/case-list', [PatientController::class, 'case_list'])->name('patients.case_list');
     Route::get('/patients/case-category', [PatientController::class, 'case_category'])->name('patients.case_category');
     Route::get('/patients/tooth', [PatientController::class, 'tooth'])->name('patients.tooth');
+
     Route::get('/patients/case-status', [PatientController::class, 'case_status'])->name('patients.case_status');
     Route::post('/patients/case_status/{medical_history_status}/update-status', [PatientController::class, 'update_status'])->name('patients.case_status.update_status');
+
     Route::get('/patients/case-refer', [PatientController::class, 'case_refer'])->name('patients.case_refer');
+
     Route::get('/patients/case-material', [PatientController::class, 'case_material'])->name('patients.case_material');
+    Route::post('/patients/case_material/{case_material}/update-status', [PatientController::class, 'update_case_material_status'])->name('patients.case_material.update_case_material_status');
     Route::get('/patients/pdocuments', [PatientController::class, 'pdocuments'])->name('patients.pdocuments');
     //schedules
     Route::get('/schedules/holidays', [ScheduleController::class, 'holidays'])->name('schedules.holidays');

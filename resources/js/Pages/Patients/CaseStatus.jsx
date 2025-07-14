@@ -107,7 +107,12 @@ export default function CaseStatus({ auth }) {
             response.data.success && showSuccessToast(response.data.message);
             !response.data.success && showErrorToast(response.data.message);
         } catch (error) {
-            showErrorToast('Error updating case_status:'+ error);
+            const errors = error?.response?.data?.errors;
+
+            if (errors) {
+                const messages = Object.values(errors).flat();
+                showErrorToast(messages.join(', '));
+            }
         } finally {
             setProcessing((prev) => ({ ...prev, [medical_history_status_Id]: false }));
         }
@@ -123,7 +128,7 @@ export default function CaseStatus({ auth }) {
         {
             id: medical_history_status.id || '',
             name: medical_history_status.name,
-            color_name: medical_history_status.color_name,
+            color_name: <span className={`badge badge-light-${medical_history_status.color_name}`}>{medical_history_status.color_name}</span>,
             status: (
                 <div className="form-check form-switch form-check-custom form-check-success form-check-solid">
                     <input

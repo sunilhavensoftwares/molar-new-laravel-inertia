@@ -9,6 +9,8 @@ import AddDoctor from '@/Modals/AddDoctor';
 import AddPatient  from "@/Modals/AddPatient"
 export default function Detail({ auth }) {
     const { patient } = usePage().props;
+    
+    
     return (
         <AuthenticatedLayout
             user={auth.user}

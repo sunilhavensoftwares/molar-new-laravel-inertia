@@ -2,21 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\singleFieldUpdateRequest;
+use App\Http\Resources\CaseMaterialResource;
 use App\Http\Resources\CaseReferHistory as ResourcesCaseReferHistory;
 use App\Http\Resources\CaseReferHistoryResource;
 use App\Http\Resources\MedicalHistoryCategoryResource;
 use App\Http\Resources\MedicalHistoryResource;
 use App\Http\Resources\MedicalHistoryStatusResource;
+use App\Http\Resources\PatientDocumentResource;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\ToothResource;
+use App\Models\CaseMaterial;
 use App\Models\CaseReferHistory;
 use App\Models\MedicalHistory;
 use App\Models\MedicalHistoryCategory;
 use App\Models\MedicalHistoryStatus;
 use App\Models\Patient;
+use App\Models\PatientDocument;
 use App\Models\Tooth;
 use Faker\Provider\Medical;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Inertia\Inertia;
 
 class PatientController extends Controller
@@ -116,16 +122,71 @@ class PatientController extends Controller
     {
         //
     }
-    public function documents(Patient $patient)
+    public function documents($patient)
     {
+        JsonResource::withoutWrapping();
+        $patient = Patient::select('id', 'name', 'phone', 'email')->with(['documents' => function ($document) {
+            $document->select('id', 'patient_id', 'date', 'document_path');
+        }])->find($patient);
+        
         return Inertia::render('Patients/Documents', [
-            'patient' => $patient
+            'patient' => new PatientResource($patient)
         ]);
     }
-    public function case_history(Patient $patient)
+    public function case_history($patient, Request $request)
     {
+        $query = MedicalHistory::with(['patient', 'doctor', 'medical_history_category', 'teeth', 'medical_history_statuses'])->where('patient_id', $patient);
+        $sort = $request->get('sort', 'medical_histories.date');
+        $order = strtolower($request->get('order', 'asc'));
+
+        $allowedSorts = [
+            'medical_histories.id',
+            'medical_histories.date',
+            'doctors.name',
+            'medical_history_categories.name',
+            'patients.name',
+            'medical_history_statuses.name'
+
+        ];
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'medical_histories.date';
+        }
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'asc';
+        }
+        if ($request->filled('name') || in_array($sort, ['doctors.name', 'patients.name', 'medical_history_categories.name', 'medical_history_statuses.name'])) {
+            $query->select('medical_histories.*')
+                ->leftJoin('doctors', 'doctors.id', '=', 'medical_histories.doctor_id')
+                ->leftJoin('patients', 'patients.id', '=', 'medical_histories.patient_id')
+                ->leftJoin('medical_history_categories', 'medical_history_categories.id', '=', 'medical_histories.medical_history_category_id')
+                ->leftJoin('medical_history_statuses', 'medical_history_statuses.id', '=', 'medical_histories.medical_history_status_id');
+        }
+        if ($request->filled('name')) {
+
+            $query->where(function ($q) use ($request) {
+                $q->Where('doctors.name', 'like', '%' . $request->name . '%')
+                    ->orWhere('patients.name', 'like', '%' . $request->name . '%')
+                    ->orWhere('medical_history_categories.name', 'like', '%' . $request->name . '%')
+                    ->orWhere('medical_history_statuses.name', 'like', '%' . $request->name . '%');
+            });
+        }
+        if ($request->has('patientFilterValue') && $request->has('patientFilterKey')) {
+            $patientFilterKey = $request->patientFilterKey;
+            $patientFilterValue = $request->patientFilterValue;
+            $query->where($patientFilterKey, 'like', $patientFilterValue . '%');
+        }
+        // Handle sorting
+        if (in_array($sort, ['doctors.name', 'patients.name', 'medical_history_categories.name', 'medical_history_statuses.name'])) {
+            $query->orderByRaw("$sort $order");
+        } else {
+            $query->orderBy($sort, $order);
+        }
+        $medical_histories = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
         return Inertia::render('Patients/CaseHistory', [
-            'patient' => $patient
+            'medical_histories' => MedicalHistoryResource::collection($medical_histories),
+            'query' => $request->all()
         ]);
     }
     public function prescription(Patient $patient)
@@ -309,7 +370,7 @@ class PatientController extends Controller
     }
     public function case_list(Request $request)
     {
-        $query = MedicalHistory::with(['patient', 'doctor', 'medical_history_category', 'teeth','medical_history_statuses']);
+        $query = MedicalHistory::with(['patient', 'doctor', 'medical_history_category', 'teeth', 'medical_history_statuses']);
         $sort = $request->get('sort', 'medical_histories.date');
         $order = strtolower($request->get('order', 'asc'));
 
@@ -330,7 +391,7 @@ class PatientController extends Controller
         if (!in_array($order, ['asc', 'desc'])) {
             $order = 'asc';
         }
-        if ($request->filled('name') || in_array($sort, ['doctors.name', 'patients.name', 'medical_history_categories.name','medical_history_statuses.name'])) {
+        if ($request->filled('name') || in_array($sort, ['doctors.name', 'patients.name', 'medical_history_categories.name', 'medical_history_statuses.name'])) {
             $query->select('medical_histories.*')
                 ->leftJoin('doctors', 'doctors.id', '=', 'medical_histories.doctor_id')
                 ->leftJoin('patients', 'patients.id', '=', 'medical_histories.patient_id')
@@ -385,7 +446,7 @@ class PatientController extends Controller
 
         if ($request->filled('name')) {
             $query->where('medical_history_categories.name', 'like', '%' . $request->name . '%')
-             ->orWhere('medical_history_categories.status', 'like', $request->name . '%');
+                ->orWhere('medical_history_categories.status', 'like', $request->name . '%');
         }
         // if ($request->has('patientFilterValue') && $request->has('patientFilterKey')) {
         //     $patientFilterKey = $request->patientFilterKey;
@@ -423,7 +484,7 @@ class PatientController extends Controller
 
         if ($request->filled('name')) {
             $query->where('teeth.name', 'like', '%' . $request->name . '%')
-             ->orWhere('teeth.code', 'like', $request->name . '%');
+                ->orWhere('teeth.code', 'like', $request->name . '%');
         }
         // if ($request->has('patientFilterValue') && $request->has('patientFilterKey')) {
         //     $patientFilterKey = $request->patientFilterKey;
@@ -460,7 +521,7 @@ class PatientController extends Controller
 
         if ($request->filled('name')) {
             $query->where('medical_history_statuses.name', 'like', '%' . $request->name . '%')
-             ->orWhere('medical_history_statuses.code', 'like', $request->name . '%');
+                ->orWhere('medical_history_statuses.code', 'like', $request->name . '%');
         }
         // if ($request->has('patientFilterValue') && $request->has('patientFilterKey')) {
         //     $patientFilterKey = $request->patientFilterKey;
@@ -474,17 +535,15 @@ class PatientController extends Controller
             'query' => $request->all(),
         ]);
     }
-    public function update_status(MedicalHistoryStatus $MedicalHistoryStatus,Request $request){
-        $MedicalHistoryStatus->status = $request->status;
-        if($MedicalHistoryStatus->save()){
-            return response()->json(['success' => true,'message'=>'Status updated successfully']);    
-        }
-        return response()->json(['success' => false,'message'=>'Unable to updated status at the moment ! Please try later.']);
+    public function update_status(MedicalHistoryStatus $MedicalHistoryStatus, singleFieldUpdateRequest $request)
+    {
+        $request->setField('status', ['required', 'in:true,false']);
+        return updateSingleField($request, $MedicalHistoryStatus, $field = 'status', $field_display_name = 'Status');
     }
     public function case_refer(Request $request)
     {
 
-        $query = CaseReferHistory::with(['patient', 'medical_history','from_doctor','to_doctor','referrer_user']);
+        $query = CaseReferHistory::with(['patient', 'medical_history', 'from_doctor', 'to_doctor', 'referrer_user']);
         $sort = $request->get('sort', 'patients.name');
         $order = strtolower($request->get('order', 'asc'));
 
@@ -504,7 +563,7 @@ class PatientController extends Controller
         if (!in_array($order, ['asc', 'desc'])) {
             $order = 'asc';
         }
-        if ($request->filled('name') || in_array($sort, ['dt_from.name','dt_to.name', 'patients.name','medical_history_statuses.name','medical_histories.date','users.name','medical_histories.id'])) {
+        if ($request->filled('name') || in_array($sort, ['dt_from.name', 'dt_to.name', 'patients.name', 'medical_history_statuses.name', 'medical_histories.date', 'users.name', 'medical_histories.id'])) {
             $query->select('case_refer_histories.*')
                 ->leftJoin('doctors as dt_from', 'dt_from.id', '=', 'case_refer_histories.from_doctor_id')
                 ->leftJoin('doctors as dt_to', 'dt_to.id', '=', 'case_refer_histories.to_doctor_id')
@@ -527,7 +586,7 @@ class PatientController extends Controller
             $query->where($patientFilterKey, 'like', $patientFilterValue . '%');
         }
         // Handle sorting
-        if (in_array($sort, ['dt_from.name','dt_to.name', 'patients.name','medical_history_statuses.name','medical_histories.date','users.name'])) {
+        if (in_array($sort, ['dt_from.name', 'dt_to.name', 'patients.name', 'medical_history_statuses.name', 'medical_histories.date', 'users.name'])) {
             $query->orderByRaw("$sort $order");
         } else {
             $query->orderBy($sort, $order);
@@ -538,12 +597,94 @@ class PatientController extends Controller
             'query' => $request->all(),
         ]);
     }
-    public function case_material()
+    public function case_material(Request $request)
     {
-        return Inertia::render('Patients/CaseMaterial', []);
+        $query = CaseMaterial::query();
+        $order = strtolower($request->get('order', 'asc'));
+
+        $allowedSorts = [
+            'case_materials.id',
+            'case_materials.name',
+            'case_materials.stock',
+            'case_materials.status'
+        ];
+        $sort = $request->get('sort', 'case_materials.stock');
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'patients.name';
+        }
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'asc';
+        }
+        if ($request->filled('name')) {
+
+            $query->where(function ($q) use ($request) {
+                $q->Where('case_materials.name', 'like', '%' . $request->name . '%');
+            });
+        }
+        if ($request->has('patientFilterValue') && $request->has('patientFilterKey')) {
+            $patientFilterKey = $request->patientFilterKey;
+            $patientFilterValue = $request->patientFilterValue;
+            $query->where($patientFilterKey, 'like', $patientFilterValue . '%');
+        }
+        // Handle sorting
+        $query->orderBy($sort, $order);
+        $case_materials = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
+        return Inertia::render('Patients/CaseMaterial', [
+            'case_materials' => CaseMaterialResource::collection($case_materials),
+            'query' => $request->all(),
+        ]);
     }
-    public function pdocuments()
+    public function update_case_material_status(CaseMaterial $caseMaterial, Request $request)
     {
-        return Inertia::render('Patients/Pdocuments', []);
+        return updateSingleField($request, $caseMaterial, $field = 'status', $field_display_name = 'Status');
+    }
+    public function pdocuments(Request $request)
+    {
+        $query = PatientDocument::with('patient');
+        $order = strtolower($request->get('order', 'asc'));
+
+        $allowedSorts = [
+            'patient_documents.id',
+            'patients.name',
+            'patient_documents.date',
+            'patient_documents.description',
+            'patient_documents.status'
+        ];
+        $sort = $request->get('sort', 'patient_documents.stock');
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'patient_documents.id';
+        }
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'asc';
+        }
+        if ($request->filled('name') || in_array($sort, ['patients.name'])) {
+            $query->select('patient_documents.*')
+                ->leftJoin('patients', 'patients.id', '=', 'patient_documents.patient_id');
+        }
+        if ($request->filled('name')) {
+
+            $query->where(function ($q) use ($request) {
+                $q->Where('patients.name', 'like', '%' . $request->name . '%');
+            });
+        }
+
+        if ($request->has('patientFilterValue') && $request->has('patientFilterKey')) {
+            $patientFilterKey = $request->patientFilterKey;
+            $patientFilterValue = $request->patientFilterValue;
+            $query->where($patientFilterKey, 'like', $patientFilterValue . '%');
+        }
+        // Handle sorting
+        if (in_array($sort, ['patients.name'])) {
+            $query->orderByRaw("$sort $order");
+        } else {
+            $query->orderBy($sort, $order);
+        }
+        $patient_documents = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
+        return Inertia::render('Patients/Pdocuments', [
+            'patient_documents' => PatientDocumentResource::collection($patient_documents),
+            'query' => $request->all(),
+        ]);
     }
 }

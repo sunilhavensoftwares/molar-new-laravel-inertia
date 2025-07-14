@@ -3,10 +3,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
 import images from '../../Misc/image_map';
+import doc_type_images from '@/Misc/doc_type_images';
 export default function Documents({ auth }) {
     const { patient } = usePage().props;
-    
-    
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -103,152 +102,50 @@ export default function Documents({ auth }) {
                                         </div>
 
                                         <div className="row g-6 g-xl-9 mb-6 mb-xl-9 mt-3">
+                                            {patient?.documents?.map((document,idx) => (
 
-                                            <div className="col-md-6 col-lg-4 col-xl-3 col-sm-6">
+                                                  
+                                                <div className="col-md-6 col-lg-4 col-xl-3 col-sm-6" key={idx}>
 
-                                                <div className="card h-100">
+                                                    <div className="card h-100">
 
-                                                    <div
-                                                        className="card-body d-flex justify-content-center text-center flex-column p-8">
+                                                        <div
+                                                            className="card-body d-flex justify-content-center text-center flex-column p-8">
 
-                                                        <a href="#"
-                                                            className="text-gray-800 text-hover-primary d-flex flex-column">
+                                                            <a href="#"
+                                                                className="text-gray-800 text-hover-primary d-flex flex-column">
 
-                                                            <div className="symbol symbol-60px mb-5">
-                                                                <img src={images.pdf} className="theme-light-show"
-                                                                    alt="" />
-                                                            </div>
+                                                                <div className="symbol symbol-60px mb-5">
+                                                                    { doc_type_images[document.document_path.split('.').pop()] ?
+                                                                    <img src={doc_type_images[document.document_path.split('.').pop()]} className="theme-light-show"
+                                                                        alt="" /> :
+                                                                    <img src={document.document_path} className="theme-light-show"
+                                                                        alt="" />
 
-                                                            <span
-                                                                className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow position-absolute">
-                                                                <i className="bi bi-x fs-2"></i>
-                                                            </span>
+                                                                    }
+                                                                </div>
 
-                                                            <div className="d-flex justify-content-center ">
-                                                                <span className=" badge badge-info">Download</span>
-                                                            </div>
+                                                                <span
+                                                                    className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow position-absolute">
+                                                                    <i className="bi bi-x fs-2"></i>
+                                                                </span>
 
-                                                        </a>
+                                                                <div className="d-flex justify-content-center ">
+                                                                    <span className=" badge badge-info">Download</span>
+                                                                </div>
 
-
-                                                        <div className="fs-7 pt-2 fw-semibold text-gray-400">12 Feb 2023</div>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
+                                                            </a>
 
 
-                                            <div className="col-md-6 col-lg-4 col-xl-3 col-sm-6">
+                                                            <div className="fs-7 pt-2 fw-semibold text-gray-400">{document.date_formatted}</div>
 
-                                                <div className="card h-100">
-
-                                                    <div
-                                                        className="card-body d-flex justify-content-center text-center flex-column p-8">
-
-                                                        <a href="#"
-                                                            className="text-gray-800 text-hover-primary d-flex flex-column">
-
-                                                            <div className="symbol symbol-60px mb-5 image-input">
-                                                                <img src={images.doc_icon} className="theme-light-show"
-                                                                    alt="" />
-
-                                                            </div>
-
-                                                            <span
-                                                                className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow position-absolute">
-                                                                <i className="bi bi-x fs-2"></i>
-                                                            </span>
-
-
-                                                            <div className="d-flex justify-content-center ">
-                                                                <span className=" badge badge-info">Download</span>
-                                                            </div>
-
-                                                        </a>
-
-
-                                                        <div className="fs-7 pt-2 fw-semibold text-gray-400">10 feb 2023</div>
+                                                        </div>
 
                                                     </div>
 
                                                 </div>
-
-                                            </div>
-
-
-                                            <div className="col-md-6 col-lg-4 col-xl-3 col-sm-6">
-
-                                                <div className="card h-100">
-
-                                                    <div
-                                                        className="card-body d-flex justify-content-center text-center flex-column p-8">
-
-                                                        <a href="#"
-                                                            className="text-gray-800 text-hover-primary d-flex flex-column">
-
-                                                            <div className="symbol symbol-60px mb-5">
-                                                                <img src={images.icon_pv4}
-                                                                    className="theme-light-show" alt="" />
-                                                            </div>
-
-                                                            <span
-                                                                className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow position-absolute">
-                                                                <i className="bi bi-x fs-2"></i>
-                                                            </span>
-
-                                                            <div className="d-flex justify-content-center ">
-                                                                <span className=" badge badge-info">Download</span>
-                                                            </div>
-
-                                                        </a>
-
-
-                                                        <div className="fs-7 pt-2 fw-semibold text-gray-400">4 days ago</div>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div className="col-md-6 col-lg-4 col-xl-3 col-sm-6">
-
-                                                <div className="card h-100">
-
-                                                    <div
-                                                        className="card-body d-flex justify-content-center text-center flex-column p-8">
-
-                                                        <a href="#"
-                                                            className="text-gray-800 text-hover-primary d-flex flex-column">
-
-                                                            <div className="symbol symbol-60px mb-5">
-                                                                <img src={images.icon_pv4}
-                                                                    className="theme-light-show" alt="" />
-                                                            </div>
-
-                                                            <span
-                                                                className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow position-absolute">
-                                                                <i className="bi bi-x fs-2"></i>
-                                                            </span>
-
-                                                            <div className="d-flex justify-content-center ">
-                                                                <span className=" badge badge-info">Download</span>
-                                                            </div>
-
-                                                        </a>
-
-
-                                                        <div className="fs-7 pt-2  fw-semibold text-gray-400">4 days ago</div>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-
+                                            ))
+                                            }
                                         </div>
 
                                     </div>

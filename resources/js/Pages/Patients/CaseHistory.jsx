@@ -3,15 +3,208 @@ import { Head, usePage, Link } from '@inertiajs/react';
 import Sidebar from './Common/sidebar';
 import FlatpickrInput from '@/Components/FlatpickrInput';
 import Select2Input from '@/Components/Select2Input';
+import DataTable from '@/Components/DataTable';
+import React, { useEffect, useRef, useState } from 'react';
+import images from '@/Misc/image_map'
 export default function CaseHistory({ auth }) {
-    const { patient } = usePage().props;
+    const { medical_histories,query  } = usePage().props;
+
+    const filtersFormRef = useRef(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({});
+    const [appliedFilters, setAppliedFilters] = useState({});
+    const [processing, setProcessing] = useState({});
+    const searchTimeout = useRef(null);
+
+    useEffect(() => {
+        if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+        // Skip firing on empty input if it's the same as what's already in the query
+        if (searchQuery === '' && !query?.name) return;
+
+        searchTimeout.current = setTimeout(() => {
+            router.get(route(route().current()), {
+                ...appliedFilters,
+                page: 1,
+                perPage: medical_histories.meta.per_page,
+                sort: query?.sort,
+                order: query?.order,
+                name: searchQuery || undefined, // don't include empty string in URL
+            }, {
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }, 400);
+
+        return () => clearTimeout(searchTimeout.current);
+    }, [searchQuery]);
+
+
+    const handleFilterChange = (key) => (value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    const handleFilterReset = () => {
+        setFilters({});
+        setAppliedFilters({});
+        filtersFormRef.current.reset();
+        $(filtersFormRef.current).find('input').val(null).trigger('change');
+        $(filtersFormRef.current).find('select').val(null).trigger('change');
+
+        router.get(route(route().current()), {
+            page: 1,
+            perPage: medical_histories.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const applyFilters = (e) => {
+        e.preventDefault();
+        setAppliedFilters(filters);
+
+        router.get(route(route().current()), {
+            ...filters,
+            sort: query?.sort,
+            order: query?.order,
+            page: 1,
+            perPage: medical_histories.meta.per_page,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const handleToggle = (patientId, key) => async (e) => {
+        const value = e.target.checked;
+        setProcessing((prev) => ({ ...prev, [patientId]: true }));
+        setChecked(prev => ({
+            ...prev,
+            [patientId]: {
+                ...prev[patientId],
+                [key]: value,
+            },
+        }));
+        try {
+            const response = await axios.post(`/patients/${patientId}/visibility`, {
+                [key]: value,
+            });
+            response.data.success && toastr.success(response.data.message);
+            !response.data.success && toastr.error(response.data.message);
+        } catch (error) {
+            toastr.error('Error updating visibility:', error);
+        } finally {
+            setProcessing((prev) => ({ ...prev, [patientId]: false }));
+        }
+    };
+    const columns = [
+        { label: 'ID', key: 'id', thProps: { className: 'min-w-50px ps-4' }, tdProps: { className: 'ps-4' }, 'sort_key': 'medical_histories.id', 'sortable': 1 },
+        { label: 'Date', key: 'date', thProps: { className: 'min-w-150px ps-4' }, tdProps: { className: 'd-flex align-items-center' }, 'sort_key': 'medical_histories.email', 'sortable': 1 },
+        { label: 'Doctor', key: 'doctor', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'doctors.name', 'sortable': 1 },
+        { label: 'Tooth', key: 'tooth', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' } },
+        { label: 'Patient', key: 'patient', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'patients.name', 'sortable': 1 },
+        { label: 'Category', key: 'category', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'medical_history_categories.name', 'sortable': 1 },
+        { label: 'Status', key: 'status', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'medical_history_statuses.name', 'sortable': 1 },
+        { label: 'Actions', key: 'actions', thProps: { className: 'text-end pe-4 min-w-100px' }, tdProps: { className: 'text-end pe-4' } },
+    ];
+    const data = medical_histories.data.map((medical_history, index) => (
+        {
+            id: medical_history.id || '',
+            date: medical_history.date_formatted,
+            doctor: {
+                sortValue: medical_history.doctor.name.toLowerCase(),
+                content: (
+                    <div className="d-flex align-items-center">
+                        <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                            <div className="symbol-label">
+                                <img src={medical_history.doctor.img_url || images.blank_avatar} alt={medical_history.doctor.name} className="w-100" />
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <Link href={`/doctors/doctor-detail/${medical_history.doctor.id}`} className="text-gray-800 text-hover-primary mb-1">{medical_history.doctor.name}</Link>
+                            <span>{medical_history.doctor.phone}</span>
+                        </div>
+                    </div>
+                )
+            },
+            tooth: medical_history?.teeth?.map(t => t.code).join(', '),
+            patient: {
+                sortValue: medical_history.patient.name.toLowerCase(),
+                content: (
+                    <div className="d-flex align-items-center">
+                        <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                            <div className="symbol-label">
+                                <img src={medical_history.patient.img_url || images.blank_avatar} alt={medical_history.patient.name} className="w-100" />
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <Link href={`/patients/patient-detail/${medical_history.patient.id}`} className="text-gray-800 text-hover-primary mb-1">{medical_history.patient.name}</Link>
+                            <span>{medical_history.patient.phone}</span>
+                        </div>
+                    </div>
+                )
+            },
+            category: medical_history.category.name || '',
+            status: <span className={`badge fs-7 fw-bold badge-light-${medical_history.medical_history_statuses.color_name}`}>{medical_history.medical_history_statuses.name}</span>,
+            actions: (
+                <>
+                    <a className="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click"
+                        data-kt-menu-placement="bottom-end">Actions
+                        {/* begin::Svg Icon | path: icons/duotune/arrows/arr072.svg*/}
+                        <span className="svg-icon svg-icon-5 m-0">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z"
+                                    fill="currentColor" />
+                            </svg>
+                        </span>
+                        {/* end::Svg Icon*/}
+                    </a>
+                    {/* begin::Menu*/}
+                    <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
+                        data-kt-menu="true">
+
+                        {/* begin::Menu item*/}
+                        <div className="menu-item">
+                            <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Edit</a>
+                        </div>
+                        {/* end::Menu item*/}
+                        {/* begin::Menu item*/}
+                        <div className="menu-item">
+                            <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Delete</a>
+                        </div>
+                        {/* end::Menu item*/}
+                        {/* begin::Menu item*/}
+                        <div className="menu-item">
+                            <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Refer To</a>
+                        </div>
+                        {/* end::Menu item*/}
+                        {/* begin::Menu item*/}
+                        <div className="menu-item">
+                            <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Set Reminder</a>
+                        </div>
+                        {/* end::Menu item*/}
+                        {/* begin::Menu item*/}
+                        <div className="menu-item">
+                            <a href="#" className="menu-link" data-kt-users-table-filter="delete_row">Material</a>
+                        </div>
+                        {/* end::Menu item*/}
+                    </div>
+                    {/* end::Menu*/}
+                </>
+            )
+        }));
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">patients</h2>} >
             <Head title="patients" />
             <>
-                   <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
+                <div className="app-main flex-column flex-row-fluid" id="kt_app_main">
 
                     <div className="d-flex flex-column flex-column-fluid">
 
@@ -55,7 +248,7 @@ export default function CaseHistory({ auth }) {
 
                                 <div className="d-flex flex-row">
 
-                                    <Sidebar patient={patient} />
+                                    <Sidebar patient={medical_histories?.patient} />
 
                                     <div className="w-100 flex-lg-row-fluid mx-lg-13">
 
@@ -102,141 +295,17 @@ export default function CaseHistory({ auth }) {
 
                                                 <div className="table-responsive">
 
-                                                    <table
-                                                        className="table table-flush align-middle table-row-bordered table-row-solid gy-4 gs-9">
-
-                                                        <thead className="border-gray-200 fs-5 fw-semibold bg-lighten">
-                                                            <tr className="bg-light">
-                                                                <th className="min-w-80px">ID</th>
-                                                                <th className="min-w-100px">Doctor</th>
-                                                                <th className="min-w-100px">Date</th>
-                                                                <th className="min-w-100px">Tooth </th>
-                                                                <th className="min-w-200px">Description</th>
-                                                                <th className="min-w-150px">Option</th>
-                                                            </tr>
-                                                        </thead>
-
-
-                                                        <tbody className="fw-6 fw-semibold text-gray-600">
-                                                            <tr>
-                                                                <td>1</td>
-                                                                <td>
-                                                                    <span className="badge badge-light-info fs-7 fw-bold">Saud</span>
-                                                                </td>
-                                                                <td>10 Feb 2023</td>
-                                                                <td>32</td>
-                                                                <td>This is for description</td>
-                                                                <td>
-                                                                    <div className="d-flex justify-content-middle flex-shrink-0">
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i
-                                                                                className="fa-regular text-warning fa-pen-to-square fs-2"></i>
-                                                                        </button>
-
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i className="fa-regular text-danger fa-trash-can fs-2"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>1</td>
-                                                                <td>
-                                                                    <span className="badge badge-light-info fs-7 fw-bold">Saud</span>
-                                                                </td>
-                                                                <td>10 Feb 2023</td>
-                                                                <td>32</td>
-                                                                <td>This is for description</td>
-                                                                <td>
-                                                                    <div className="d-flex justify-content-middle flex-shrink-0">
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i
-                                                                                className="fa-regular text-warning fa-pen-to-square fs-2"></i>
-                                                                        </button>
-
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i className="fa-regular text-danger fa-trash-can fs-2"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>1</td>
-                                                                <td>
-                                                                    <span className="badge badge-light-info fs-7 fw-bold">Saud</span>
-                                                                </td>
-                                                                <td>10 Feb 2023</td>
-                                                                <td>32</td>
-                                                                <td>This is for description</td>
-                                                                <td>
-                                                                    <div className="d-flex justify-content-middle flex-shrink-0">
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i
-                                                                                className="fa-regular text-warning fa-pen-to-square fs-2"></i>
-                                                                        </button>
-
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i className="fa-regular text-danger fa-trash-can fs-2"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>1</td>
-                                                                <td>
-                                                                    <span className="badge badge-light-info fs-7 fw-bold">Saud</span>
-                                                                </td>
-                                                                <td>10 Feb 2023</td>
-                                                                <td>32</td>
-                                                                <td>This is for description</td>
-                                                                <td>
-                                                                    <div className="d-flex justify-content-middle flex-shrink-0">
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i
-                                                                                className="fa-regular text-warning fa-pen-to-square fs-2"></i>
-                                                                        </button>
-
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i className="fa-regular text-danger fa-trash-can fs-2"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>1</td>
-                                                                <td>
-                                                                    <span className="badge badge-light-info fs-7 fw-bold">Saud</span>
-                                                                </td>
-                                                                <td>10 Feb 2023</td>
-                                                                <td>32</td>
-                                                                <td>This is for description</td>
-                                                                <td>
-                                                                    <div className="d-flex justify-content-middle flex-shrink-0">
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i
-                                                                                className="fa-regular text-warning fa-pen-to-square fs-2"></i>
-                                                                        </button>
-
-                                                                        <button type="button"
-                                                                            className="btn btn-icon btn-bg-white my-2 me-1">
-                                                                            <i className="fa-regular text-danger fa-trash-can fs-2"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-
-                                                        </tbody>
-
-                                                    </table>
+                                                    <DataTable
+                                                        columns={columns}
+                                                        data={data}
+                                                        tableProps={{ className: 'table align-middle table-row-dashed fs-6 gy-5' }}
+                                                        currentPage={medical_histories.meta.current_page}
+                                                        perPage={medical_histories.meta.per_page}
+                                                        total={medical_histories.meta.total}
+                                                        sortKey={query?.sort}
+                                                        sortOrder={query?.order}
+                                                        searchQuery={filters.name}
+                                                        appliedFilters={appliedFilters} />
 
                                                 </div>
 
