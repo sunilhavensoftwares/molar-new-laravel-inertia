@@ -1,1 +1,0 @@
-import{r,j as t}from"./app-BKUyurm2.js";import{Q as s}from"./quill.snow-CtpHwrV9.js";function u({className:o=""}){const e=r.useRef(null);return r.useEffect(()=>{e.current&&new s(e.current,{theme:"snow",placeholder:"Compose your message...",modules:{toolbar:[[{header:[1,2,!1]}],["bold","italic","underline"]]}})},[]),t.jsx("div",{ref:e,className:o})}export{u as Q};
