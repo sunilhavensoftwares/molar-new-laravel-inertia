@@ -92,8 +92,9 @@ class PatientController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Patient $patient)
+    public function show($patient)
     {
+        $patient = Patient::select('id')->find($patient);
         return Inertia::render('Patients/Detail', [
             'patient' => $patient
         ]);
@@ -135,7 +136,8 @@ class PatientController extends Controller
     }
     public function case_history($patient, Request $request)
     {
-        $query = MedicalHistory::with(['patient', 'doctor', 'medical_history_category', 'teeth', 'medical_history_statuses'])->where('patient_id', $patient);
+        $patient = Patient::select('id')->find($patient);
+        $query = MedicalHistory::with(['patient', 'doctor', 'medical_history_category', 'teeth', 'medical_history_statuses'])->where('patient_id', $patient->id);
         $sort = $request->get('sort', 'medical_histories.date');
         $order = strtolower($request->get('order', 'asc'));
 
@@ -186,30 +188,34 @@ class PatientController extends Controller
         $medical_histories = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
         return Inertia::render('Patients/CaseHistory', [
             'medical_histories' => MedicalHistoryResource::collection($medical_histories),
-            'query' => $request->all()
+            'query' => $request->all(),
+            'patient_detail' =>$patient
         ]);
     }
-    public function prescription(Patient $patient)
+    public function prescription($patient)
     {
+         $patient = Patient::select('id')->find($patient);
         return Inertia::render('Patients/Prescription', [
             'patient' => $patient
         ]);
     }
-    public function timeline(Patient $patient)
+    public function timeline($patient)
     {
+        $patient = Patient::select('id')->find($patient);
         return Inertia::render('Patients/TimeLine', [
             'patient' => $patient
         ]);
     }
-    public function lab(Patient $patient)
+    public function lab($patient)
     {
+        $patient = Patient::select('id')->find($patient);
         return Inertia::render('Patients/Lab', [
             'patient' => $patient
         ]);
     }
-    public function payment_history(Patient $patient)
+    public function payment_history($patient)
     {
-
+        $patient = Patient::select('id')->find($patient);
         $options = [
             [
                 'value' => 'تركيب زيركون - Zircon Crown',
@@ -321,7 +327,7 @@ class PatientController extends Controller
             ],
         ];
         return Inertia::render('Patients/PaymentHistory', [
-            'patient' => $patient,
+            'patient_detail' => $patient,
             'options' => $options
         ]);
     }
@@ -448,11 +454,6 @@ class PatientController extends Controller
             $query->where('medical_history_categories.name', 'like', '%' . $request->name . '%')
                 ->orWhere('medical_history_categories.status', 'like', $request->name . '%');
         }
-        // if ($request->has('patientFilterValue') && $request->has('patientFilterKey')) {
-        //     $patientFilterKey = $request->patientFilterKey;
-        //     $patientFilterValue = $request->patientFilterValue;
-        //     $query->where($patientFilterKey, 'like', $patientFilterValue . '%');
-        // }
         $query->orderBy($sort, $order);
         $medical_history_categories = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
         return Inertia::render('Patients/CaseCategory', [
@@ -486,11 +487,6 @@ class PatientController extends Controller
             $query->where('teeth.name', 'like', '%' . $request->name . '%')
                 ->orWhere('teeth.code', 'like', $request->name . '%');
         }
-        // if ($request->has('patientFilterValue') && $request->has('patientFilterKey')) {
-        //     $patientFilterKey = $request->patientFilterKey;
-        //     $patientFilterValue = $request->patientFilterValue;
-        //     $query->where($patientFilterKey, 'like', $patientFilterValue . '%');
-        // }
         $query->orderBy($sort, $order);
         $teeth = $query->paginate($request->get('perPage', 10))->appends(array_filter($request->all(), fn($value) => $value !== null && $value !== ''));
         return Inertia::render('Patients/Tooth', [

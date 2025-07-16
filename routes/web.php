@@ -33,6 +33,9 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Route::get('/test', function () {
+// });
 Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -50,6 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/roles/add-role', [RoleController::class, 'create'])->name('roles.create');
     //Doctors modules
     Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index');
+    Route::get('/doctors/search', [DoctorController::class, 'search'])->name('doctors.search');
     Route::post('/doctors/{doctor}/visibility', [DoctorController::class, 'updateVisibility'])->name('doctor.updateVisibility');
     Route::get('/doctors/doctor-detail/{doctor}', [DoctorController::class, 'show'])->name('doctors.show');
     //Patients modules
@@ -144,7 +148,7 @@ Route::middleware('auth')->group(function () {
         Route::get('sms-templates', [SmsController::class, 'sms_templates'])->name('sms_templates');
         Route::get('whatsapp-reply', [SmsController::class, 'whatsapp_reply'])->name('whatsapp_reply');
     });
-     //website
+    //website
     Route::prefix('/website')->name('website.')->group(function () {
         Route::get('slides', [WebsiteController::class, 'slides'])->name('slides');
         Route::get('services', [WebsiteController::class, 'services'])->name('services');
@@ -158,7 +162,6 @@ Route::middleware('auth')->group(function () {
         Route::get('notification', [SettingController::class, 'notification'])->name('notification');
         Route::get('email', [SettingController::class, 'email'])->name('email');
         Route::get('payment-gateways', [SettingController::class, 'payment_gateways'])->name('payment_gateways');
-        
     });
 });
 

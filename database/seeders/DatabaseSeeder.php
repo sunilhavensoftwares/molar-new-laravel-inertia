@@ -36,5 +36,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CaseReferHistorySeeder::class); //CaseReferHistorySeeder
         $this->call(CaseMaterialSeeder::class); //CaseMaterialSeeder
         $this->call(PatientDoctorSeeder::class); //PatientDoctorSeeder
+        $this->call(AppointmentSeeder::class); //AppointmentSeeder
     }
 }

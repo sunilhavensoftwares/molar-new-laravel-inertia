@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import statisticsStylesArray from '../../Misc/stat_card_style';
 import statisticsStylesArray_2 from '../../Misc/stat_card_style_2';
 import IncomeExpenseCharts from '../../components/IncomeExpenseCharts';
@@ -30,7 +30,7 @@ export default function Dashboard({ auth }) {
                                 <div className="row g-5 mb-5 mt-1">
 
                                     <div className="col-md-3">
-                                        <a href="doctors" className="text-decoration-none">
+                                        <Link href="doctors" className="text-decoration-none">
                                             <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100 hover-scale"
                                                 style={statisticsStylesArray[0]} >
                                                 <div className="card-header pt-5 mb-3">
@@ -48,12 +48,12 @@ export default function Dashboard({ auth }) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
 
 
                                     <div className="col-md-3">
-                                        <a href="patient" className="text-decoration-none">
+                                        <Link href="/patients" className="text-decoration-none">
                                             <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100 hover-scale"
                                                 style={statisticsStylesArray[1]}>
                                                 <div className="card-header pt-5 mb-3">
@@ -71,12 +71,12 @@ export default function Dashboard({ auth }) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
 
 
                                     <div className="col-md-3">
-                                        <a href="appointment" className="text-decoration-none">
+                                        <Link href="/appointments" className="text-decoration-none">
                                             <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100 hover-scale"
                                                 style={statisticsStylesArray[2]}>
                                                 <div className="card-header pt-5 mb-3">
@@ -94,12 +94,12 @@ export default function Dashboard({ auth }) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
 
 
                                     <div className="col-md-3">
-                                        <a href="prescription" className="text-decoration-none">
+                                        <Link href="/prescription" className="text-decoration-none">
                                             <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100 hover-scale"
                                                 style={statisticsStylesArray[3]}>
                                                 <div className="card-header pt-5 mb-3">
@@ -118,12 +118,12 @@ export default function Dashboard({ auth }) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
 
 
                                     <div className="col-md-3">
-                                        <a href="patient/case_list" className="text-decoration-none">
+                                        <Link href="/patients/case-list" className="text-decoration-none">
                                             <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100 hover-scale"
                                                 style={statisticsStylesArray[4]}>
                                                 <div className="card-header pt-5 mb-3">
@@ -141,12 +141,12 @@ export default function Dashboard({ auth }) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
 
 
                                     <div className="col-md-3">
-                                        <a href="patient/lab" className="text-decoration-none">
+                                        <Link href="/lab/report" className="text-decoration-none">
                                             <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100 hover-scale"
                                                 style={statisticsStylesArray[5]}>
                                                 <div className="card-header pt-5 mb-3">
@@ -164,12 +164,12 @@ export default function Dashboard({ auth }) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
 
 
                                     <div className="col-md-3">
-                                        <a href="patient/document" className="text-decoration-none">
+                                        <Link href="/patients/pdocuments" className="text-decoration-none">
                                             <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100 hover-scale"
                                                 style={statisticsStylesArray[6]}>
                                                 <div className="card-header pt-5 mb-3">
@@ -187,12 +187,12 @@ export default function Dashboard({ auth }) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
 
 
                                     <div className="col-md-3">
-                                        <a href="finance" className="text-decoration-none">
+                                        <Link href="/finance/payment" className="text-decoration-none">
                                             <div className="card border-0 card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-xl-100 hover-scale"
                                                 style={statisticsStylesArray[7]}>
                                                 <div className="card-header pt-5 mb-3">
@@ -210,7 +210,7 @@ export default function Dashboard({ auth }) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </div>
                                 </div>
                                 <div className="row">

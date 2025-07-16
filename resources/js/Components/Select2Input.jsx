@@ -8,6 +8,7 @@ const Select2Input = ({
   name,
   className = '',
   multiple = false,
+  ajax = null, // NEW PROP
   ...rest
 }) => {
   const selectRef = useRef();
@@ -32,6 +33,7 @@ const Select2Input = ({
       theme: 'bootstrap-5',
       width: '100%',
       dropdownAutoWidth: true,
+      ajax: ajax || undefined, // ✅ Inject AJAX config if provided
     });
 
     // Apply container and selection styles
@@ -60,6 +62,14 @@ const Select2Input = ({
         .next('.select2-container')
         .find('.select2-selection');
       $selection.attr('aria-expanded', 'true').addClass(className);
+      // setTimeout(() => {
+      //   const $searchField = $('.select2-container--open .select2-search__field');
+      //   if ($searchField.length) {
+      //     $searchField.off('input').on('input', function () {
+      //       onInput?.(this.value); // 🔥 call React callback
+      //     });
+      //   }
+      // }, 0);
     });
 
     $select.on('select2:close', () => {

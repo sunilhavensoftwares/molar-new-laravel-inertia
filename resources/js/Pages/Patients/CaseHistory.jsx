@@ -7,8 +7,7 @@ import DataTable from '@/Components/DataTable';
 import React, { useEffect, useRef, useState } from 'react';
 import images from '@/Misc/image_map'
 export default function CaseHistory({ auth }) {
-    const { medical_histories,query  } = usePage().props;
-
+    const { patient_detail,medical_histories,query  } = usePage().props;
     const filtersFormRef = useRef(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState({});
@@ -106,7 +105,7 @@ export default function CaseHistory({ auth }) {
         { label: 'Date', key: 'date', thProps: { className: 'min-w-150px ps-4' }, tdProps: { className: 'd-flex align-items-center' }, 'sort_key': 'medical_histories.email', 'sortable': 1 },
         { label: 'Doctor', key: 'doctor', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'doctors.name', 'sortable': 1 },
         { label: 'Tooth', key: 'tooth', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' } },
-        { label: 'Patient', key: 'patient', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'patients.name', 'sortable': 1 },
+        { label: 'Patient', key: 'patient', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }},
         { label: 'Category', key: 'category', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'medical_history_categories.name', 'sortable': 1 },
         { label: 'Status', key: 'status', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'medical_history_statuses.name', 'sortable': 1 },
         { label: 'Actions', key: 'actions', thProps: { className: 'text-end pe-4 min-w-100px' }, tdProps: { className: 'text-end pe-4' } },
@@ -248,7 +247,7 @@ export default function CaseHistory({ auth }) {
 
                                 <div className="d-flex flex-row">
 
-                                    <Sidebar patient={medical_histories?.patient} />
+                                    <Sidebar patient={patient_detail} />
 
                                     <div className="w-100 flex-lg-row-fluid mx-lg-13">
 

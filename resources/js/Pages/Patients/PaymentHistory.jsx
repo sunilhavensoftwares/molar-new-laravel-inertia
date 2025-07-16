@@ -8,7 +8,7 @@ import images from '@/Misc/image_map';
 import AddPatient  from "@/Modals/AddPatient"
 import AddDoctor from '@/Modals/AddDoctor'
 export default function PaymentHistory({ auth }) {
-    const { patient, options } = usePage().props;
+    const { patient_detail, options } = usePage().props;
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -102,7 +102,7 @@ export default function PaymentHistory({ auth }) {
 
                                 <div className="d-flex flex-row">
 
-                                    <Sidebar patient={patient} />
+                                    <Sidebar patient={patient_detail} />
 
 
 
