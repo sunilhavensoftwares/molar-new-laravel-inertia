@@ -60,6 +60,22 @@ class User extends Authenticatable
     }
     public function hasRole($role)
     {
-        return $this->roles->contains('name', $role);
+        // Use whereHas to avoid loading all roles into memory
+        return $this->roles()->where('name', $role)->exists();
+    }
+
+    /**
+     * Override toArray to prevent unnecessary serialization of relationships
+     */
+    public function toArray()
+    {
+        $array = parent::toArray();
+        
+        // Remove heavy relationships from serialization unless explicitly loaded
+        if (!$this->relationLoaded('roles')) {
+            unset($array['roles']);
+        }
+        
+        return $array;
     }
 }

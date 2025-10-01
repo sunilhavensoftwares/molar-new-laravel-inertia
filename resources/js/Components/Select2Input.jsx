@@ -25,6 +25,7 @@ const Select2Input = ({
 
     // Initialize select2
     $select.select2({
+      
       dropdownParent: dropdownParent,
       placeholder: $select.data('placeholder') || 'Select',
       allowClear:
@@ -66,7 +67,7 @@ const Select2Input = ({
       //   const $searchField = $('.select2-container--open .select2-search__field');
       //   if ($searchField.length) {
       //     $searchField.off('input').on('input', function () {
-      //       onInput?.(this.value); // 🔥 call React callback
+      //       onInput?.(this.value); // 
       //     });
       //   }
       // }, 0);

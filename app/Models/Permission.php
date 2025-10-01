@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Str;
 class Permission extends Model
 {
     use HasFactory;
@@ -17,5 +17,13 @@ class Permission extends Model
     public function module()
     {
         return $this->belongsTo(Module::class);
+    }
+    public function setLabelAttribute($value)
+    {
+        $this->attributes['label'] = ucfirst($value);
+    }
+     public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = Str::slug(strtolower($value),'_');
     }
 }

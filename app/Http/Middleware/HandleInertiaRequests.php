@@ -33,12 +33,45 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $this->getOptimizedUser($request),
             ],
-            'ziggy' => fn () => [
+            'ziggy' => $this->getOptimizedZiggy($request),
+        ];
+    }
+
+    /**
+     * Get optimized user data to reduce serialization overhead
+     */
+    private function getOptimizedUser(Request $request)
+    {
+        $user = $request->user();
+        
+        if (!$user) {
+            return null;
+        }
+
+        // Only return essential user data to reduce payload size
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            // Don't load relationships unless specifically needed
+        ];
+    }
+
+    /**
+     * Get cached Ziggy routes for better performance
+     */
+    private function getOptimizedZiggy(Request $request)
+    {
+        // Cache Ziggy routes for 1 hour to improve performance
+        return \Illuminate\Support\Facades\Cache::remember(
+            'ziggy_routes_' . config('app.debug', false),
+            3600, // 1 hour
+            fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
-            ],
-        ];
+            ]
+        );
     }
 }

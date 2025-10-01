@@ -100,7 +100,7 @@ class RoleController extends Controller
             return [
                 'id' => $module->id,
                 'name' => $module->name,
-                'permissions' => $module->permissions->map(function ($permission) use ($assignedPermissionIds) {
+                'module_permissions' => $module->permissions->map(function ($permission) use ($assignedPermissionIds) {
                     return [
                         'id' => $permission->id,
                         'name' => $permission->name,

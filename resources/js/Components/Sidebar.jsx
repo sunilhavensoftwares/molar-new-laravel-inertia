@@ -55,7 +55,7 @@ export default function Sidebar() {
                     </span>
 
 
-                    <div className={SidebarFunctions.getMenuClass(['users', 'roles'], 'sub')}>
+                    <div className={SidebarFunctions.getMenuClass(['users', 'roles', 'permissions'], 'sub')}>
 
                         <div data-kt-menu-trigger="click" className={SidebarFunctions.getMenuClass(['users'], 'item')}>
 
@@ -79,7 +79,7 @@ export default function Sidebar() {
                         </div>
 
 
-                        <div data-kt-menu-trigger="click" className={SidebarFunctions.getMenuClass(['roles'], 'item')}>
+                        <div data-kt-menu-trigger="click" className={SidebarFunctions.getMenuClass(['roles', 'permissions'], 'item')}>
 
                             <span className="menu-link">
                                 <span className="menu-bullet">
@@ -94,6 +94,7 @@ export default function Sidebar() {
 
                                 <div className="menu-item">
                                     <SidebarLink title='Roles List' href="/roles"/>
+                                    <SidebarLink title='Permissions' href="/permissions"/>
                                 </div>
 
                             </div>

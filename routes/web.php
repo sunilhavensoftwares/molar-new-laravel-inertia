@@ -10,6 +10,7 @@ use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\LabController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -36,7 +37,7 @@ use Illuminate\Support\Facades\Route;
 
 // Route::get('/test', function () {
 // });
-Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
+Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('home');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -51,6 +52,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/roles/role-detail/{id}', [RoleController::class, 'show'])->name('roles.show');
     Route::get('/roles/edit-role/{role}', [RoleController::class, 'edit'])->name('roles.edit');
     Route::get('/roles/add-role', [RoleController::class, 'create'])->name('roles.create');
+
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
+    Route::get('/permissions/edit-permission/{permission}', [PermissionController::class, 'edit'])->name('permissions.edit');
+    Route::post('/permissions/add-permission', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::post('/permissions/update-permission/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
+    Route::delete('/permissions/delete-permission/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+    
+
     //Doctors modules
     Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index');
     Route::get('/doctors/search', [DoctorController::class, 'search'])->name('doctors.search');

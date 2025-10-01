@@ -2,6 +2,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 export default function Index({ auth }) {
     const { role, modules } = usePage().props;
+    //console.log(modules);
+    
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -124,11 +126,11 @@ export default function Index({ auth }) {
 
 
 
-                                                                        {module.permissions && module.permissions.map((permission, idx) => (
+                                                                        {module.module_permissions && module.module_permissions.map((permission, idx) => (
                                                                             <div className="d-flex align-items-center mb-2" key={idx} >
                                                                                 <div className="">
                                                                                     <a href="#"
-                                                                                        className="text-dark text-hover-primary fs-6 fw-bold">{permission.name}</a>
+                                                                                        className="text-dark text-hover-primary fs-6 fw-bold">{permission.label}</a>
                                                                                 </div>
 
 

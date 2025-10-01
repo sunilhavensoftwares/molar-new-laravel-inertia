@@ -19,8 +19,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): Response
     {
+        // Cache route check to improve performance
+        $canResetPassword = \Illuminate\Support\Facades\Cache::remember(
+            'can_reset_password',
+            3600, // 1 hour
+            fn () => Route::has('password.request')
+        );
+
         return Inertia::render('Auth/Login', [
-            'canResetPassword' => Route::has('password.request'),
+            'canResetPassword' => $canResetPassword,
             'status' => session('status')
         ])->withViewData([
             'bodyClass' => 'app-blank bgi-size-cover bgi-attachment-fixed bgi-position-center bgi-no-repeat guestLayoutBody',
