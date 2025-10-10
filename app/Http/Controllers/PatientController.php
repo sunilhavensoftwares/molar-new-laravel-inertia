@@ -10,6 +10,7 @@ use App\Http\Resources\MedicalHistoryCategoryResource;
 use App\Http\Resources\MedicalHistoryResource;
 use App\Http\Resources\MedicalHistoryStatusResource;
 use App\Http\Resources\PatientDocumentResource;
+use App\Http\Resources\PatientResource;
 use App\Http\Resources\ToothResource;
 use App\Http\Resources\UserResource;
 use App\Models\CaseMaterial;
