@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Requests;
-
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class PermissionRequest extends FormRequest {
+use Illuminate\Foundation\Http\FormRequest;
+
+class RoleRequest extends FormRequest {
     public $response;
     /**
      * Determine if the user is authorized to make this request.
@@ -22,20 +22,21 @@ class PermissionRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            'module_id'   => 'required',
-            'permission_name'  => 'required|max:255',
-            'permission_label' => 'required|max:255',
+            'role_name' => 'required|string|max:255',
+            'permissions' => 'required|min:1',
+        ];
+    }
+    public function messages(): array {
+        return [
+            'role_name.required' => 'Please enter a role name.',
+            'permissions.required' => 'Please select at least one permission.',
         ];
     }
     protected function failedValidation(Validator $validator) {
         throw new HttpResponseException(response()->json([
             'status' => 422,
+            'message' => 'Please check validation errors',
             'errors' => $validator->errors(),
         ], 200));
-    }
-    public function messages(): array {
-        return [
-            'module_id.required'        => 'Please select a module name.',
-        ];
     }
 }

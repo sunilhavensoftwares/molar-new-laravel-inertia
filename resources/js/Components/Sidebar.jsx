@@ -43,7 +43,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className={SidebarFunctions.getMenuClass(['users', 'roles'], 'main')}>
+                <div data-kt-menu-trigger="click" className={SidebarFunctions.getMenuClass(['users', 'roles','permissions'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">

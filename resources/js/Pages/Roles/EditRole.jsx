@@ -1,9 +1,63 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import api from '@/Lib/axios';
+import { showSuccessToast, showErrorToast } from '@/Misc/loadToastr';
 export default function Index({ auth }) {
     const { role, modules } = usePage().props;
+    const [checked, setChecked] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [roleName, setRoleName] = useState(role.label);
+    const [error, setError] = useState(null);
     //console.log(modules);
-    
+    // Initialize checked state when users load/change
+    useEffect(() => {
+
+        if (!modules) return;
+
+        const initChecked = {};
+        modules.forEach(module => {
+            module.module_permissions.forEach(permission => {
+                initChecked[permission.id] = {
+                    status: !!permission.status,
+                };
+            });
+
+        });
+        setChecked(initChecked);
+    }, [modules]);
+    const handleToggle = (permissionId, key) => (e) => {
+        const value = e.target.checked;
+        setChecked(prev => ({
+            ...prev,
+            [permissionId]: {
+                ...prev[permissionId],
+                [key]: value,
+            },
+        }));
+    };
+    const submitUpdatedPermissions = (e) => {
+        setError(null);
+        e.preventDefault();
+        let permission_id_status = {};
+        for (const [key, value] of Object.entries(checked)) {
+            if (value.status) {
+                permission_id_status[key] = { status: value.status ? 1 : 0 };
+            }
+        }
+        //console.log(permissions);
+        api.patch(route('roles.update', role.id), { permissions: permission_id_status, role_name: roleName }).then((response) => {
+            if (response.data.status === 200) {
+                showSuccessToast(response.data.message);
+            } else {
+                setError(response.data.errors);
+                showErrorToast(response.data.message);
+                scrollTo(0, 0, { behavior: 'smooth' });
+            }
+        });
+
+    }
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -63,7 +117,7 @@ export default function Index({ auth }) {
                             <div id="kt_app_content_container" className="app-container container-fluid">
 
                                 <div className="card card-dashed shadow-sm pt-3 mb-5 mb-lg-10">
-                                    <form className="form w-100" noValidate="novalidate" id="kt_sign_in_form">
+                                    <form className="form w-100" noValidate="novalidate" id="kt_sign_in_form" onSubmit={submitUpdatedPermissions}>
 
                                         <div className="card-header">
 
@@ -80,9 +134,15 @@ export default function Index({ auth }) {
                                                 <label className="required form-label">Role Name</label>
 
 
-                                                <input type="text" name="product_name" className="form-control mb-2" placeholder="Role name" defaultValue={role.name}
-                                                />
-
+                                                <input type="text" name="role_name" className="form-control mb-2" placeholder="Role name" defaultValue={role.label}
+                                                    onInput={(e) => setRoleName(e.target.value)} />
+                                                {error && error.role_name && <span className="text-danger">{error.role_name[0]}</span>}
+                                                {error && error.permissions && <span className="text-danger">{error.permissions[0]}</span>}
+                                            </div>
+                                            <div className="card-footer d-flex justify-content-start py-6 px-9">
+                                                <button type="reset" className="btn btn-light btn-active-light-primary me-2">Discard</button>
+                                                <button type="submit" className="btn btn-primary" id="kt_account_profile_details_submit">Save
+                                                    Changes</button>
                                             </div>
                                             <div className="card bg-light card-dashed mb-10">
 
@@ -137,10 +197,12 @@ export default function Index({ auth }) {
                                                                                 <div className="ms-auto">
                                                                                     <div
                                                                                         className="form-check form-switch form-check-default form-check-custom form-check-success">
-                                                                                        <input className="form-check-input h-20px w-40px"
-                                                                                            type="checkbox" id="flexSwitchDefault1" />
-                                                                                        <label className="form-check-label"
-                                                                                            htmlFor="flexSwitchDefault1"></label>
+                                                                                        <input className="form-check-input permissions-form-check-input h-20px w-40px" type="checkbox" id={`flexSwitchDefault${permission.id}`}
+                                                                                            name={`status[${permission.id}]`}
+                                                                                            checked={!!checked[permission.id]?.status}
+                                                                                            onChange={handleToggle(permission.id, 'status')}
+                                                                                        />
+                                                                                        <label className="form-check-label" htmlFor={`flexSwitchDefault${permission.id}`}></label>
                                                                                     </div>
                                                                                 </div>
 
@@ -160,12 +222,6 @@ export default function Index({ auth }) {
 
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div className="card-footer d-flex justify-content-end py-6 px-9">
-                                            <button type="reset" className="btn btn-light btn-active-light-primary me-2">Discard</button>
-                                            <button type="submit" className="btn btn-primary" id="kt_account_profile_details_submit">Save
-                                                Changes</button>
                                         </div>
                                     </form>
                                 </div>

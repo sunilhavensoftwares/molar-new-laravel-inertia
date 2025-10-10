@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
 use App\Models\Module;
 use App\Models\Role;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
-class RoleController extends Controller
-{
+use Illuminate\Support\Str;
+class RoleController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    public function index() {
         $roles = Role::withCount('users')->get();
         $roles = RoleResource::collection($roles);
         return Inertia::render(
@@ -30,8 +28,7 @@ class RoleController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
+    public function create() {
         return Inertia::render(
             'Roles/CreateRole',
             [
@@ -43,16 +40,14 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Role $role, Request $request, $id)
-    {
+    public function show(Role $role, Request $request, $id) {
         $role = $role->findOrFail($id);
 
         $query = $role->users()->latest();
@@ -88,51 +83,56 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Role $role)
-    {
-        //get permission ids array from role collection
-        $assignedPermissionIds = $role->permissions->pluck('id')->toArray();
+    public function edit(Role $role) {
+        $assignedPermissions = $role->permissions
+            ->pluck('pivot.status', 'id') // permission_id => status
+            ->toArray();
         $modules = Module::with(['permissions' => function ($q) {
-            $q->orderBy('name');
+            $q->orderBy('id');
         }])->get();
-        // Format permissions to include whether they're assigned to the role
-        $modulesWithPermissions = $modules->map(function ($module) use ($assignedPermissionIds) {
+        // Map modules with their permissions including assignment info
+        $modulesWithPermissions = $modules->map(function ($module) use ($assignedPermissions) {
             return [
                 'id' => $module->id,
                 'name' => $module->name,
-                'module_permissions' => $module->permissions->map(function ($permission) use ($assignedPermissionIds) {
+                'module_permissions' => $module->permissions->map(function ($permission) use ($assignedPermissions) {
+                    $status = $assignedPermissions[$permission->id] ?? 0;
                     return [
                         'id' => $permission->id,
                         'name' => $permission->name,
                         'label' => $permission->label,
-                        'assigned' => in_array($permission->id, $assignedPermissionIds),
+                        'status' => $status,
+                        'assigned' => isset($assignedPermissions[$permission->id]),
                     ];
                 }),
             ];
         });
 
-        return Inertia::render(
-            'Roles/EditRole',
-            [
-                'role' => $role,
-                'modules' => $modulesWithPermissions
-            ]
-        );
+        return Inertia::render('Roles/EditRole', [
+            'role' => $role,
+            'modules' => $modulesWithPermissions,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Role $role)
-    {
-        //
+    public function update(Request $request, Role $role, RoleRequest $roleRequest) {
+        if($request->has('permissions')) {
+            $role->permissions()->sync($request->permissions);
+        }
+        if($request->has('role_name')) {
+            $role->name = Str::slug($request->role_name,'_');
+            $role->label = ucfirst($request->role_name);
+            $role->save();
+        }
+        return response()->json(['status' => 200, 'message' => 'Role Updated Successfully']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Role $role)
-    {
+    public function destroy(Role $role) {
         //
     }
 }

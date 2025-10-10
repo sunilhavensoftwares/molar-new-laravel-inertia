@@ -21,7 +21,9 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\WebsiteController;
+use App\Models\Permission;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,35 +37,48 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/test', function () {
+// Route::get('/upload-permissions', function () {
+//     $permissions = DB::connection('mysql2')->table('permissions')->get();
+//     $permissions =     $permissions->map(function ($permission) {
+//         return [
+//             'name' => $permission->perm_name,
+//             'label' => ucfirst(str_replace('_', ' ', $permission->perm_name)),
+//             'module_id' => 1,
+//         ];
+//     })->toArray();
+//     DB::table('permissions')->delete();
+//     Permission::insert($permissions);
+//     echo 'Permissions uploaded';
 // });
 Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('home');
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('permission:show_chart');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update')->middleware('permission:update_profile');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy')->middleware('permission:delete_users');
     //dashboard modules
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('permission:sbar_dashboard');
     //user Management modules
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/user-detail/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index')->middleware('permission:view_users');
+    Route::get('/users/user-detail/{id}', [UserController::class, 'show'])->name('users.show')->middleware('permission:view_users');
 
-    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
-    Route::get('/roles/role-detail/{id}', [RoleController::class, 'show'])->name('roles.show');
-    Route::get('/roles/edit-role/{role}', [RoleController::class, 'edit'])->name('roles.edit');
-    Route::get('/roles/add-role', [RoleController::class, 'create'])->name('roles.create');
+    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index')->middleware('permission:read_roles');
+    Route::get('/roles/role-detail/{id}', [RoleController::class, 'show'])->name('roles.show')->middleware('permission:read_roles');
+    Route::get('/roles/edit-role/{role}', [RoleController::class, 'edit'])->name('roles.edit')->middleware('permission:update_roles');
+    Route::patch('/roles/update-role/{role}', [RoleController::class, 'update'])->name('roles.update')->middleware('permission:update_roles');
+    
+    Route::get('/roles/add-role', [RoleController::class, 'create'])->name('roles.create')->middleware('permission:add_roles');
 
-    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
-    Route::get('/permissions/edit-permission/{permission}', [PermissionController::class, 'edit'])->name('permissions.edit');
-    Route::post('/permissions/add-permission', [PermissionController::class, 'store'])->name('permissions.store');
-    Route::post('/permissions/update-permission/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
-    Route::delete('/permissions/delete-permission/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index')->middleware('is_admin');
+    Route::get('/permissions/edit-permission/{permission}', [PermissionController::class, 'edit'])->name('permissions.edit')->middleware('is_admin');
+    Route::post('/permissions/add-permission', [PermissionController::class, 'store'])->name('permissions.store')->middleware('is_admin');
+    Route::post('/permissions/update-permission/{permission}', [PermissionController::class, 'update'])->name('permissions.update')->middleware('is_admin');
+    Route::delete('/permissions/delete-permission/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy')->middleware('is_admin');
     
 
     //Doctors modules
-    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index');
-    Route::get('/doctors/search', [DoctorController::class, 'search'])->name('doctors.search');
-    Route::post('/doctors/{doctor}/visibility', [DoctorController::class, 'updateVisibility'])->name('doctor.updateVisibility');
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index')->middleware('permission:read_doctor');
+    Route::get('/doctors/search', [DoctorController::class, 'search'])->name('doctors.search')->middleware('permission:read_doctor');
+    Route::post('/doctors/{doctor}/visibility', [DoctorController::class, 'updateVisibility'])->name('doctor.updateVisibility')->middleware('permission:update_doctor');
     Route::get('/doctors/doctor-detail/{doctor}', [DoctorController::class, 'show'])->name('doctors.show');
     //Patients modules
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');

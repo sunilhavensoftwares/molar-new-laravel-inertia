@@ -129,7 +129,7 @@ export default function Index({ auth }) {
     };
     const columns = [
         { label: 'ID', key: 'id', thProps: { className: 'min-w-125px' }, 'sort_key': 'permissions.id', 'sortable': 1 },
-        { label: 'Permission Name', key: 'permisison_name', thProps: { className: 'min-w-125px' }, 'sort_key': 'permissions.name', 'sortable': 1 },
+        { label: 'Permission Name', key: 'permission_name', thProps: { className: 'min-w-125px' }, 'sort_key': 'permissions.name', 'sortable': 1 },
         { label: 'Permission Label', key: 'permisison_label', thProps: { className: 'min-w-125px' }, 'sort_key': 'permissions.label', 'sortable': 1 },
         { label: 'Module Name', key: 'module_name', thProps: { className: 'min-w-125px' }, 'sort_key': 'modules.name', 'sortable': 1 },
         { label: 'Actions', key: 'actions', thProps: { className: 'text-end min-w-100px' } },
@@ -137,7 +137,7 @@ export default function Index({ auth }) {
     const data = permissions.data.map((permission, index) => (
         {
             id: permission.id,
-            permisison_name: permission.name,
+            permission_name: permission.name,
             permisison_label: permission.label,
             module_name: permission.module.name,
             actions: (
@@ -156,7 +156,7 @@ export default function Index({ auth }) {
                         data-kt-menu="true">
 
                         <div className="menu-item px-3">
-                            <a href="#" onClick={() => showPermission(permission.id)} className="menu-link px-3"
+                            <a href="#" onClick={(e) => { e.preventDefault(); showPermission(permission.id); }} className="menu-link px-3"
                             //data-bs-target="#kt_modal_add_permission"
                             //</div>data-bs-toggle="modal"
                             >Edit</a>

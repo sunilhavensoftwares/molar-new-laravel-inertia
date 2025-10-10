@@ -10,8 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
-{
+class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -44,22 +43,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    public function getCreatedAtFormattedAttribute()
-    {
+    public function getCreatedAtFormattedAttribute() {
         return Carbon::parse($this->created_at)->format('d M Y, H:i A');
     }
-    public function roles()
-    {
+    public function roles() {
         return $this->belongsToMany(Role::class);
     }
-    public function scopeHasRole($query, $role)
-    {
+    public function scopeHasRole($query, $role) {
         return $query->whereHas('roles', function ($q) use ($role) {
             $q->where('name', $role);
         });
     }
-    public function hasRole($role)
-    {
+    public function hasRole($role) {
         // Use whereHas to avoid loading all roles into memory
         return $this->roles()->where('name', $role)->exists();
     }
@@ -67,15 +62,22 @@ class User extends Authenticatable
     /**
      * Override toArray to prevent unnecessary serialization of relationships
      */
-    public function toArray()
-    {
+    public function toArray() {
         $array = parent::toArray();
-        
+
         // Remove heavy relationships from serialization unless explicitly loaded
         if (!$this->relationLoaded('roles')) {
             unset($array['roles']);
         }
-        
+
         return $array;
+    }
+    public function hasPermission($permission): bool {
+        return $this->roles()
+            ->whereHas('permissions', function ($q) use ($permission) {
+                $q->where('permissions.name', $permission)
+                    ->where('permission_role.status', 1); // use pivot table + column name
+            })
+            ->exists();
     }
 }
