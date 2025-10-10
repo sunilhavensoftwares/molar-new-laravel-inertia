@@ -161,7 +161,7 @@ export default function Index({ auth }) {
             whatsapp: <button className="btn btn-sm btn-light-primary fw-bold">Send</button>,
             actions: (
                 <div className="text-end">
-                    <Link className="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                    <a className="btn btn-light btn-active-light-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         Actions
                         <span className="svg-icon svg-icon-5 m-0">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -170,7 +170,7 @@ export default function Index({ auth }) {
                                     fill="currentColor" />
                             </svg>
                         </span>
-                    </Link>
+                    </a>
                     <div className="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"
                         data-kt-menu="true">
                         <div className="menu-item px-3">
