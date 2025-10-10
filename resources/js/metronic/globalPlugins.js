@@ -15,9 +15,10 @@ import 'bootstrap';
 // Load Select2
 window.select2Ready = new Promise((resolve, reject) => {
     const select2Script = document.createElement('script');
-    select2Script.src = '/plugins/select2/select2.full.min.js';
+    // Correct path under public/ for Select2 assets
+    select2Script.src = '/plugins/select2/dist/js/select2.full.min.js';
     select2Script.onload = () => {
-        if (window.$.fn?.select2) {
+        if (window.$ && window.$.fn?.select2) {
             resolve();
         } else {
             reject(new Error('❌ Select2 not attached to jQuery'));

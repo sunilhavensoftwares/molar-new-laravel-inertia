@@ -7,6 +7,8 @@ import PageLoader from '@/Components/PageLoader';
 import '@assets/plugins/global/plugins.bundle.css';
 import '@assets/css/style.bundle.css';
 import '@assets/css/custom.css';
+// Initialize global plugins (jQuery, Bootstrap, Select2, etc.)
+import './metronic/globalPlugins';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

@@ -5,6 +5,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import AddPaymentModal from "@/Modals/AddPaymentModal"
 import "../../../assets/css/multi-select.min.css";
 import { Head,Link, usePage } from "@inertiajs/react"
+import AddPatient  from "@/Modals/AddPatient"
+import AddDoctor from '@/Modals/AddDoctor'
 export default function Payment({ auth }) {
     const {options} = usePage().props; 
     return (
@@ -437,6 +439,9 @@ export default function Payment({ auth }) {
                     </div>
                     {/*  end::Content wrapper */}
                     <AddPaymentModal options={options} />
+                    <AddDoctor/>
+
+                    <AddPatient/>
                 </div>
                 {/* end:::Main*/}
             </>

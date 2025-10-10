@@ -7,9 +7,12 @@ export default function MetronicPluginLoader() {
     if (window.__metronic_plugins_loaded__) return;
     window.__metronic_plugins_loaded__ = true;
 
-    // Load jQuery first
-    //import('jquery').then(($) => {
-      window.$ = window.jQuery = $.default || $;
+  // Load jQuery first (only if not already set)
+  if (!window.$ || typeof window.$ !== 'function') {
+    import('jquery').then((jq) => {
+      window.$ = window.jQuery = jq.default || jq;
+    });
+  }
 
       // Load Popper FIRST before Bootstrap
       import('@popperjs/core').then((Popper) => {
