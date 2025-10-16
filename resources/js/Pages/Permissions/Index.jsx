@@ -7,7 +7,7 @@ import { showSuccessToast, showErrorToast } from '@/Misc/loadToastr';
 import images from '@/Misc/image_map';
 import AddDoctor from "@/Modals/AddDoctor"
 import api from "@/Lib/axios";
-
+import { Modal } from 'bootstrap';
 import AddEditPermissions from "@/Modals/AddEditPermissions"
 import Swal from 'sweetalert2';
 export default function Index({ auth }) {
@@ -91,9 +91,9 @@ export default function Index({ auth }) {
             if (response.status === 200) {
                 setEditPermission(response.data.permission);
                 //console.log(response.data.permission);
-                
-                $('#kt_modal_add_permission').modal('show');
-
+                const modalEl = document.getElementById('kt_modal_add_permission');
+                const modal = new Modal(modalEl);
+                modal.show();
 
             } else {
                 showErrorToast(response.data.message);

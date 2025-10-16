@@ -113,7 +113,8 @@ export default function AddPaymentModal ({options}) {
                                                 data-control="select2"
                                                 data-dropdown-parent="#kt_modal_add_payment"
                                                 initOn="#kt_modal_add_payment"
-                                                aria-label="Select example"
+                                                aria-label="Select doctor"
+                                                data-placeholder="Select categories"
                                                 name="doctor_id"
                                             >
                                                 <option value="">Select Doctor</option>

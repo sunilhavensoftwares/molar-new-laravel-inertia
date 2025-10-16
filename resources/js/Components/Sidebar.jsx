@@ -3,35 +3,35 @@ import { useEffect, useState } from "react";
 import SidebarFunctions from './Common/SidebarFunctions'
 import { SidebarLink } from './Common/SidebarLink';
 export default function Sidebar() {
-//     const [sidebarOpen, setSidebarOpen] = useState(true);
+    //     const [sidebarOpen, setSidebarOpen] = useState(true);
 
-//    useEffect(() => {
-//     const sidebarEl = document.getElementById('kt_app_sidebar_menu');
-//     if (!sidebarEl) return;
+    //    useEffect(() => {
+    //     const sidebarEl = document.getElementById('kt_app_sidebar_menu');
+    //     if (!sidebarEl) return;
 
-//     // Defensive: Initialize once
-//     let sidebar = window.KTAppSidebar?.getInstance?.(sidebarEl);
-//     if (!sidebar) {
-//         sidebar = new window.KTAppSidebar(sidebarEl);
-//     }
+    //     // Defensive: Initialize once
+    //     let sidebar = window.KTAppSidebar?.getInstance?.(sidebarEl);
+    //     if (!sidebar) {
+    //         sidebar = new window.KTAppSidebar(sidebarEl);
+    //     }
 
-//     // Clean up duplicate overlays if any
-//     const overlays = document.querySelectorAll('.drawer-overlay');
-//     overlays.forEach((overlay, index) => {
-//         if (index > 0) overlay.remove(); // Keep only the first one
-//     });
+    //     // Clean up duplicate overlays if any
+    //     const overlays = document.querySelectorAll('.drawer-overlay');
+    //     overlays.forEach((overlay, index) => {
+    //         if (index > 0) overlay.remove(); // Keep only the first one
+    //     });
 
-//     // Show or hide the sidebar
-//     if (sidebarOpen) {
-//         sidebar.show();
-//     } else {
-//         sidebar.hide();
-//     }
+    //     // Show or hide the sidebar
+    //     if (sidebarOpen) {
+    //         sidebar.show();
+    //     } else {
+    //         sidebar.hide();
+    //     }
 
-//     return () => {
-//         // Optional: sidebar.dispose(); if needed
-//     };
-// }, [sidebarOpen]);
+    //     return () => {
+    //         // Optional: sidebar.dispose(); if needed
+    //     };
+    // }, [sidebarOpen]);
 
     return (
         <>
@@ -43,7 +43,7 @@ export default function Sidebar() {
                 </div>
 
 
-                <div data-kt-menu-trigger="click" className={SidebarFunctions.getMenuClass(['users', 'roles','permissions'], 'main')}>
+                <div data-kt-menu-trigger="click" className={SidebarFunctions.getMenuClass(['users', 'roles', 'permissions'], 'main')}>
 
                     <span className="menu-link">
                         <span className="menu-icon">
@@ -71,7 +71,7 @@ export default function Sidebar() {
                             <div className={SidebarFunctions.getMenuClass(['users'], 'sub')}>
 
                                 <div className="menu-item ">
-                                    <SidebarLink title='Users List' href="/users"/>
+                                    <SidebarLink title='Users List' href="/users" />
                                 </div>
 
                             </div>
@@ -93,8 +93,8 @@ export default function Sidebar() {
                             <div className={SidebarFunctions.getMenuClass(['roles'], 'sub')}>
 
                                 <div className="menu-item">
-                                    <SidebarLink title='Roles List' href="/roles"/>
-                                    <SidebarLink title='Permissions' href="/permissions"/>
+                                    <SidebarLink title='Roles List' href="/roles" />
+                                    <SidebarLink title='Permissions' href="/permissions" />
                                 </div>
 
                             </div>
@@ -136,7 +136,7 @@ export default function Sidebar() {
                     </span>
                     <div className={SidebarFunctions.getMenuClass(['patients'], 'sub')}>
                         <div className="menu-item">
-                            
+
                             <SidebarLink title="Patients List" href={[
                                 "/patients",
                                 "/patients/patient-detail/*",
@@ -154,7 +154,7 @@ export default function Sidebar() {
                             <SidebarLink title='Case Refer' href="/patients/case-refer" />
                             <SidebarLink title='Case Material' href="/patients/case-material" />
                             <SidebarLink title='Documents' href="/patients/pdocuments" />
-                        </div>  
+                        </div>
                     </div>
 
                 </div>
@@ -219,7 +219,13 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['human-resources'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='All' href="/human-resources/nurse" />
+                            <SidebarLink title='Nurse' href="/human-resources/nurse" />
+                            <SidebarLink title='Pharmacist' href="/human-resources/pharmacist" />
+                            <SidebarLink title='Laboratorist' href="/human-resources/laboratorist" />
+                            <SidebarLink title='Accountant' href="/human-resources/accountant" />
+                            <SidebarLink title='Receptionist' href="/human-resources/receptionist" />
+                                
+
                         </div>
                     </div>
 
@@ -274,7 +280,7 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['lab'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='All' href={["/lab/report","/lab/report-templates"]}/>
+                            <SidebarLink title='All' href={["/lab/report", "/lab/report-templates"]} />
                         </div>
                     </div>
 
@@ -294,8 +300,8 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['medicine'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='All' href="/medicine"/>
-                            <SidebarLink title='Medicine Category' href="/medicine/category"/>
+                            <SidebarLink title='All' href="/medicine" />
+                            <SidebarLink title='Medicine Category' href="/medicine/category" />
                         </div>
                     </div>
                 </div>
@@ -314,11 +320,11 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['pharmacy'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='Dashboard' href="/pharmacy/dashboard"/>
-                            <SidebarLink title='Sales' href="/pharmacy/sales"/>
-                            <SidebarLink title='Expense' href="/pharmacy/expense"/>
-                            <SidebarLink title='Expense Categories' href="/pharmacy/expense-categories"/>
-                            <SidebarLink title='Pharmacy Report' href="/pharmacy/pharmacy-report"/>
+                            <SidebarLink title='Dashboard' href="/pharmacy/dashboard" />
+                            <SidebarLink title='Sales' href="/pharmacy/sales" />
+                            <SidebarLink title='Expense' href="/pharmacy/expense" />
+                            <SidebarLink title='Expense Categories' href="/pharmacy/expense-categories" />
+                            <SidebarLink title='Pharmacy Report' href="/pharmacy/pharmacy-report" />
                         </div>
                     </div>
 
@@ -338,9 +344,9 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['reports'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='Financial Report' href="/reports/financial-report"/>
-                            <SidebarLink title='Doctors Commission' href="/reports/doctors-commission"/>
-                            <SidebarLink title='User Activity Report' href="/reports/user-activity-report"/>
+                            <SidebarLink title='Financial Report' href="/reports/financial-report" />
+                            <SidebarLink title='Doctors Commission' href="/reports/doctors-commission" />
+                            <SidebarLink title='User Activity Report' href="/reports/user-activity-report" />
                         </div>
                     </div>
 
@@ -360,7 +366,7 @@ export default function Sidebar() {
 
                     <div className={SidebarFunctions.getMenuClass(['email'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='Email List' href="/email/email-list"/>
+                            <SidebarLink title='Email List' href="/email/email-list" />
                         </div>
                     </div>
 
@@ -382,10 +388,10 @@ export default function Sidebar() {
 
 
                         <div className="menu-item">
-                            <SidebarLink title='Write Sms' href="/sms/new-sms"/>
-                            <SidebarLink title='Sms Settings' href={["/sms/sms-settings","/sms/whatsapp-settings"]}/>
-                            <SidebarLink title='SMS Template' href="/sms/sms-templates"/>
-                            <SidebarLink title='Whatsapp Reply' href="/sms/whatsapp-reply"/>
+                            <SidebarLink title='Write Sms' href="/sms/new-sms" />
+                            <SidebarLink title='Sms Settings' href={["/sms/sms-settings", "/sms/whatsapp-settings"]} />
+                            <SidebarLink title='SMS Template' href="/sms/sms-templates" />
+                            <SidebarLink title='Whatsapp Reply' href="/sms/whatsapp-reply" />
                         </div>
 
 
@@ -409,7 +415,7 @@ export default function Sidebar() {
 
 
                         <div className="menu-item">
-                            <SidebarLink title='All' href={["/website/slides","/website/services","/website/featured-doctors"]}/>
+                            <SidebarLink title='All' href={["/website/slides", "/website/services", "/website/featured-doctors"]} />
                         </div>
 
 
@@ -429,12 +435,20 @@ export default function Sidebar() {
                     </span>
                     <div className={SidebarFunctions.getMenuClass(['settings'], 'sub')}>
                         <div className="menu-item">
-                            <SidebarLink title='System Settings' href="/settings/general"/>
+                            <SidebarLink title='System Settings' href="/settings/general" />
                         </div>
                     </div>
 
                 </div>
-
+                <div className="menu-item">
+                    <SidebarLink title='Monitor Users Activities' href="/monitor-users-activities" faClass="fa-solid fa-search" />
+                </div>
+                <div className="menu-item">
+                    <SidebarLink title='Notifications' href="/notifications" faClass="fa-solid fa-bell" />
+                </div>
+                 <div className="menu-item">
+                    <SidebarLink title='Alarm Messages' href="/notifications/alarm-messages" faClass="fa-solid fa-clock" />
+                </div>
 
             </div>
         </>

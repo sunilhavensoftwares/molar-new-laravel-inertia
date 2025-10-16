@@ -248,7 +248,7 @@ export default function Index({ auth }) {
                                                                         Export Format:</label>
                                                                     {/*end::Label*/}
                                                                     {/*begin::Input*/}
-                                                                    <select name="format" data-control="select2"
+                                                                    <Select2Input name="format" data-control="select2"
                                                                         data-placeholder="Select a format" data-hide-search="true"
                                                                         className="form-select form-select-solid fw-bold">
                                                                         <option></option>
@@ -256,7 +256,7 @@ export default function Index({ auth }) {
                                                                         <option value="pdf">PDF</option>
                                                                         <option value="cvs">CVS</option>
                                                                         <option value="zip">ZIP</option>
-                                                                    </select>
+                                                                    </Select2Input>
                                                                     {/*end::Input*/}
                                                                 </div>
                                                                 {/*end::Input group*/}

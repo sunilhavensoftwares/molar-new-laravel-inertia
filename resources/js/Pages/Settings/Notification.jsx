@@ -69,6 +69,108 @@ function Index({ auth }) {
                                                     {/*begin::Heading*/}
                                                     <div className="row mb-7">
                                                         <div className="col-md-9 offset-md-3">
+                                                            <h2>Time Settings</h2>
+                                                        </div>
+                                                    </div>
+                                                    {/*end::Heading*/}
+                                                    {/*begin::Input group*/}
+                                                    <div className="row fv-row mb-7">
+                                                        <div className="col-md-3 text-md-end">
+                                                            {/*begin::Label*/}
+                                                            <label className="fs-6 fw-semibold form-label mt-3">
+                                                                <span>Patient Documents</span>
+                                                                <i className="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" aria-label="patient documents" data-bs-original-title="patient documents" data-kt-initialized="1"></i>
+                                                            </label>
+                                                            {/*end::Label*/}
+                                                        </div>
+                                                        <div className="col-md-3">
+                                                            <div className="d-flex mt-3">
+                                                                <div className="me-5">
+                                                                    <input className="form-control form-control-solid" type="text" defaultValue="" name="patient_documents" id="patient_documents" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-md-3 text-md-end">
+                                                            {/*begin::Label*/}
+                                                            <label className="fs-6 fw-semibold form-label mt-3">
+                                                                <span>Time format for document</span>
+                                                                <i className="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" aria-label="Time format for document" data-bs-original-title="Time format for document" data-kt-initialized="1"></i>
+                                                            </label>
+                                                            {/*end::Label*/}
+                                                        </div>
+                                                        <div className="col-md-3">
+                                                            <div className="d-flex mt-3">
+                                                                <div className="me-5">
+                                                                    <input className="form-control form-control-solid" type="text" defaultValue="" name="time_format_for_document" id="time_format_for_document" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-md-3 text-md-end">
+                                                            {/*begin::Label*/}
+                                                            <label className="fs-6 fw-semibold form-label mt-3">
+                                                                <span>Patient Case</span>
+                                                                <i className="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" aria-label="Patient Case" data-bs-original-title="Patient Case" data-kt-initialized="1"></i>
+                                                            </label>
+                                                            {/*end::Label*/}
+                                                        </div>
+                                                        <div className="col-md-3">
+                                                            <div className="d-flex mt-3">
+                                                                <div className="me-5">
+                                                                    <input className="form-control form-control-solid" type="text" defaultValue="" name="patient_case" id="patient_case" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-md-3 text-md-end">
+                                                            {/*begin::Label*/}
+                                                            <label className="fs-6 fw-semibold form-label mt-3">
+                                                                <span>Time format for Case</span>
+                                                                <i className="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" aria-label="Time format for Case" data-bs-original-title="Time format for Case" data-kt-initialized="1"></i>
+                                                            </label>
+                                                            {/*end::Label*/}
+                                                        </div>
+                                                        <div className="col-md-3">
+                                                            <div className="d-flex mt-3">
+                                                                <div className="me-5">
+                                                                    <input className="form-control form-control-solid" type="text" defaultValue="" name="time_format_for_case" id="time_format_for_case" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-md-3 text-md-end">
+                                                            {/*begin::Label*/}
+                                                            <label className="fs-6 fw-semibold form-label mt-3">
+                                                                <span>Time format for Bill</span>
+                                                                <i className="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" aria-label="Time format for Bill" data-bs-original-title="Time format for Bill" data-kt-initialized="1"></i>
+                                                            </label>
+                                                            {/*end::Label*/}
+                                                        </div>
+                                                        <div className="col-md-3">
+                                                            <div className="d-flex mt-3">
+                                                                <div className="me-5">
+                                                                    <input className="form-control form-control-solid" type="text" defaultValue="" name="time_format_for_bill" id="time_format_for_bill" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-md-3 text-md-end">
+                                                            {/*begin::Label*/}
+                                                            <label className="fs-6 fw-semibold form-label mt-3">
+                                                                <span>Patient Bill</span>
+                                                                <i className="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" aria-label="patient bill" data-bs-original-title="patient bill" data-kt-initialized="1"></i>
+                                                            </label>
+                                                            {/*end::Label*/}
+                                                        </div>
+                                                        <div className="col-md-3">
+                                                            <div className="d-flex mt-3">
+                                                                <div className="me-5">
+                                                                    <input className="form-control form-control-solid" type="text" defaultValue="" name="patient_bill" id="patient_bill" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {/*end::Input group*/}
+                                                  
+                                                    {/*begin::Heading*/}
+                                                    <div className="row mb-7">
+                                                        <div className="col-md-9 offset-md-3">
                                                             <h2>Cateogries Settings</h2>
                                                         </div>
                                                     </div>

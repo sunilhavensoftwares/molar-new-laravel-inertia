@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\LabController;
 use App\Http\Controllers\MedicineController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PrescriptionController;
@@ -125,6 +127,9 @@ Route::middleware('auth')->group(function () {
         Route::get('{human_resource}', [HumanResourceController::class, 'handleRole'])
             ->where('human_resource', 'nurse|pharmacist|laboratorist|accountant|receptionist')
             ->name('role');
+        Route::post('{human_resource}/add', [HumanResourceController::class, 'store'])->name('create');
+        Route::patch('{human_resource}/update', [HumanResourceController::class, 'update'])->name('update');
+        Route::post('{human_resource}/edit', [HumanResourceController::class, 'edit'])->name('edit');
     });
     //finance
     Route::prefix('/finance')->name('finance.')->group(function () {
@@ -187,6 +192,12 @@ Route::middleware('auth')->group(function () {
         Route::get('email', [SettingController::class, 'email'])->name('email');
         Route::get('payment-gateways', [SettingController::class, 'payment_gateways'])->name('payment_gateways');
     });
+    //Activity Logs
+    Route::get('/monitor-users-activities', [ActivityLogController::class,'index'])->name('monitor_users_activities');
+    //Notifications
+    Route::get('/notifications', [NotificationController::class,'index'])->name('notifications');
+    Route::get('/notifications/alarm-messages', [NotificationController::class,'alarm_messages'])->name('notifications.alarm_messages');
+
 });
 
 require __DIR__ . '/auth.php';

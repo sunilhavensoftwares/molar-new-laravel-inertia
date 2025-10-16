@@ -216,8 +216,8 @@ class AppointmentController extends Controller {
         return Inertia::render('Appointments/Calendar');
     }
     public function request( Request $request) {
-         $query = Appointment::query();
-        $query->where('status','=', Appointment::getStatusKeyByValue('requested'));
+        $query = Appointment::query();
+        $query->where('appointments.status','=', Appointment::getStatusKeyByValue('requested'));
         $sort = $request->get('sort', 'appointments.appointment_date');
 
         $order = strtolower($request->get('order', 'asc'));
