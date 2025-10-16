@@ -1,8 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import FlatpickrInput from '@/Components/FlatpickrInput';
-import CalendarApp from '@/Components/CalendarApp';
-import Select2Input from '@/Components/Select2Input';
 import DataTable from '@/Components/DataTable';
 import { useEffect, useRef, useState } from 'react';
 import Sidebar from './Common/Sidebar';
@@ -12,6 +9,7 @@ import AddPatient from "@/Modals/AddPatient";
 import AddEditHumanResource from "@/Modals/AddEditHumanResource";
 import api from '@/Lib/axios';
 import { Modal } from 'bootstrap';
+import DataExport from '@/Components/dataExport';
 export default function Receptionist({ auth }) {
     const { receptionists, query } = usePage().props;
     const [searchQuery, setSearchQuery] = useState('');
@@ -278,43 +276,7 @@ export default function Receptionist({ auth }) {
                                                                             {/* end::Modal header */}
                                                                             {/* begin::Modal body */}
                                                                             <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                                                                                {/* begin::Form */}
-                                                                                <form id="kt_modal_export_users_form" className="form" action="#">
-
-                                                                                    {/* begin::Input group */}
-                                                                                    <div className="fv-row mb-10">
-                                                                                        {/* begin::Label */}
-                                                                                        <label className="required fs-6 fw-semibold form-label mb-2">Select
-                                                                                            Export Format:</label>
-                                                                                        {/* end::Label */}
-                                                                                        {/* begin::Input */}
-                                                                                        <select name="format" data-control="select2"
-                                                                                            data-placeholder="Select a format" data-hide-search="true"
-                                                                                            className="form-select form-select-solid fw-bold">
-                                                                                            <option></option>
-                                                                                            <option defaultValue="excel">Excel</option>
-                                                                                            <option defaultValue="pdf">PDF</option>
-                                                                                            <option defaultValue="cvs">CVS</option>
-                                                                                            <option defaultValue="zip">ZIP</option>
-                                                                                        </select>
-                                                                                        {/* end::Input */}
-                                                                                    </div>
-                                                                                    {/* end::Input group */}
-                                                                                    {/* begin::Actions */}
-                                                                                    <div className="text-center">
-                                                                                        <button type="reset" className="btn btn-light me-3"
-                                                                                            data-bs-dismiss="modal">Discard</button>
-                                                                                        <button type="submit" className="btn btn-primary"
-                                                                                            data-kt-users-modal-action="submit">
-                                                                                            <span className="indicator-label">Submit</span>
-                                                                                            <span className="indicator-progress">Please wait...
-                                                                                                <span
-                                                                                                    className="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                    {/* end::Actions */}
-                                                                                </form>
-                                                                                {/* end::Form */}
+                                                                               <DataExport data={receptionists.data} resource="receptionist" headings={['name','phone','email','address']} />
                                                                             </div>
                                                                             {/* end::Modal body */}
                                                                         </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\HumanResourceController;
 use App\Http\Controllers\LabController;
@@ -197,7 +198,8 @@ Route::middleware('auth')->group(function () {
     //Notifications
     Route::get('/notifications', [NotificationController::class,'index'])->name('notifications');
     Route::get('/notifications/alarm-messages', [NotificationController::class,'alarm_messages'])->name('notifications.alarm_messages');
-
+    //Export Data
+    Route::post('/export-data', [ExportController::class,'export'])->name('export_data');
 });
 
 require __DIR__ . '/auth.php';

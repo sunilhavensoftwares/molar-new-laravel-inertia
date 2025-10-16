@@ -7,14 +7,15 @@ import AddDoctor from '@/Modals/AddDoctor';
 import AddEditHumanResource from "@/Modals/AddEditHumanResource";
 import api from '@/Lib/axios';
 import { Modal } from 'bootstrap';
-
+import { showSuccessToast, showErrorToast } from '@/Misc/loadToastr';
+import DataExport from '@/Components/dataExport';
 export default function Nurse({ auth }) {
     const { nurses, query } = usePage().props;
     const [searchQuery, setSearchQuery] = useState('');
     const searchTimeout = useRef(null);
     const [appliedFilters, setAppliedFilters] = useState({});
     const [editHumanResourceData, setEditHumanResourceData] = useState({});
-
+    
     useEffect(() => {
         if (searchTimeout.current) clearTimeout(searchTimeout.current);
 
@@ -61,6 +62,7 @@ export default function Nurse({ auth }) {
         { label: 'Phone', key: 'phone', thProps: { className: 'min-w-80px ps-4' }, tdProps: { className: '' }, 'sort_key': 'nurses.phone', 'sortable': 1 },
         { label: 'Actions', key: 'actions', thProps: { className: 'text-end pe-4 min-w-100px' }, tdProps: { className: 'text-end pe-4' } },
     ];
+
     const data = nurses.data.map((nurse, index) => (
         {
             id: nurse.id || '',
@@ -275,43 +277,7 @@ export default function Nurse({ auth }) {
                                                                             {/* end::Modal header */}
                                                                             {/* begin::Modal body */}
                                                                             <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                                                                                {/* begin::Form */}
-                                                                                <form id="kt_modal_export_users_form" className="form" action="#">
-
-                                                                                    {/* begin::Input group */}
-                                                                                    <div className="fv-row mb-10">
-                                                                                        {/* begin::Label */}
-                                                                                        <label className="required fs-6 fw-semibold form-label mb-2">Select
-                                                                                            Export Format:</label>
-                                                                                        {/* end::Label */}
-                                                                                        {/* begin::Input */}
-                                                                                        <select name="format" data-control="select2"
-                                                                                            data-placeholder="Select a format" data-hide-search="true"
-                                                                                            className="form-select form-select-solid fw-bold">
-                                                                                            <option></option>
-                                                                                            <option defaultValue="excel">Excel</option>
-                                                                                            <option defaultValue="pdf">PDF</option>
-                                                                                            <option defaultValue="cvs">CVS</option>
-                                                                                            <option defaultValue="zip">ZIP</option>
-                                                                                        </select>
-                                                                                        {/* end::Input */}
-                                                                                    </div>
-                                                                                    {/* end::Input group */}
-                                                                                    {/* begin::Actions */}
-                                                                                    <div className="text-center">
-                                                                                        <button type="reset" className="btn btn-light me-3"
-                                                                                            data-bs-dismiss="modal">Discard</button>
-                                                                                        <button type="submit" className="btn btn-primary"
-                                                                                            data-kt-users-modal-action="submit">
-                                                                                            <span className="indicator-label">Submit</span>
-                                                                                            <span className="indicator-progress">Please wait...
-                                                                                                <span
-                                                                                                    className="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                    {/* end::Actions */}
-                                                                                </form>
-                                                                                {/* end::Form */}
+                                                                                <DataExport data={nurses.data} resource="nurse" headings={['name','phone','email','address']} />
                                                                             </div>
                                                                             {/* end::Modal body */}
                                                                         </div>

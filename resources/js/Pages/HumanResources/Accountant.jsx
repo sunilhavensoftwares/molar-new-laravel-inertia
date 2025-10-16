@@ -9,6 +9,7 @@ import AddPatient from "@/Modals/AddPatient";
 import AddEditHumanResource from "@/Modals/AddEditHumanResource";
 import api from '@/Lib/axios';
 import { Modal } from 'bootstrap';
+import DataExport from '@/Components/dataExport';
 export default function Accountant({ auth }) {
     const { accountants, query } = usePage().props;
     const [searchQuery, setSearchQuery] = useState('');
@@ -20,8 +21,8 @@ export default function Accountant({ auth }) {
 
         // Skip firing on empty input if it's the same as what's already in the query
         if (searchQuery === '' && !query?.name) return;
-      
-        
+
+
         searchTimeout.current = setTimeout(() => {
             router.get(route('human_resources.role', { human_resource: 'accountant' }), {
                 ...appliedFilters,
@@ -38,7 +39,7 @@ export default function Accountant({ auth }) {
 
         return () => clearTimeout(searchTimeout.current);
     }, [searchQuery]);
-     const editHumanResource = async (resourse_name, id) => {
+    const editHumanResource = async (resourse_name, id) => {
         await api.post(route('human_resources.edit', { human_resource: resourse_name }), { human_resource: resourse_name, id: id }).then((response) => {
             if (response.status === 200) {
                 setEditHumanResourceData(response.data);
@@ -53,7 +54,7 @@ export default function Accountant({ auth }) {
             }
         })
     }
-    
+
     const columns = [
         { label: 'ID', key: 'id', thProps: { className: 'min-w-50px ps-4' }, tdProps: { className: 'ps-4' }, 'sort_key': 'accountants.id', 'sortable': 1 },
         { label: 'Name', key: 'name', thProps: { className: 'min-w-150px ps-4' }, tdProps: { className: 'd-flex align-items-center' }, 'sort_key': 'accountants.name', 'sortable': 1 },
@@ -89,7 +90,7 @@ export default function Accountant({ auth }) {
                         data-kt-menu="true">
                         {/* begin::Menu item */}
                         <div className="menu-item px-3">
-                           <a className="menu-link px-3" onClick={() => editHumanResource('accountant', accountant.id)}>Edit</a>
+                            <a className="menu-link px-3" onClick={() => editHumanResource('accountant', accountant.id)}>Edit</a>
                         </div>
                         {/* end::Menu item */}
                         {/* begin::Menu item */}
@@ -276,43 +277,7 @@ export default function Accountant({ auth }) {
                                                                             {/* end::Modal header */}
                                                                             {/* begin::Modal body */}
                                                                             <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                                                                                {/* begin::Form */}
-                                                                                <form id="kt_modal_export_users_form" className="form" action="#">
-
-                                                                                    {/* begin::Input group */}
-                                                                                    <div className="fv-row mb-10">
-                                                                                        {/* begin::Label */}
-                                                                                        <label className="required fs-6 fw-semibold form-label mb-2">Select
-                                                                                            Export Format:</label>
-                                                                                        {/* end::Label */}
-                                                                                        {/* begin::Input */}
-                                                                                        <select name="format" data-control="select2"
-                                                                                            data-placeholder="Select a format" data-hide-search="true"
-                                                                                            className="form-select form-select-solid fw-bold">
-                                                                                            <option></option>
-                                                                                            <option defaultValue="excel">Excel</option>
-                                                                                            <option defaultValue="pdf">PDF</option>
-                                                                                            <option defaultValue="cvs">CVS</option>
-                                                                                            <option defaultValue="zip">ZIP</option>
-                                                                                        </select>
-                                                                                        {/* end::Input */}
-                                                                                    </div>
-                                                                                    {/* end::Input group */}
-                                                                                    {/* begin::Actions */}
-                                                                                    <div className="text-center">
-                                                                                        <button type="reset" className="btn btn-light me-3"
-                                                                                            data-bs-dismiss="modal">Discard</button>
-                                                                                        <button type="submit" className="btn btn-primary"
-                                                                                            data-kt-users-modal-action="submit">
-                                                                                            <span className="indicator-label">Submit</span>
-                                                                                            <span className="indicator-progress">Please wait...
-                                                                                                <span
-                                                                                                    className="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                    {/* end::Actions */}
-                                                                                </form>
-                                                                                {/* end::Form */}
+                                                                                <DataExport data={accountants.data} resource="accountant" headings={['name', 'phone', 'email', 'address']} />
                                                                             </div>
                                                                             {/* end::Modal body */}
                                                                         </div>
@@ -343,7 +308,7 @@ export default function Accountant({ auth }) {
                                                                         sortKey={query?.sort}
                                                                         sortOrder={query?.order}
                                                                         appliedFilters={appliedFilters}
-                                                                        />
+                                                                    />
                                                                     {/* end::Table*/}
                                                                 </div>
                                                             </div>
